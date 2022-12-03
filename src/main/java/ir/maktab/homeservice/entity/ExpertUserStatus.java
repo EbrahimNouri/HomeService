@@ -1,4 +1,5 @@
 package ir.maktab.homeservice.entity;
 
-public enum SpecialistType {
+public class ExpertUserStatus {
+
 }

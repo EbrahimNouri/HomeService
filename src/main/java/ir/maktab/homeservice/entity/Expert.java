@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+import java.util.List;
+
 
 @Entity
 @AllArgsConstructor
@@ -12,7 +15,18 @@ import org.springframework.stereotype.Component;
 @Setter
 @ToString
 @Component
-public class Expert extends Person{
+@NoArgsConstructor
+public class Expert extends Person implements Serializable {
 
-//    private SpecialistType specialistType;
+
+    @Column(nullable = false)
+    private ExpertStatus expertStatus;
+
+    @ManyToOne
+    @ToString.Exclude
+    private TypeService typeService;
+
+    @OneToMany
+    @ToString.Exclude
+    private List<ExpertUser> expertUsers;
 }
