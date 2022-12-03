@@ -25,7 +25,13 @@ public class User extends Person {
         super(id, firstname, lastname, email, password, registerTime, credit);
     }
 
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     @ToString.Exclude
     private List<ExpertUser> expertUsers;
+
+    @OneToMany(mappedBy = "user")
+    @ToString.Exclude
+    private List<Order> orders;
+
+    private OrderType orderType;
 }

@@ -26,7 +26,7 @@ public class Expert extends Person implements Serializable {
     @ToString.Exclude
     private TypeService typeService;
 
-    @OneToMany
+    @OneToMany(mappedBy = "expert")
     @ToString.Exclude
     private List<ExpertUser> expertUsers;
 }
