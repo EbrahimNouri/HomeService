@@ -21,8 +21,10 @@ public class TypeServiceServiceImpl implements TypeServiceService {
     public void addSubService(TypeService typeService) {
         try {
             typeServiceRepository.save(typeService);
-        }catch (Exception e){
-            // TODO: 12/9/2022 AD
+
+            log.debug("debug add sub service {} ", typeService);
+        } catch (Exception e) {
+            log.error("error add sub service {} ", typeService, e);
         }
     }
 

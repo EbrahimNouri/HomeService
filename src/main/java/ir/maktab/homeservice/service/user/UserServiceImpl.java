@@ -23,9 +23,9 @@ public class UserServiceImpl implements UserService {
                 repository.save(user);
 
                 log.debug("debug user service iml {} ", user);
-            } else {
-                log.error("error register user  username or password is is null {} ", user);
-            }
+            } else
+                log.warn("warn register user  username or password is is null {} ", user);
+
         } catch (Exception e) {
 
             log.error("error register user {} ", user, e);

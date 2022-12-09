@@ -17,19 +17,23 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void OrderRegistration(Order order) {
+        try {
+            if (order.getSuggestedPrice() != null
+                    && order.getDescription() != null
+                    && order.getStartOfWork() != null
+                    && order.getUser() != null) {
 
-        if (order.getSuggestedPrice() != null
-                && order.getDescription() != null
-                && order.getStartOfWork() != null
-                && order.getUser() != null) {
+                order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
+                repository.save(order);
 
-            order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
-            repository.save(order);
+                log.debug("debug order registration {} ", order);
+            } else {
 
-            log.debug("debug order registration {} ", order);
+                log.error("debug order registration the fields are not filled {} ", order);
+            }
+        } catch (Exception e) {
 
-        } else {
-            log.error("debug order registration the fields are not filled {} ", order);
+            log.error("debug order registration {} ", order);
         }
     }
 }

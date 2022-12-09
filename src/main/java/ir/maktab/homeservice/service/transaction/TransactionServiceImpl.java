@@ -4,6 +4,7 @@ package ir.maktab.homeservice.service.transaction;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Transaction;
 import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.entity.id.TransactionId;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.repository.transaction.TransactionRepository;
 import ir.maktab.homeservice.repository.user.UserRepository;
@@ -44,7 +45,7 @@ private TransactionRepository repository;
             }
         } else {
 
-            log.error("error Transfers are more than inventory {} ", transaction1);
+            log.warn("warn Transfers are more than inventory {} ", transaction1);
 
         }
     }
@@ -55,14 +56,14 @@ private TransactionRepository repository;
 
             user.setCredit(user.getCredit() + amount);
             userRepository.save(user);
-            // TODO: 12/9/2022 AD
-            repository.save(Transaction.builder().user(user).transfer(amount).build());
+            Transaction transaction =
+                    new Transaction((new TransactionId(null, user, null)), amount);
+            repository.save(transaction);
 
-            log.debug("error add transaction to wallet user {} {} ", user, amount);
+            log.debug("debug add transaction to wallet user {} {} ", user, amount);
         } catch (Exception e) {
 
             log.error("error add transaction to wallet user {} {} ", user, amount, e);
-
         }
     }
 }
