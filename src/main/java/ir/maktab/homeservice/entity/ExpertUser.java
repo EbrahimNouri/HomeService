@@ -1,35 +1,36 @@
 package ir.maktab.homeservice.entity;
 
+import ir.maktab.homeservice.entity.id.ExpertUserId;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.Max;
+import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-
+@Entity
+@Table(name = "comment_point")
+@Builder
 @IdClass(ExpertUserId.class)
-public class ExpertUser extends ExpertUserId {
-    @ManyToOne
+public class ExpertUser implements Serializable {
+    @EmbeddedId
+    private ExpertUserId expertUserId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id")
     @Id
-    private Expert expert;
+    private Order order;
 
-    @ManyToOne
-    @Id
-    private User user;
+    private LocalDate localDate;
 
-    @Id
-    private LocalDate localDate = LocalDate.now();
+    @Max(5)
+    private Double point;
 
-    private float point;
-
+    @Column(columnDefinition = "text")
     private String comment;
-
 
 }

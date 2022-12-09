@@ -1,27 +1,32 @@
 package ir.maktab.homeservice.entity;
 
-import jakarta.persistence.*;
+
+import ir.maktab.homeservice.entity.base.BaseEntity;
+import ir.maktab.homeservice.entity.enums.OrderType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
-@Entity
+@Entity(name = "order_table")
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
-@Table(name = "orders")
-public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Builder
+public class Order extends BaseEntity {
 
     @ManyToOne
     private TypeService typeService;
 
     @ManyToOne
     private User user;
+
+    @OneToMany(mappedBy = "order")
+    private List<ExpertUser> expertUser;
 
     private Double suggestedPrice;
 
@@ -30,5 +35,7 @@ public class Order {
     private LocalDate startOfWork;
 
     private String address;
+
+    private OrderType orderType;
 
 }

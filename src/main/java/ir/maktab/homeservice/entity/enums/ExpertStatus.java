@@ -1,4 +1,4 @@
-package ir.maktab.homeservice.entity;
+package ir.maktab.homeservice.entity.enums;
 
 public enum ExpertStatus {
     AWAITING_CONFIRMATION,

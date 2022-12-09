@@ -1,37 +1,46 @@
 package ir.maktab.homeservice.entity;
 
-import jakarta.persistence.*;
+import ir.maktab.homeservice.entity.base.Person;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
-@Entity
+@Entity(name = "user_table")
+@AllArgsConstructor
 @Getter
 @Setter
-@ToString
-@Component
 @NoArgsConstructor
-@Table(name = "users")
 public class User extends Person {
-    @Builder
-    public User(Long id, String firstname, String lastname, @Email(message = "email address is not valid") String email
-            , @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$"
-            , message = "password is not valid") String password, Timestamp registerTime, Double credit) {
-        super(id, firstname, lastname, email, password, registerTime, credit);
-    }
 
     @OneToMany(mappedBy = "user")
-    @ToString.Exclude
     private List<ExpertUser> expertUsers;
 
     @OneToMany(mappedBy = "user")
-    @ToString.Exclude
     private List<Order> orders;
 
-    private OrderType orderType;
+    @OneToMany(mappedBy = "user")
+    private List<Transaction> transactions;
+
+    @Builder
+    public User(@NotEmpty(message = "Blank is not acceptable") String firstname
+            , @NotEmpty(message = "Blank is not acceptable") String lastname
+            , @Email(message = "email address is not valid") String email
+            , @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$"
+            , message = "password is not valid") String password, Double credit
+            , LocalDateTime signupDateTime, List<ExpertUser> expertUsers
+            , List<Order> orders, List<Transaction> transactions) {
+
+        super(firstname, lastname, email, password, credit, signupDateTime);
+        this.expertUsers = expertUsers;
+        this.orders = orders;
+        this.transactions = transactions;
+
+    }
 }

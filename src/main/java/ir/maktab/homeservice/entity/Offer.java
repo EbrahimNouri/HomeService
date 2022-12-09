@@ -1,6 +1,11 @@
 package ir.maktab.homeservice.entity;
 
-import jakarta.persistence.*;
+import ir.maktab.homeservice.entity.base.BaseEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -11,10 +16,8 @@ import java.time.LocalDate;
 @Setter
 @ToString
 @NoArgsConstructor
-public class Offer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Builder
+public class Offer extends BaseEntity {
 
     @ManyToOne
     private Order order;
@@ -25,8 +28,12 @@ public class Offer {
     @Column(nullable = false)
     private LocalDate startDate;
 
-    private Double suggestedPrice;
-    //todo check in service be after start
-    private LocalDate EndDate;
+    @Column(nullable = false)
+    @NotEmpty
+    private String description;
 
+    @NotNull
+    private Double suggestedPrice;
+
+    private LocalDate EndDate;
 }
