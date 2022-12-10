@@ -3,6 +3,7 @@ package ir.maktab.homeservice.service.admin;
 
 import ir.maktab.homeservice.entity.Admin;
 import ir.maktab.homeservice.repository.admin.AdminRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Log4j2
 @AllArgsConstructor
+@Transactional
 public class AdminServiceImpl implements AdminService {
 
     private AdminRepository adminRepository;

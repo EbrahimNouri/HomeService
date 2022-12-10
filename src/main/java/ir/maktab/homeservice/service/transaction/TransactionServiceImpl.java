@@ -8,6 +8,7 @@ import ir.maktab.homeservice.entity.id.TransactionId;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.repository.transaction.TransactionRepository;
 import ir.maktab.homeservice.repository.user.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class TransactionServiceImpl implements TransactionService {
     private ExpertRepository expertRepository;
 private TransactionRepository repository;
 
+    @Transactional
     @Override
     public void addTransaction(Transaction transaction1) {
         User user = transaction1.getTransactionId().getUser();
@@ -50,6 +52,7 @@ private TransactionRepository repository;
         }
     }
 
+    @Transactional
     @Override
     public void chargeAccountBalance(User user, Double amount) {
         try {

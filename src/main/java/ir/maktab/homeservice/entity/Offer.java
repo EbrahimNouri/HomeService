@@ -3,6 +3,7 @@ package ir.maktab.homeservice.entity;
 import ir.maktab.homeservice.entity.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -22,7 +23,7 @@ public class Offer extends BaseEntity {
     @ManyToOne
     private Order order;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Expert expert;
 
     @Column(nullable = false)

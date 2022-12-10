@@ -2,6 +2,7 @@ package ir.maktab.homeservice.service.basicServices;
 
 import ir.maktab.homeservice.entity.BasicService;
 import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.util.List;
 @Service
 @Log4j2
 @AllArgsConstructor
+@Transactional
 public class BasicServicesServiceImpl implements BasicServicesService {
 
     private final BasicServiceRepository repository;

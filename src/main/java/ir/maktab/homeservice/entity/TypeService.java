@@ -1,6 +1,7 @@
 package ir.maktab.homeservice.entity;
 
 import ir.maktab.homeservice.entity.base.BaseEntity;
+import ir.maktab.homeservice.entity.id.ExpertTypeServiceId;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -14,7 +15,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Builder
-@ToString
 public class TypeService extends BaseEntity {
 
     @Column(unique = true)
@@ -24,7 +24,6 @@ public class TypeService extends BaseEntity {
     private double basePrice;
 
     @OneToMany(mappedBy = "typeService")
-    @ToString.Exclude
     private List<ExpertTypeService> expertTypeServices;
 
     @OneToMany(mappedBy = "typeService")

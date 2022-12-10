@@ -3,23 +3,22 @@ package ir.maktab.homeservice.entity;
 
 import ir.maktab.homeservice.entity.base.BaseEntity;
 import ir.maktab.homeservice.entity.enums.OrderType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Entity(name = "order_table")
+@Entity
 @AllArgsConstructor
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "order_table")
 @Builder
 public class Order extends BaseEntity {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private TypeService typeService;
 
     @ManyToOne
@@ -27,6 +26,9 @@ public class Order extends BaseEntity {
 
     @OneToMany(mappedBy = "order")
     private List<ExpertUser> expertUser;
+
+    @OneToMany(mappedBy = "order")
+    private List<Offer> offers;
 
     private Double suggestedPrice;
 

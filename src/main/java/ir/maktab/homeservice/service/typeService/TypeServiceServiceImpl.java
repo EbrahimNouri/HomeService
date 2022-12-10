@@ -3,6 +3,7 @@ package ir.maktab.homeservice.service.typeService;
 
 import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 @Log4j2
+@Transactional
 public class TypeServiceServiceImpl implements TypeServiceService {
 
     private TypeServiceRepository typeServiceRepository;
