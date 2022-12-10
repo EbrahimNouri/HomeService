@@ -22,8 +22,8 @@ public class ExpertUserServiceImpl implements ExpertUserService {
     @Transactional
     @Override
     public void addCommentAndPoint(ExpertUser expertUser) {
-        Expert expert = expertUser.getExpertUserId().getExpert();
-        User user = expertUser.getExpertUserId().getUser();
+        Expert expert = expertUser.getExpert();
+        User user = expertUser.getUser();
         try {
 
             if (expertUser.getOrder().getOrderType().equals(OrderType.DONE)

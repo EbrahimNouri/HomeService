@@ -10,12 +10,8 @@ import lombok.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Embeddable
-@Getter
-@Setter
+
 @EqualsAndHashCode
-@AllArgsConstructor
-@NoArgsConstructor
 public class TransactionId implements Serializable {
 
     @ManyToOne

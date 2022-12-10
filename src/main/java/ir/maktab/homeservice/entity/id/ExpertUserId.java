@@ -4,19 +4,13 @@ package ir.maktab.homeservice.entity.id;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.User;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
 
-@Embeddable
-@Getter
-@Setter
+
 @EqualsAndHashCode
-@AllArgsConstructor
-@NoArgsConstructor
 public class ExpertUserId implements Serializable {
     @ManyToOne
     @JoinColumn(name = "expert_id")
@@ -26,7 +20,7 @@ public class ExpertUserId implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")
     private Order order;
 

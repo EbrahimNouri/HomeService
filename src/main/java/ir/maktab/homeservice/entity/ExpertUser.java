@@ -17,8 +17,14 @@ import java.time.LocalDate;
 @Builder
 @IdClass(ExpertUserId.class)
 public class ExpertUser implements Serializable {
-    @EmbeddedId
-    private ExpertUserId expertUserId;
+
+    @ManyToOne
+    @Id
+    private Expert expert;
+
+    @ManyToOne
+    @Id
+    private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")

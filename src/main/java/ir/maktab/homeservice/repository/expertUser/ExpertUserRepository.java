@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExpertUserRepository extends JpaRepository<ExpertUser, ExpertUserId> {
-    @Query("select avg(exu.point) from ExpertUser exu where exu.expertUserId.expert.id = :expertId")
+    @Query("select avg(exu.point) from ExpertUser exu where exu.expert.id = :expertId")
     Double getAveragePoint(@Param(value = "expertId") Long expertId);
 
 }

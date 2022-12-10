@@ -13,11 +13,17 @@ import java.io.Serializable;
 @Setter
 @Entity
 @Builder
-@IdClass(ExpertUserId.class)
+@IdClass(ExpertTypeServiceId.class)
 @Table(name = "expert_type_service")
 public class ExpertTypeService implements Serializable {
 
-    @EmbeddedId
-    private ExpertTypeServiceId expertTypeServiceId;
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "expert_id")
+    private Expert expert;
 
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "type_service_id")
+    private TypeService typeService;
 }

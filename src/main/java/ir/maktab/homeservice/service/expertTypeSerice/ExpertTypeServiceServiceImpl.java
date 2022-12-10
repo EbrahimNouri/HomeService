@@ -35,11 +35,11 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
     public void addExpertToTypeService(ExpertTypeService expertTypeService) {
 
         var temp = repository.findByExpertAndTypeService
-                (expertTypeService.getExpertTypeServiceId().getExpert().getId()
-                        , expertTypeService.getExpertTypeServiceId().getTypeService().getId());
+                (expertTypeService.getExpert().getId()
+                        , expertTypeService.getTypeService().getId());
         try {
             if (temp.isPresent()
-                    && expertTypeService.getExpertTypeServiceId().getExpert()
+                    && expertTypeService.getExpert()
                     .getExpertStatus().equals(ExpertStatus.CONFIRMED)) {
 
                 repository.save(expertTypeService);
@@ -48,7 +48,7 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
             } else
 
                 log.error("error add expert to basic service expert type service is null or {} "
-                        , expertTypeService.getExpertTypeServiceId().getTypeService());
+                        , expertTypeService.getTypeService());
         } catch (Exception e) {
 
             log.error("error add expert to basic service {} ", expertTypeService, e);
@@ -60,11 +60,11 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
 
         try {
             Optional<ExpertTypeService> temp = repository
-                    .findByExpertAndTypeService(expertTypeService.getExpertTypeServiceId().getExpert().getId()
-                            , expertTypeService.getExpertTypeServiceId().getTypeService().getId());
+                    .findByExpertAndTypeService(expertTypeService.getExpert().getId()
+                            , expertTypeService.getTypeService().getId());
 
             temp.ifPresent(typeService -> repository
-                    .removeTypeServiceByExpertId(typeService.getExpertTypeServiceId().getExpert().getId()));
+                    .removeTypeServiceByExpertId(typeService.getExpert().getId()));
 
             log.debug("debug remove expert type service {} ", expertTypeService);
 

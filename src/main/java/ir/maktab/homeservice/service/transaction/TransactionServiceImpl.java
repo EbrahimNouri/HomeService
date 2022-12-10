@@ -25,18 +25,18 @@ private TransactionRepository repository;
     @Transactional
     @Override
     public void addTransaction(Transaction transaction1) {
-        User user = transaction1.getTransactionId().getUser();
-        Expert expert = transaction1.getTransactionId().getExpert();
+        User user = transaction1.getUser();
+        Expert expert = transaction1.getExpert();
         double amount = transaction1.getTransfer();
-        if (transaction1.getTransfer() >= transaction1.getTransactionId().getUser().getCredit()) {
+        if (transaction1.getTransfer() >= transaction1.getUser().getCredit()) {
 
             try {
                 user.setCredit(user.getCredit() - amount);
                 expert.setCredit(expert.getCredit() + amount);
                 userRepository.save(user);
                 expertRepository.save(expert);
-                transaction1.getTransactionId().setUser(user);
-                transaction1.getTransactionId().setExpert(expert);
+                transaction1.setUser(user);
+                transaction1.setExpert(expert);
                 repository.save(transaction1);
 
                 log.debug("error add transaction {} ", transaction1);
@@ -59,9 +59,9 @@ private TransactionRepository repository;
 
             user.setCredit(user.getCredit() + amount);
             userRepository.save(user);
-            Transaction transaction =
-                    new Transaction((new TransactionId(null, user, null)), amount);
-            repository.save(transaction);
+//            Transaction transaction =
+//                    new Transaction(new TransactionId(null, user, null), amount);
+//            repository.save(transaction);
 
             log.debug("debug add transaction to wallet user {} {} ", user, amount);
         } catch (Exception e) {

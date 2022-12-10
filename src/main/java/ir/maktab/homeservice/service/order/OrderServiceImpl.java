@@ -43,7 +43,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> showOrderSuggestionOrSelection() {
-        return repository.findAllByOrderType_WaitingForTheSuggestionsOrOrderType_WaitingExpertSelection();
+        return repository.findByOrderTypeBeforeStart();
     }
-
 }

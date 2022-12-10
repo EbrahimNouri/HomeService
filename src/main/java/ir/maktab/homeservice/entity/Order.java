@@ -38,6 +38,7 @@ public class Order extends BaseEntity {
 
     private String address;
 
+    @Enumerated(EnumType.STRING)
     private OrderType orderType;
 
 }

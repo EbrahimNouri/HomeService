@@ -59,7 +59,7 @@ public class OfferServiceImpl implements OfferService {
                 && order.getId() != null
                 && offer.getSuggestedPrice() >= order.getTypeService().getBasePrice()
                 && offer.getExpert().getExpertTypeServices().stream()
-                .filter(typeService -> typeService.getExpertTypeServiceId().getTypeService()
+                .filter(typeService -> typeService.getTypeService()
                         .getSubService().equals(order.getTypeService().getSubService())).toList().size()>0;
     }
 }
