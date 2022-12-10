@@ -20,7 +20,7 @@ import java.time.LocalDate;
 @Builder
 public class Offer extends BaseEntity {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Order order;
 
     @ManyToOne(fetch = FetchType.EAGER)
