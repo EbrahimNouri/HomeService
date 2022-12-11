@@ -25,7 +25,7 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
     public void removeExpertFromBasicService(Expert expert) {
         try {
 
-            repository.removeTypeServicesByExpert(expert);
+            repository.removeByExpert(expert);
 
             log.debug("debug remove expert from basic service {} ", expert);
         } catch (Exception e) {
@@ -34,12 +34,12 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
         }
     }
 
-/*    @Override
+    @Override
     public void addExpertToTypeService(ExpertTypeService expertTypeService) {
         try {
 
-            if (!repository.existsById
-                    (new ExpertTypeServiceId(expertTypeService.getExpert(), expertTypeService.getTypeService()))) {
+            if (!repository.existsById(new ExpertTypeServiceId(expertTypeService.getExpert()
+                    , expertTypeService.getTypeService()))) {
                 repository.save(expertTypeService);
 
                 log.debug("debug add expert to basic service {} ", expertTypeService);
@@ -52,7 +52,7 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
             log.error("error add expert to basic service {} ", expertTypeService, e);
         }
 
-    }*/
+    }
 
     @Override
     public void removeExpertFromTypeService(ExpertTypeService expertTypeService) {
@@ -70,5 +70,16 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
 
             log.error("error remove expert type service {} ", expertTypeService, e);
         }
+    }
+
+    @Override
+    public Optional<ExpertTypeService> findById(ExpertTypeServiceId expertTypeServiceId) {
+        Optional<ExpertTypeService> expertTypeService = Optional.empty();
+        try {
+            expertTypeService = repository.findById(expertTypeServiceId);
+        }catch (Exception e){
+            // TODO: 12/11/2022 AD
+        }
+        return expertTypeService;
     }
 }

@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
 
 
 @EqualsAndHashCode
+@Embeddable
+@AllArgsConstructor
+@NoArgsConstructor
 public class TransactionId implements Serializable {
 
     @ManyToOne

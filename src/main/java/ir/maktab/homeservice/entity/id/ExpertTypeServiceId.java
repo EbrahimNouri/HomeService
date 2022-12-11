@@ -3,15 +3,19 @@ package ir.maktab.homeservice.entity.id;
 
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.TypeService;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @EqualsAndHashCode
+@Embeddable
 @AllArgsConstructor
+@NoArgsConstructor
 public class ExpertTypeServiceId implements Serializable {
 
     @ManyToOne

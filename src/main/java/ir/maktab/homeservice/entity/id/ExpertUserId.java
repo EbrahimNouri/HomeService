@@ -11,6 +11,9 @@ import java.io.Serializable;
 
 
 @EqualsAndHashCode
+@Embeddable
+@AllArgsConstructor
+@NoArgsConstructor
 public class ExpertUserId implements Serializable {
     @ManyToOne
     @JoinColumn(name = "expert_id")

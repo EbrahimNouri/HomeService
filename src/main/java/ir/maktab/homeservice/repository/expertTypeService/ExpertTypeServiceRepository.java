@@ -14,7 +14,7 @@ public interface ExpertTypeServiceRepository extends JpaRepository<ExpertTypeSer
 
     List<ExpertTypeService> findExpertTypeServiceByExpertId(Long expertId);
 
-    void removeTypeServicesByExpert(Expert expert);
+    void removeByExpert(Expert expert);
 
     Optional<ExpertTypeService> findByExpertIdAndTypeServiceId(Long expert, Long typeService);
 
