@@ -12,5 +12,7 @@ public interface OfferService {
 
     void chooseOffer(Offer offer);
 
-    void startedToWord(Offer offer);
+    void startOfWork(Offer offer);
+
+    void endOfTheWork(Offer offer);
 }

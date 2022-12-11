@@ -20,7 +20,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private UserRepository userRepository;
     private ExpertRepository expertRepository;
-private TransactionRepository repository;
+    private TransactionRepository repository;
 
     @Transactional
     @Override
@@ -59,9 +59,9 @@ private TransactionRepository repository;
 
             user.setCredit(user.getCredit() + amount);
             userRepository.save(user);
-//            Transaction transaction =
-//                    new Transaction(new TransactionId(null, user, null), amount);
-//            repository.save(transaction);
+            Transaction transaction =
+                    new Transaction(null, user, null, amount);
+            repository.save(transaction);
 
             log.debug("debug add transaction to wallet user {} {} ", user, amount);
         } catch (Exception e) {

@@ -18,12 +18,12 @@ import java.io.Serializable;
 public class ExpertTypeService implements Serializable {
 
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "expert_id")
     private Expert expert;
 
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "type_service_id")
     private TypeService typeService;
 }

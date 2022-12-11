@@ -1,9 +1,11 @@
 package ir.maktab.homeservice.service.expertTypeSerice;
 
 
+import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
-import ir.maktab.homeservice.entity.enums.ExpertStatus;
-import ir.maktab.homeservice.repository.expertTypeSerice.ExpertTypeServiceRepository;
+import ir.maktab.homeservice.entity.id.ExpertTypeServiceId;
+import ir.maktab.homeservice.repository.expert.ExpertRepository;
+import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,55 +18,51 @@ import java.util.Optional;
 @AllArgsConstructor
 @Transactional
 public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
+    private final ExpertRepository expertRepository;
     ExpertTypeServiceRepository repository;
 
     @Override
-    public void removeExpertFromBasicService(Long expertTypeServiceId) {
+    public void removeExpertFromBasicService(Expert expert) {
         try {
 
-            repository.removeTypeServiceByExpertId(expertTypeServiceId);
+            repository.removeTypeServicesByExpert(expert);
 
-            log.debug("debug remove expert from basic service {} ", expertTypeServiceId);
+            log.debug("debug remove expert from basic service {} ", expert);
         } catch (Exception e) {
 
-            log.error("error remove expert from basic service {} ", expertTypeServiceId);
+            log.error("error remove expert from basic service {} ", expert);
         }
     }
 
-    @Override
+/*    @Override
     public void addExpertToTypeService(ExpertTypeService expertTypeService) {
-
-        var temp = repository.findByExpertAndTypeService
-                (expertTypeService.getExpert().getId()
-                        , expertTypeService.getTypeService().getId());
         try {
-            if (temp.isPresent()
-                    && expertTypeService.getExpert()
-                    .getExpertStatus().equals(ExpertStatus.CONFIRMED)) {
 
+            if (!repository.existsById
+                    (new ExpertTypeServiceId(expertTypeService.getExpert(), expertTypeService.getTypeService()))) {
                 repository.save(expertTypeService);
 
                 log.debug("debug add expert to basic service {} ", expertTypeService);
-            } else
-
+            } else {
                 log.error("error add expert to basic service expert type service is null or {} "
                         , expertTypeService.getTypeService());
+            }
         } catch (Exception e) {
 
             log.error("error add expert to basic service {} ", expertTypeService, e);
         }
-    }
+
+    }*/
 
     @Override
     public void removeExpertFromTypeService(ExpertTypeService expertTypeService) {
 
         try {
             Optional<ExpertTypeService> temp = repository
-                    .findByExpertAndTypeService(expertTypeService.getExpert().getId()
+                    .findByExpertIdAndTypeServiceId(expertTypeService.getExpert().getId()
                             , expertTypeService.getTypeService().getId());
 
-            temp.ifPresent(typeService -> repository
-                    .removeTypeServiceByExpertId(typeService.getExpert().getId()));
+            temp.ifPresent(typeService -> repository.delete(expertTypeService));
 
             log.debug("debug remove expert type service {} ", expertTypeService);
 

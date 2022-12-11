@@ -3,6 +3,8 @@ package ir.maktab.homeservice.service.expert;
 import ir.maktab.homeservice.entity.Expert;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.util.Optional;
 
 public interface ExpertService {
 
@@ -10,5 +12,9 @@ public interface ExpertService {
 
     void acceptExpert(Expert expert);
 
+    Optional<Expert> findById(Long id);
+
     void changePassword(Expert expert, String password);
+
+    Optional<Expert> findById(Long id, Path path);
 }

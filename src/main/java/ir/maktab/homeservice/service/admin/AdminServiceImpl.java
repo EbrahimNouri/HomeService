@@ -6,19 +6,18 @@ import ir.maktab.homeservice.repository.admin.AdminRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @Log4j2
 @AllArgsConstructor
-@Transactional
 public class AdminServiceImpl implements AdminService {
 
     private AdminRepository adminRepository;
 
-
+@Transactional
     @Override
     public void addAdmin(Admin admin) {
         try {
@@ -31,7 +30,7 @@ public class AdminServiceImpl implements AdminService {
             log.error("error admin create {} ", admin, e);
         }
     }
-
+@Transactional
     @Override
     public void changePassword(Admin admin, String password) {
         try {
@@ -50,5 +49,18 @@ public class AdminServiceImpl implements AdminService {
         }catch (Exception e){
             log.error("error admin change password {} ", admin, e);
         }
+    }
+
+    @Override
+    public Optional<Admin> findById(Long adminId){
+        Optional<Admin> admin = Optional.empty();
+        try {
+            admin = adminRepository.findById(adminId);
+
+            log.debug("debug found admin by id {} ", adminId);
+        }catch (Exception e){
+            log.debug("debug found admin by id {} ", adminId);
+        }
+        return admin;
     }
 }

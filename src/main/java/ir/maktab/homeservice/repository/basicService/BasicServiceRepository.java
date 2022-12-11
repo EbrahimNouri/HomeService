@@ -8,5 +8,7 @@ import java.util.Optional;
 @Repository
 public interface BasicServiceRepository extends JpaRepository<BasicService, Long> {
 
-    boolean findByName(String name);
+    boolean existsByName(String name);
+
+    Optional<BasicService> findBasicServiceById(Long id);
 }

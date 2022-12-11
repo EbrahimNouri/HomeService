@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -55,16 +56,6 @@ public class OfferServiceImpl implements OfferService {
         }
     }
 
-    private boolean offerRegistrationCheck(Offer offer, Order order) {
-        return offer.getEndDate().isAfter(offer.getStartDate())
-                && order.getSuggestedPrice() >= order.getTypeService().getBasePrice()
-                && order.getId() != null
-                && offer.getSuggestedPrice() >= order.getTypeService().getBasePrice()
-                && offer.getExpert().getExpertTypeServices().stream()
-                .filter(typeService -> typeService.getTypeService()
-                        .getSubService().equals(order.getTypeService().getSubService())).toList().size() > 0;
-    }
-
     @Override
     public List<Offer> showOffersByOrder(Order order) {
         try {
@@ -82,9 +73,7 @@ public class OfferServiceImpl implements OfferService {
     public void chooseOffer(Offer offer) {
         Order order = offer.getOrder();
 
-        if (offer.getId() != null
-                && order.getId() != null
-                && order.getOrderType().equals(OrderType.WAITING_FOR_THE_SUGGESTIONS)) {
+        if (checkLevelWork(offer, OrderType.WAITING_FOR_THE_SUGGESTIONS)) {
 
             try {
 
@@ -99,8 +88,53 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public void startedToWord(Offer offer){
-        // TODO: 12/10/2022  
+    public void startOfWork(Offer offer) {
+        Order order = offer.getOrder();
+        try {
+            if (checkLevelWork(offer, OrderType.WAITING_FOR_COME_TO_YOUR_PLACE)) {
+
+                orderRepository.save(order);
+
+                log.debug("debug start of work {} ", order);
+            } else
+                log.warn("warn start of work not worked order id or offer id is null or order type is invalid {} "
+                        , offer);
+        } catch (Exception e) {
+            log.error("error start of work {} ", offer, e);
+        }
     }
 
+    @Override
+    public void endOfTheWork(Offer offer) {
+        Order order = offer.getOrder();
+        try {
+            if (checkLevelWork(offer, OrderType.DONE)) {
+
+                orderRepository.save(order);
+
+                log.debug("debug done of work {} ", order);
+            } else
+                log.warn("warn done work not worked order id or offer id is null or order type is invalid {} "
+                        , offer);
+        } catch (Exception e) {
+            log.error("error done of work {} ", offer, e);
+        }
+    }
+
+    private boolean checkLevelWork(Offer offer, OrderType orderType) {
+        Order order = offer.getOrder();
+        return order.getOrderType().equals(orderType)
+                && order.getId() != null && offer.getId() != null
+                && LocalDate.now().isAfter(offer.getStartDate());
+    }
+
+    private boolean offerRegistrationCheck(Offer offer, Order order) {
+        return offer.getEndDate().isAfter(offer.getStartDate())
+                && order.getSuggestedPrice() >= order.getTypeService().getBasePrice()
+                && order.getId() != null
+                && offer.getSuggestedPrice() >= order.getTypeService().getBasePrice()
+                && offer.getExpert().getExpertTypeServices().stream()
+                .filter(typeService -> typeService.getTypeService()
+                        .getSubService().equals(order.getTypeService().getSubService())).toList().size() > 0;
+    }
 }

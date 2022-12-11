@@ -7,22 +7,27 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 @Service
 @Log4j2
 @AllArgsConstructor
-@Transactional
 public class BasicServicesServiceImpl implements BasicServicesService {
 
-    private final BasicServiceRepository repository;
+    private BasicServiceRepository repository;
 
+
+    @Transactional
     @Override
     public void addBasicService(BasicService basicService) {
 
         try {
-            if (!repository.findByName(basicService.getName())) {
+            if (!repository.existsByName(basicService.getName())) {
 
                 repository.save(basicService);
 
@@ -33,12 +38,17 @@ public class BasicServicesServiceImpl implements BasicServicesService {
         }
     }
 
+    @Override
+    public List<BasicService> findAll(){
+        return repository.findAll();
+    }
+
 
     @Override
     public void removeBasicService(BasicService basicService) {
         try {
 
-            if (repository.findByName(basicService.getName())) {
+            if (repository.existsByName(basicService.getName())) {
 
                 repository.delete(basicService);
 
@@ -63,5 +73,10 @@ public class BasicServicesServiceImpl implements BasicServicesService {
             log.error("error show all basic service");
         }
         return all;
+    }
+
+    @Override
+    public Optional<BasicService> findById(Long id) {
+        return repository.findBasicServiceById(id);
     }
 }

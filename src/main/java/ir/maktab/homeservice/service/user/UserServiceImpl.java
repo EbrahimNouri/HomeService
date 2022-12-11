@@ -9,6 +9,8 @@ import lombok.extern.log4j.Log4j2;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Log4j2
 @AllArgsConstructor
@@ -38,15 +40,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changePassword(User user, String password) {
         try {
+            if (!user.getPassword().equals(password)
+                    && user.equals(findById(user.getId()).orElse(null))) {
+                user.setPassword(password);
+                repository.save(user);
 
-            user.setPassword(password);
-            repository.save(user);
-
-            log.debug("debug change password user {} to {} ", user, password);
+                log.debug("debug change password user {} to {} ", user, password);
+            }else {
+                // TODO: 12/11/2022 AD
+            }
         } catch (Exception e) {
 
             log.error("error change password user {} to {}", user, password, e);
 
         }
+    }
+
+    @Override
+    public Optional<User> findById(Long id){
+        Optional<User> user = Optional.empty();
+        try {
+            user = repository.findById(id);
+        }catch (Exception e){
+            // TODO: 12/11/2022 AD
+        }
+        return user;
     }
 }
