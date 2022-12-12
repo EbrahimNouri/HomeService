@@ -2,8 +2,10 @@ package ir.maktab.homeservice.service.offer;
 
 import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.OrderType;
+import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
+import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.order.OrderService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
@@ -19,7 +21,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,20 +32,18 @@ import static org.junit.jupiter.api.Assertions.*;
 class OfferServiceImplTest {
 
 
-    private static Expert expert;
-    private static File avatar;
-    private static User user;
-    private static ExpertUser expertUser;
-    private static Order order;
+    private static Expert[] expert = new Expert[4];
+    private static File[] avatar = new File[4];
+    private static User[] user = new User[4];
+    private static ExpertUser[] expertUser = new ExpertUser[4];
+    private static Order[] order = new Order[4];
 
-    private static Offer offer1;
-    private static Offer offer2;
-    private static Offer offer3;
-    private static Offer offer4;
+    private static Offer[] offer = new Offer[4];
 
-    private static TypeService typeService;
 
-    private static BasicService basicService;
+    private static TypeService[] typeService = new TypeService[4];
+
+    private static BasicService[] basicService = new BasicService[4];
     @Autowired
     ExpertUserService expertUserService;
 
@@ -64,54 +66,99 @@ class OfferServiceImplTest {
     @Autowired
     private OfferService service;
 
+    @Autowired
+    private ExpertTypeServiceService expertTypeServiceService;
+    @Autowired
+    private ExpertRepository expertRepository;
+
     @BeforeAll
     static void initialize() {
-        expert = Expert.builder().firstname("testName").lastname("lname").lastname("testLastname").email("test@email.com")
+        expert[0] = Expert.builder().firstname("testName1").lastname("lname1").email("test1@email.com")
                 .password("1234QWer").build();
-        avatar = new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg");
+        avatar[0] = new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg");
+        expert[1] = Expert.builder().firstname("testName2").lastname("lname2").email("test2@email.com")
+                .password("1234QWer").build();
+        avatar[1] = new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg");
+        expert[2] = Expert.builder().firstname("testName3").lastname("lname3").email("test3@email.com")
+                .password("1234QWer").build();
+        avatar[2] = new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg");
+        expert[3] = Expert.builder().firstname("testName4").lastname("lname4").email("test4@email.com")
+                .password("1234QWer").build();
+        avatar[3] = new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg");
 
-        user = User.builder().firstname("fname").lastname("lname").email("userTest@email.com").password("1234QWear").build();
-        basicService = new BasicService("basicServiceTest", null);
+        user[0] = User.builder().firstname("fname1").lastname("lname1").email("userTest1@email.com").password("1234QWear").build();
+        user[1] = User.builder().firstname("fname2").lastname("lname2").email("userTest2@email.com").password("1234QWear").build();
+        user[2] = User.builder().firstname("fname3").lastname("lname3").email("userTest3@email.com").password("1234QWear").build();
+        user[3] = User.builder().firstname("fname4").lastname("lname4").email("userTest4@email.com").password("1234QWear").build();
+        basicService[0] = new BasicService("basicServiceTest1", null);
+        basicService[1] = new BasicService("basicServiceTest2", null);
+        basicService[2] = new BasicService("basicServiceTest3", null);
+        basicService[3] = new BasicService("basicServiceTest4", null);
 
-        typeService = new TypeService("subTest", 100.0, null, null, basicService);
+        typeService[0] = new TypeService("subTest", 100.0, null, null, basicService[0]);
+        typeService[1] = new TypeService("subTest", 100.0, null, null, basicService[1]);
+        typeService[2] = new TypeService("subTest", 100.0, null, null, basicService[2]);
+        typeService[3] = new TypeService("subTest", 100.0, null, null, basicService[3]);
 
-        order = new Order(typeService, user, null, null, 101.0, "description Test"
-                , null, "addrestest", OrderType.WAITING_EXPERT_SELECTION);
+        order[0] = new Order(typeService[0], user[0], null, null, 120.0, "description Test"
+                , LocalDate.now(), "addrestest", OrderType.DONE);
+        order[1] = new Order(typeService[1], user[1], null, null, 120.0, "description Test"
+                , LocalDate.now(), "addrestest", OrderType.DONE);
+        order[2] = new Order(typeService[2], user[2], null, null, 120.0, "description Test"
+                , LocalDate.now(), "addrestest", OrderType.DONE);
+        order[3] = new Order(typeService[3], user[3], null, null, 120.0, "description Test"
+                , LocalDate.now(), "addrestest", OrderType.DONE);
 
-        expertUser = new ExpertUser(expert, user, order, LocalDate.now(), 0.0, "hello comment");
+        expertUser[0] = new ExpertUser(expert[0], user[0], order[0], LocalDate.now(), 0.0, "hello comment");
+        expertUser[1] = new ExpertUser(expert[1], user[1], order[1], LocalDate.now(), 0.0, "hello comment");
+        expertUser[2] = new ExpertUser(expert[2], user[2], order[2], LocalDate.now(), 0.0, "hello comment");
+        expertUser[3] = new ExpertUser(expert[3], user[3], order[3], LocalDate.now(), 0.0, "hello comment");
 
-        offer1 = Offer.builder().description("description for offer1").EndDate(LocalDate.of(2023, 2, 1))
-                .startDate(LocalDate.of(2023, 2, 1)).suggestedPrice(110.0).expert(expert).order(order).build();
-        offer2 = Offer.builder().description("description for offer2").EndDate(LocalDate.of(2023, 2, 1))
-                .startDate(LocalDate.of(2023, 3, 1)).suggestedPrice(103.0).expert(expert).order(order).build();
-        offer3 = Offer.builder().description("description for offer3").EndDate(LocalDate.of(2023, 2, 1))
-                .startDate(LocalDate.of(2023, 1, 1)).suggestedPrice(104.0).expert(expert).order(order).build();
-        offer4 = Offer.builder().description("description for offer4").EndDate(LocalDate.of(2023, 2, 1))
-                .startDate(LocalDate.of(2023, 1, 1)).suggestedPrice(105.0).expert(expert).order(order).build();
+        offer[0] = new Offer(order[1], expert[0], LocalDate.now(), "desss"
+                , 130.0, LocalDate.of(2023, 1, 1));
+        offer[1] = new Offer(order[1], expert[1], LocalDate.now(), "desss"
+                , 112.0, LocalDate.of(2023, 1, 1));
+        offer[2]= new Offer(order[2], expert[2], LocalDate.now(), "desss"
+                , 118.0, LocalDate.of(2023, 1, 1));
+        offer[3] = new Offer(order[3], expert[3], LocalDate.now(), "desss"
+                , 126.0, LocalDate.of(2023, 1, 1));
+
     }
 
     @BeforeEach
     void setToDb() {
+        expertService.registerExpert(expert[0], avatar[0]);
+        userService.registerUser(user[0]);
+        basicServicesService.addBasicService(basicService[0]);
+        typeServiceService.addSubService(typeService[0]);
+        orderService.OrderRegistration(order[0]);
+        orderService.setOrderToDone(order[0]);
+        expertUserService.addCommentAndPoint(expertUser[0]);
+        List<ExpertTypeService> expertTypeServices = new ArrayList<>();
+        expertTypeServices.add(new ExpertTypeService(expert[0], typeService[0]));
+        expertTypeServiceService.addExpertToTypeService(expertTypeServices.get(0));
+        expert[0].setExpertTypeServices(expertTypeServices);
+//        service.offerRegistrationOrUpdate(offer[0]);
+//        service.offerRegistrationOrUpdate(offer[1]);
+//        service.offerRegistrationOrUpdate(offer[2]);
+//        service.offerRegistrationOrUpdate(offer[3]);
 
     }
 
 
     @Test
     void offerRegistrationOrUpdate() {
-        expertService.registerExpert(expert, avatar);
-        userService.registerUser(user);
-        basicServicesService.addBasicService(basicService);
-        typeServiceService.addSubService(typeService);
-        expertUserService.addCommentAndPoint(expertUser);
-        order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
-        orderService.OrderRegistration(order);
+
         assertNotNull(service.findById(1L).orElse(null).getId());
     }
 
     @Test
     void showOffersByOrder() {
         assertAll(
-                () -> assertEquals(order,service.showOffersByOrder(order).get(0))
+                () -> assertTrue(
+                        () -> service.showOffersByOrder(order[1]).stream()
+                                .allMatch((offer) -> offer.getOrder().getId() == 1L),
+                        () -> String.valueOf(service.showOffersByOrder(order[0]).size() == 4))
         );
     }
 
@@ -128,14 +175,14 @@ class OfferServiceImplTest {
     }
 
     @Test
-    void findByOrder(){
-        service.offerRegistrationOrUpdate(offer1);
-        service.offerRegistrationOrUpdate(offer2);
-        service.offerRegistrationOrUpdate(offer3);
-        service.offerRegistrationOrUpdate(offer4);
+    void findByOrder() {
+        service.offerRegistrationOrUpdate(offer[0]);
+        service.offerRegistrationOrUpdate(offer[1]);
+        service.offerRegistrationOrUpdate(offer[2]);
+        service.offerRegistrationOrUpdate(offer[3]);
         assertNotNull(service.findById(1L));
 
-        assertEquals(4,service.findByOrder(order).size()) ;
+        assertEquals(4, service.findByOrder(order[0]).size());
 //        assertEquals(4,service.findByOrder(order).size()) ;
     }
 }

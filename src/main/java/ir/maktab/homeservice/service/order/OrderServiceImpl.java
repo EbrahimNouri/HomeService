@@ -41,6 +41,21 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    @Transactional
+    @Override
+    public void setOrderToDone(Order order) {
+        /*if (order.getSuggestedPrice() != null
+                && order.getDescription() != null
+                && order.getStartOfWork() != null
+                && order.getUser() != null
+                && order.getId() != null)*/ {
+// TODO: 12/12/2022 AD if
+                order.setOrderType(OrderType.DONE);
+                repository.save(order);
+
+        }
+    }
+
     @Override
     public List<Order> showOrderSuggestionOrSelection() {
         return repository.findByOrderTypeBeforeStart();

@@ -32,29 +32,32 @@ public class OfferServiceImpl implements OfferService {
 
             if (offerRegistrationCheck(offer, offer.getOrder())) {
 
-                if (repository.findById(offer.getId()).isEmpty()) {
+                repository.save(offer);
 
-                    repository.save(offer);
+                log.debug("debug offer registered {} ", order);
+                if (order.getOrderType().equals(OrderType.WAITING_FOR_THE_SUGGESTIONS)
+                        || order.getOrderType().equals(OrderType.WAITING_EXPERT_SELECTION)) {
 
-                    log.debug("debug offer registered {} ", order);
-                    if (order.getOrderType().equals(OrderType.WAITING_FOR_THE_SUGGESTIONS)) {
-                        orderRepository.save(order);
+                    order.setOrderType(OrderType.WAITING_EXPERT_SELECTION);
+                    orderRepository.save(order);
 
-                        log.debug("debug order change to {} ", order.getOrderType());
-                    } else
-                        log.debug("debug order type It had already changed {} ", order.getOrderType());
+                    log.debug("debug order change to {} ", order.getOrderType());
+                } else
+                    log.debug("debug order type It had already changed {} ", order.getOrderType());
 
-                } else {
-                    repository.save(offer);
+            } else {
+                repository.save(offer);
 
-                    log.debug("debug offer updated {} ", order);
-                }
-            } else
-                log.warn("offer or order not invalid");
-        } catch (Exception e) {
+                log.debug("debug offer updated {} ", order);
+
+            }
+
+        } catch (
+                Exception e) {
 
             log.error("error offer updated {} ", order, e);
         }
+
     }
 
     @Override
@@ -160,4 +163,6 @@ public class OfferServiceImpl implements OfferService {
         }
         return offers;
     }
+
+
 }

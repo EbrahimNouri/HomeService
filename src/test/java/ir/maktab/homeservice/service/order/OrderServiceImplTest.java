@@ -59,4 +59,9 @@ class OrderServiceImplTest {
                                 || order.getOrderType().equals(OrderType.STARTED)
                 ));
     }
+    @Test
+    void setOrderToDone(){
+        service.setOrderToDone(order);
+        assertTrue(() -> order.getOrderType().equals(OrderType.DONE));
+    }
 }
