@@ -14,16 +14,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ComponentScan(basePackages = "ir.maktab.homeservice")
 @SpringBootTest
-@PropertySource("applicationTest.properties")
+@PropertySource("/applicationTest.properties")
 @ExtendWith(MockitoExtension.class)
 class ExpertUserServiceImplTest {
 
@@ -56,35 +57,38 @@ class ExpertUserServiceImplTest {
 
     @BeforeAll
     static void initialize() {
-        expert = Expert.builder().firstname("testName").lastname("testLastname").email("test@email.com")
+        expert = Expert.builder().firstname("testName").lastname("lname").lastname("testLastname").email("test@email.com")
                 .password("1234QWer").build();
         avatar = new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg");
 
-        user = User.builder().firstname("nameTest").email("userTest@email.com").password("1234QWer").build();
+        user = User.builder().firstname("fname").lastname("lname").email("userTest@email.com").password("1234QWear").build();
         basicService = new BasicService("basicServiceTest", null);
 
         typeService = new TypeService("subTest", 0.0, null, null, basicService);
 
         order = new Order(typeService, user, null, null, 0.0, "description Test"
-                , LocalDate.now(), "addrestest", OrderType.WAITING_FOR_THE_SUGGESTIONS);
+                , LocalDate.now(), "addrestest", OrderType.DONE);
 
-        expertUser = new ExpertUser(expert, user, order, LocalDate.now(), null, "hello comment");
+        expertUser = new ExpertUser(expert, user, order, LocalDate.now(), 0.0, "hello comment");
     }
 
     @BeforeEach
     void setToDb() {
         expertService.registerExpert(expert, avatar);
         userService.registerUser(user);
+        basicServicesService.addBasicService(basicService);
+        typeServiceService.addSubService(typeService);
+        orderService.OrderRegistration(order);
 
     }
 
 
     @Test
     void addCommentAndPoint() {
-        assertAll(
-                () -> service.addCommentAndPoint(expertUser)
-//            ()-> assertNotNull(service.findById(expertUser))
-        );
 
+        assertAll(
+                () -> service.addCommentAndPoint(expertUser),
+                () -> assertNotNull(service.findById(expertUser))
+        );
     }
 }

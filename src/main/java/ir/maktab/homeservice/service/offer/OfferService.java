@@ -4,9 +4,10 @@ import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OfferService {
-    void offerRegistrationOrUpdate(Offer offer, Order order);
+    void offerRegistrationOrUpdate(Offer offer);
 
     List<Offer> showOffersByOrder(Order order);
 
@@ -15,4 +16,8 @@ public interface OfferService {
     void startOfWork(Offer offer);
 
     void endOfTheWork(Offer offer);
+
+    Optional<Offer> findById(Long id);
+
+    List<Offer> findByOrder(Order order);
 }

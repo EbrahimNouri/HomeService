@@ -34,4 +34,10 @@ public class Transaction implements Serializable {
 
     private Double transfer;
 
+    @PrePersist
+    void autoSet(){
+        localDateTime = LocalDateTime.now();
+        transfer = 0.0;
+    }
+
 }

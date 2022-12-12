@@ -9,10 +9,13 @@ import ir.maktab.homeservice.repository.order.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -23,13 +26,11 @@ public class OfferServiceImpl implements OfferService {
     private OrderRepository orderRepository;
 
     @Override
-    public void offerRegistrationOrUpdate(Offer offer, Order order) {
-
-
-        offer.setOrder(order);
+    public void offerRegistrationOrUpdate(Offer offer) {
+        Order order = offer.getOrder();
         try {
 
-            if (offerRegistrationCheck(offer, order)) {
+            if (offerRegistrationCheck(offer, offer.getOrder())) {
 
                 if (repository.findById(offer.getId()).isEmpty()) {
 
@@ -121,6 +122,17 @@ public class OfferServiceImpl implements OfferService {
         }
     }
 
+    @Override
+    public Optional<Offer> findById(Long id) {
+        Optional<Offer> offer = Optional.empty();
+        try {
+            offer = repository.findOfferById(id);
+        } catch (Exception e) {
+            // TODO: 12/11/2022 AD
+        }
+        return offer;
+    }
+
     private boolean checkLevelWork(Offer offer, OrderType orderType) {
         Order order = offer.getOrder();
         return order.getOrderType().equals(orderType)
@@ -136,5 +148,16 @@ public class OfferServiceImpl implements OfferService {
                 && offer.getExpert().getExpertTypeServices().stream()
                 .filter(typeService -> typeService.getTypeService()
                         .getSubService().equals(order.getTypeService().getSubService())).toList().size() > 0;
+    }
+
+    @Override
+    public List<Offer> findByOrder(Order order) {
+        List<Offer> offers = new ArrayList<>();
+        try {
+            return repository.findOfferByOrder_Id(order.getId()/*, Sort.by(Sort.Direction.DESC*/);
+        } catch (Exception e) {
+            // TODO: 12/12/2022 AD
+        }
+        return offers;
     }
 }

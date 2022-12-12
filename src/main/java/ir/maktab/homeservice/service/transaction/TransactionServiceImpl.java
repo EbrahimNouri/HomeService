@@ -13,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 @Log4j2
@@ -28,7 +30,7 @@ public class TransactionServiceImpl implements TransactionService {
         User user = transaction1.getUser();
         Expert expert = transaction1.getExpert();
         double amount = transaction1.getTransfer();
-        if (transaction1.getTransfer() >= transaction1.getUser().getCredit()) {
+        if (transaction1.getTransfer() <= transaction1.getUser().getCredit()) {
 
             try {
                 user.setCredit(user.getCredit() - amount);
@@ -68,5 +70,20 @@ public class TransactionServiceImpl implements TransactionService {
 
             log.error("error add transaction to wallet user {} {} ", user, amount, e);
         }
+    }
+
+
+    @Override
+    public Optional<Transaction> findById(Transaction transaction) {
+        Optional<Transaction> transaction1 = Optional.empty();
+        try {
+            return repository.findByExpertIdAndUserId(
+                    transaction1.orElse(null).getExpert().getId(),
+                    transaction1.orElse(null).getUser().getId()
+            );
+        } catch (Exception e) {
+            // TODO: 12/12/2022 AD
+        }
+        return transaction1;
     }
 }

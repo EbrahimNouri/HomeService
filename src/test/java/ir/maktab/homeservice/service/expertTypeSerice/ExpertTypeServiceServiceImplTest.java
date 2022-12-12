@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ComponentScan(basePackages = "ir.maktab.homeservice")
 @SpringBootTest
-@PropertySource("applicationTest.properties")
+@PropertySource("/applicationTest.properties")
 @ExtendWith(MockitoExtension.class)
 class ExpertTypeServiceServiceImplTest {
 

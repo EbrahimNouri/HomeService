@@ -8,9 +8,4 @@ public interface BasicServicesController {
 
 
 
-    void addBasicService(BasicService basicService);
-
-    void removeBasicService(BasicService basicService);
-
-    List<BasicService> showAllBasicService();
 }

@@ -26,7 +26,7 @@ public class OrderServiceImpl implements OrderService {
                     && order.getDescription() != null
                     && order.getStartOfWork() != null
                     && order.getUser() != null) {
-
+// TODO: 12/12/2022 AD if 
                 order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
                 repository.save(order);
 
