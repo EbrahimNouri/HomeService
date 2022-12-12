@@ -4,6 +4,7 @@ import ir.maktab.homeservice.entity.id.ExpertUserId;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -31,6 +32,7 @@ public class ExpertUser implements Serializable {
     @Id
     private Order order;
 
+    @CreationTimestamp
     private LocalDate localDate;
 
     @Max(5)
@@ -38,5 +40,6 @@ public class ExpertUser implements Serializable {
 
     @Column(columnDefinition = "text")
     private String comment;
+
 
 }

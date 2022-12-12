@@ -1,15 +1,16 @@
 package ir.maktab.homeservice.service.offer;
 
 
+import ir.maktab.homeservice.entity.ExpertTypeService;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.enums.OrderType;
+import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
 import ir.maktab.homeservice.repository.offer.OfferRepository;
 import ir.maktab.homeservice.repository.order.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ import java.util.Optional;
 @Log4j2
 @Transactional
 public class OfferServiceImpl implements OfferService {
+    private final ExpertTypeServiceRepository expertTypeServiceRepository;
     private OfferRepository repository;
     private OrderRepository orderRepository;
 
@@ -41,6 +43,7 @@ public class OfferServiceImpl implements OfferService {
                     order.setOrderType(OrderType.WAITING_EXPERT_SELECTION);
                     orderRepository.save(order);
 
+
                     log.debug("debug order change to {} ", order.getOrderType());
                 } else
                     log.debug("debug order type It had already changed {} ", order.getOrderType());
@@ -52,10 +55,10 @@ public class OfferServiceImpl implements OfferService {
 
             }
 
-        } catch (
-                Exception e) {
-
+        } catch (Exception e) {
             log.error("error offer updated {} ", order, e);
+
+            throw e;
         }
 
     }
@@ -77,7 +80,7 @@ public class OfferServiceImpl implements OfferService {
     public void chooseOffer(Offer offer) {
         Order order = offer.getOrder();
 
-        if (checkLevelWork(offer, OrderType.WAITING_FOR_THE_SUGGESTIONS)) {
+        if (checkLevelWork(offer, OrderType.WAITING_FOR_THE_SUGGESTIONS, OrderType.WAITING_EXPERT_SELECTION)) {
 
             try {
 
@@ -97,6 +100,7 @@ public class OfferServiceImpl implements OfferService {
         try {
             if (checkLevelWork(offer, OrderType.WAITING_FOR_COME_TO_YOUR_PLACE)) {
 
+                order.setOrderType(OrderType.STARTED);
                 orderRepository.save(order);
 
                 log.debug("debug start of work {} ", order);
@@ -112,8 +116,9 @@ public class OfferServiceImpl implements OfferService {
     public void endOfTheWork(Offer offer) {
         Order order = offer.getOrder();
         try {
-            if (checkLevelWork(offer, OrderType.DONE)) {
+            if (checkLevelWork(offer, OrderType.STARTED)) {
 
+                order.setOrderType(OrderType.DONE);
                 orderRepository.save(order);
 
                 log.debug("debug done of work {} ", order);
@@ -136,20 +141,23 @@ public class OfferServiceImpl implements OfferService {
         return offer;
     }
 
-    private boolean checkLevelWork(Offer offer, OrderType orderType) {
+    private boolean checkLevelWork(Offer offer, OrderType... orderType) {
         Order order = offer.getOrder();
-        return order.getOrderType().equals(orderType)
+        return order.getOrderType().equals(orderType[0])
+                || order.getOrderType().equals(orderType[1])
                 && order.getId() != null && offer.getId() != null
-                && LocalDate.now().isAfter(offer.getStartDate());
+                && offer.getStartDate().isAfter(LocalDate.now());
     }
 
     private boolean offerRegistrationCheck(Offer offer, Order order) {
+        List<ExpertTypeService> typeServices = expertTypeServiceRepository
+                .findExpertTypeServiceByExpertId(offer.getExpert().getId());
         return offer.getEndDate().isAfter(offer.getStartDate())
                 && order.getSuggestedPrice() >= order.getTypeService().getBasePrice()
                 && order.getId() != null
                 && offer.getSuggestedPrice() >= order.getTypeService().getBasePrice()
-                && offer.getExpert().getExpertTypeServices().stream()
-                .filter(typeService -> typeService.getTypeService()
+                && typeServices.stream()
+                .filter(expertTypeService -> expertTypeService.getTypeService()
                         .getSubService().equals(order.getTypeService().getSubService())).toList().size() > 0;
     }
 
@@ -164,5 +172,15 @@ public class OfferServiceImpl implements OfferService {
         return offers;
     }
 
+    @Override
+    public List<Offer> findByOrderIdSortedPrice(Long orderId) {
+        List<Offer> offers = new ArrayList<>();
+        try {
+            offers = repository.findOfferSortedByPrice(orderId);
+        }catch (Exception e){
+            // TODO: 12/12/2022 AD
+        }
+        return offers;
+    }
 
 }

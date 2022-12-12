@@ -4,9 +4,8 @@ import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.User;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.repository.order.OrderRepository;
-import ir.maktab.homeservice.repository.user.UserRepository;
 import ir.maktab.homeservice.service.user.UserService;
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,7 +45,8 @@ class OrderServiceImplTest {
     @Test
     void orderRegistration() {
         service.OrderRegistration(order);
-        assertEquals(order.getDescription(), orderRepository.findById(order.getId()).orElse(null).getDescription());
+        assertEquals(order.getDescription(), Objects.requireNonNull
+                (orderRepository.findById(order.getId()).orElse(null)).getDescription());
     }
 
     @Test
@@ -59,8 +60,9 @@ class OrderServiceImplTest {
                                 || order.getOrderType().equals(OrderType.STARTED)
                 ));
     }
+
     @Test
-    void setOrderToDone(){
+    void setOrderToDone() {
         service.setOrderToDone(order);
         assertTrue(() -> order.getOrderType().equals(OrderType.DONE));
     }
