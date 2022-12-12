@@ -105,13 +105,14 @@ class OfferServiceImplTest {
         expertUserService.addCommentAndPoint(expertUser);
         order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
         orderService.OrderRegistration(order);
+        assertNotNull(service.findById(1L).orElse(null).getId());
     }
 
     @Test
     void showOffersByOrder() {
-//        assertAll(
-//                () -> assertEquals(order,service.showOffersByOrder(order).get(0))
-//        );
+        assertAll(
+                () -> assertEquals(order,service.showOffersByOrder(order).get(0))
+        );
     }
 
     @Test
