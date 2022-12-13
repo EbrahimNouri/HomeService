@@ -8,5 +8,7 @@ import java.util.List;
 public interface OrderService {
     void OrderRegistration(Order order);
 
+    void setOrderToDone(Order order);
+
     List<Order> showOrderSuggestionOrSelection();
 }

@@ -4,7 +4,6 @@ package ir.maktab.homeservice.service.expertTypeSerice;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
 import ir.maktab.homeservice.entity.id.ExpertTypeServiceId;
-import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -18,7 +17,6 @@ import java.util.Optional;
 @AllArgsConstructor
 @Transactional
 public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
-    private final ExpertRepository expertRepository;
     ExpertTypeServiceRepository repository;
 
     @Override
@@ -38,18 +36,19 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
     public void addExpertToTypeService(ExpertTypeService expertTypeService) {
         try {
 
-            if (!repository.existsById(new ExpertTypeServiceId(expertTypeService.getExpert()
-                    , expertTypeService.getTypeService()))) {
+            if (!repository.existsById(new ExpertTypeServiceId(expertTypeService.getExpert(), expertTypeService.getTypeService()))) {
                 repository.save(expertTypeService);
-
                 log.debug("debug add expert to basic service {} ", expertTypeService);
+
+
             } else {
                 log.error("error add expert to basic service expert type service is null or {} "
                         , expertTypeService.getTypeService());
             }
         } catch (Exception e) {
-
             log.error("error add expert to basic service {} ", expertTypeService, e);
+
+            throw e;
         }
 
     }
@@ -77,7 +76,7 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
         Optional<ExpertTypeService> expertTypeService = Optional.empty();
         try {
             expertTypeService = repository.findById(expertTypeServiceId);
-        }catch (Exception e){
+        } catch (Exception e) {
             // TODO: 12/11/2022 AD
         }
         return expertTypeService;

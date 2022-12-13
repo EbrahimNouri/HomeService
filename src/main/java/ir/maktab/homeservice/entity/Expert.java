@@ -28,11 +28,10 @@ public class Expert extends Person {
     @Enumerated(EnumType.STRING)
     private ExpertStatus expertStatus;
 
-    @OneToMany(mappedBy = "expert")
+    @OneToMany(mappedBy = "expert", fetch = FetchType.EAGER)
     private List<ExpertTypeService> expertTypeServices;
 
-    @OneToMany(mappedBy = "expert")
-    @ToString.Exclude
+    @OneToMany(mappedBy = "expert", fetch = FetchType.EAGER)
     private List<ExpertUser> expertUsers;
 
     @OneToMany(mappedBy = "expert")
@@ -49,7 +48,7 @@ public class Expert extends Person {
             , @NotEmpty(message = "Blank is not acceptable") String lastname
             , @Email(message = "email address is not valid") String email
             , @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$"
-            , message = "password is not valid") String password, Double credit
+            , message = "password is not valid") String password, double credit
             , LocalDateTime signupDateTime, ExpertStatus expertStatus
             , List<ExpertTypeService> expertTypeServices
             , List<ExpertUser> expertUsers

@@ -16,6 +16,6 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
 
     List<Offer> findOfferByOrder_Id(Long order);
 
-    Optional<Offer> findOfferById(Long id);
-
+    @Query("from Offer o where o.order.id =:orderId order by o.suggestedPrice desc ")
+    List<Offer> findOfferSortedByPrice(Long orderId);
 }

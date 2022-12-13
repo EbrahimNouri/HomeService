@@ -20,4 +20,6 @@ public interface OfferService {
     Optional<Offer> findById(Long id);
 
     List<Offer> findByOrder(Order order);
+
+    List<Offer> findByOrderIdSortedPrice(Long OrderId);
 }

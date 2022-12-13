@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -19,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public abstract class Person extends BaseEntity{
+public abstract class Person extends BaseEntity {
 
     @NotEmpty(message = "Blank is not acceptable")
     private String firstname;
@@ -35,8 +34,7 @@ public abstract class Person extends BaseEntity{
     @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$", message = "password is not valid")
     private String password;
 
-    @ColumnDefault("0.0")
-    private Double credit;
+    private double credit;
 
     @CreationTimestamp
     @Column(name = "signup_date_time")

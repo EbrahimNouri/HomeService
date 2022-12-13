@@ -4,7 +4,6 @@ package ir.maktab.homeservice.service.offer;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.enums.OrderType;
-import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
 import ir.maktab.homeservice.repository.offer.OfferRepository;
 import ir.maktab.homeservice.repository.order.OrderRepository;
 import jakarta.transaction.Transactional;
@@ -23,7 +22,6 @@ import java.util.Optional;
 @Log4j2
 @Transactional
 public class OfferServiceImpl implements OfferService {
-    private final ExpertTypeServiceRepository expertTypeServiceRepository;
     private OfferRepository repository;
     private OrderRepository orderRepository;
 
@@ -34,13 +32,16 @@ public class OfferServiceImpl implements OfferService {
 
             if (offerRegistrationCheck(offer, offer.getOrder())) {
 
+                if (repository.findById(offer.getId()).isEmpty()) {
 
                     repository.save(offer);
 
-                    log.debug("debug offer registered {} ", order);
-                    if (order.getOrderType().equals(OrderType.WAITING_FOR_THE_SUGGESTIONS)) {
-                        order.setOrderType(OrderType.WAITING_EXPERT_SELECTION);
-                        orderRepository.save(order);
+                log.debug("debug offer registered {} ", order);
+                if (order.getOrderType().equals(OrderType.WAITING_FOR_THE_SUGGESTIONS)
+                        || order.getOrderType().equals(OrderType.WAITING_EXPERT_SELECTION)) {
+
+                    order.setOrderType(OrderType.WAITING_EXPERT_SELECTION);
+                    orderRepository.save(order);
 
                         log.debug("debug order change to {} ", order.getOrderType());
                     } else
@@ -51,21 +52,25 @@ public class OfferServiceImpl implements OfferService {
 
                     log.debug("debug offer updated {} ", order);
                 }
+            } else
+                log.warn("offer or order not invalid");
         } catch (Exception e) {
 
             log.error("error offer updated {} ", order, e);
+
+            throw e;
         }
     }
 
     @Override
-    public List<Offer> showOffersByOrderId(Long orderId) {
+    public List<Offer> showOffersByOrder(Order order) {
         try {
-            log.debug("debug found offer by order {}", orderId);
+            log.debug("debug found offer by order {}", order);
 
-            return repository.findOfferByOrder_Id(orderId);
+            return repository.findByOrder(order);
 
         } catch (Exception e) {
-            log.error("error found offer by order {} ", orderId, e);
+            log.error("error found offer by order {} ", order, e);
         }
         return null;
     }
@@ -94,6 +99,7 @@ public class OfferServiceImpl implements OfferService {
         try {
             if (checkLevelWork(offer, OrderType.WAITING_FOR_COME_TO_YOUR_PLACE)) {
 
+                order.setOrderType(OrderType.STARTED);
                 orderRepository.save(order);
 
                 log.debug("debug start of work {} ", order);
@@ -109,8 +115,9 @@ public class OfferServiceImpl implements OfferService {
     public void endOfTheWork(Offer offer) {
         Order order = offer.getOrder();
         try {
-            if (checkLevelWork(offer, OrderType.DONE)) {
+            if (checkLevelWork(offer, OrderType.STARTED)) {
 
+                order.setOrderType(OrderType.DONE);
                 orderRepository.save(order);
 
                 log.debug("debug done of work {} ", order);
@@ -133,14 +140,17 @@ public class OfferServiceImpl implements OfferService {
         return offer;
     }
 
-    private boolean checkLevelWork(Offer offer, OrderType orderType) {
+    private boolean checkLevelWork(Offer offer, OrderType... orderType) {
         Order order = offer.getOrder();
-        return order.getOrderType().equals(orderType)
+        return order.getOrderType().equals(orderType[0])
+                || order.getOrderType().equals(orderType[1])
                 && order.getId() != null && offer.getId() != null
-                && LocalDate.now().isAfter(offer.getStartDate());
+                && offer.getStartDate().isAfter(LocalDate.now());
     }
 
     private boolean offerRegistrationCheck(Offer offer, Order order) {
+        List<ExpertTypeService> typeServices = expertTypeServiceRepository
+                .findExpertTypeServiceByExpertId(offer.getExpert().getId());
         return offer.getEndDate().isAfter(offer.getStartDate())
                 && order.getSuggestedPrice() >= order.getTypeService().getBasePrice()
                 && order.getId() != null
@@ -160,4 +170,16 @@ public class OfferServiceImpl implements OfferService {
         }
         return offers;
     }
+
+    @Override
+    public List<Offer> findByOrderIdSortedPrice(Long orderId) {
+        List<Offer> offers = new ArrayList<>();
+        try {
+            offers = repository.findOfferSortedByPrice(orderId);
+        }catch (Exception e){
+            // TODO: 12/12/2022 AD
+        }
+        return offers;
+    }
+
 }

@@ -33,7 +33,7 @@ public class User extends Person {
             , @NotEmpty(message = "Blank is not acceptable") String lastname
             , @Email(message = "email address is not valid") String email
             , @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$"
-            , message = "password is not valid") String password, Double credit
+            , message = "password is not valid") String password, double credit
             , LocalDateTime signupDateTime, List<ExpertUser> expertUsers
             , List<Order> orders, List<Transaction> transactions) {
 
