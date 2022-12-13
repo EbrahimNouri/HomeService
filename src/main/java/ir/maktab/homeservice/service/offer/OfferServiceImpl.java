@@ -4,6 +4,7 @@ package ir.maktab.homeservice.service.offer;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.enums.OrderType;
+import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
 import ir.maktab.homeservice.repository.offer.OfferRepository;
 import ir.maktab.homeservice.repository.order.OrderRepository;
 import jakarta.transaction.Transactional;
@@ -22,6 +23,7 @@ import java.util.Optional;
 @Log4j2
 @Transactional
 public class OfferServiceImpl implements OfferService {
+    private final ExpertTypeServiceRepository expertTypeServiceRepository;
     private OfferRepository repository;
     private OrderRepository orderRepository;
 
@@ -32,12 +34,12 @@ public class OfferServiceImpl implements OfferService {
 
             if (offerRegistrationCheck(offer, offer.getOrder())) {
 
-                if (repository.findById(offer.getId()).isEmpty()) {
 
                     repository.save(offer);
 
                     log.debug("debug offer registered {} ", order);
                     if (order.getOrderType().equals(OrderType.WAITING_FOR_THE_SUGGESTIONS)) {
+                        order.setOrderType(OrderType.WAITING_EXPERT_SELECTION);
                         orderRepository.save(order);
 
                         log.debug("debug order change to {} ", order.getOrderType());
@@ -49,8 +51,6 @@ public class OfferServiceImpl implements OfferService {
 
                     log.debug("debug offer updated {} ", order);
                 }
-            } else
-                log.warn("offer or order not invalid");
         } catch (Exception e) {
 
             log.error("error offer updated {} ", order, e);
@@ -58,14 +58,14 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public List<Offer> showOffersByOrder(Order order) {
+    public List<Offer> showOffersByOrderId(Long orderId) {
         try {
-            log.debug("debug found offer by order {}", order);
+            log.debug("debug found offer by order {}", orderId);
 
-            return repository.findByOrder(order);
+            return repository.findOfferByOrder_Id(orderId);
 
         } catch (Exception e) {
-            log.error("error found offer by order {} ", order, e);
+            log.error("error found offer by order {} ", orderId, e);
         }
         return null;
     }
@@ -145,9 +145,9 @@ public class OfferServiceImpl implements OfferService {
                 && order.getSuggestedPrice() >= order.getTypeService().getBasePrice()
                 && order.getId() != null
                 && offer.getSuggestedPrice() >= order.getTypeService().getBasePrice()
-                && offer.getExpert().getExpertTypeServices().stream()
-                .filter(typeService -> typeService.getTypeService()
-                        .getSubService().equals(order.getTypeService().getSubService())).toList().size() > 0;
+                && !expertTypeServiceRepository.findExpertTypeServiceByExpertId(offer.getExpert().getId()).stream()
+                .filter(expertTypeService -> expertTypeService.getTypeService()
+                        .getSubService().equals(order.getTypeService().getSubService())).toList().isEmpty();
     }
 
     @Override

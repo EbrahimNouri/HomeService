@@ -12,12 +12,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest()
+@ActiveProfiles("test")
 class OrderServiceImplTest {
 
     static User user;
@@ -45,7 +48,8 @@ class OrderServiceImplTest {
     @Test
     void orderRegistration() {
         service.OrderRegistration(order);
-        assertEquals(order.getDescription(), orderRepository.findById(order.getId()).orElse(null).getDescription());
+        assertEquals(order.getDescription(), Objects
+                .requireNonNull(orderRepository.findById(order.getId()).orElse(null)).getDescription());
     }
 
     @Test

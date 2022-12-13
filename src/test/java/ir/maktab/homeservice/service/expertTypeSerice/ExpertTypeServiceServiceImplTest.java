@@ -12,11 +12,8 @@ import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 
 import java.io.File;
@@ -24,10 +21,8 @@ import java.io.File;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@ComponentScan(basePackages = "ir.maktab.homeservice")
 @SpringBootTest
-@PropertySource("/applicationTest.properties")
-@ExtendWith(MockitoExtension.class)
+@PropertySource("/application.properties")
 class ExpertTypeServiceServiceImplTest {
 
     private static ExpertTypeService expertTypeService;

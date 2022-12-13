@@ -2,6 +2,7 @@ package ir.maktab.homeservice.service.expertUser;
 
 import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.OrderType;
+import ir.maktab.homeservice.repository.order.OrderRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.order.OrderService;
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ComponentScan(basePackages = "ir.maktab.homeservice")
 @SpringBootTest
-@PropertySource("/applicationTest.properties")
+@PropertySource("/application.properties")
 @ExtendWith(MockitoExtension.class)
 class ExpertUserServiceImplTest {
 
@@ -54,6 +55,8 @@ class ExpertUserServiceImplTest {
 
     @Autowired
     BasicServicesService basicServicesService;
+    @Autowired
+    private OrderRepository orderRepository;
 
     @BeforeAll
     static void initialize() {
@@ -79,7 +82,9 @@ class ExpertUserServiceImplTest {
         basicServicesService.addBasicService(basicService);
         typeServiceService.addSubService(typeService);
         orderService.OrderRegistration(order);
-
+        order.setOrderType(OrderType.DONE);
+        orderRepository.save(order);
+        service.addCommentAndPoint(expertUser);
     }
 
 
@@ -87,7 +92,6 @@ class ExpertUserServiceImplTest {
     void addCommentAndPoint() {
 
         assertAll(
-                () -> service.addCommentAndPoint(expertUser),
                 () -> assertNotNull(service.findById(expertUser))
         );
     }
