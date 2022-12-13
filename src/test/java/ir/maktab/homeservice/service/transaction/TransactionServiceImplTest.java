@@ -4,13 +4,13 @@ import ir.maktab.homeservice.entity.BasicService;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Transaction;
 import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.repository.expert.ExpertRepository;
+import ir.maktab.homeservice.repository.transaction.TransactionRepository;
+import ir.maktab.homeservice.repository.user.UserRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.user.UserService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -35,6 +35,12 @@ class TransactionServiceImplTest {
     private ExpertService expertService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ExpertRepository expertRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @BeforeAll
     static void initials() {
@@ -53,19 +59,23 @@ class TransactionServiceImplTest {
         service.addTransaction(transaction);
     }
 
+
+    @AfterAll
+    static void purgeObj(){
+        expert = null;
+        user = null;
+        transaction = null;
+    }
+
     @Test
     void addTransaction() {
+
 
         assertAll(
                 () -> assertEquals(400.0, userService.findById(user.getId()).orElse(null).getCredit()),
                 () -> assertEquals(100.0, expertService.findById(expert.getId()).orElse(null).getCredit()) ,
                 () -> assertNotNull(service.findById(transaction))
         );
-    }
-
-    @Test
-    void chargeAccountBalance() {
-
-
+        transactionRepository.delete(transaction);
     }
 }

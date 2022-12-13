@@ -1,10 +1,9 @@
 package ir.maktab.homeservice.service.user;
 
 import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.repository.user.UserRepository;
 import org.checkerframework.checker.units.qual.A;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +20,8 @@ class UserServiceImplTest {
 
     @Autowired
     UserService service;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeAll
     public static void initialize() {
@@ -28,17 +29,30 @@ class UserServiceImplTest {
                 .password("qwER1234").credit(0.0).build();
     }
 
+    @BeforeEach
+    void addToDatabase(){
+        service.registerUser(user);
+    }
+
+    @AfterEach
+    public void purgeDatabase(){
+        userRepository.delete(user);
+        user.setId(null);
+    }
+    @AfterAll
+    static void purgeObj(){
+        user = null;
+    }
+
     @Test
     void registerUser() {
-        service.registerUser(user);
         assertNotNull(user.getId());
     }
 
     @Test
     void changePassword() {
-        service.registerUser(user);
-        String oldPass = user.getPassword();
-        service.changePassword(user, "newPassw0rd");
-        assertNotNull(oldPass, Objects.requireNonNull(service.findById(1L).orElse(null)).getPassword());
+        String newPass = "newPassw0rd";
+        service.changePassword(user, newPass );
+        assertEquals(newPass, service.findById(user.getId()).orElse(null).getPassword());
     }
 }

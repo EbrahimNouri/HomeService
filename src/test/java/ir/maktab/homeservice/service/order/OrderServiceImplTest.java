@@ -31,10 +31,10 @@ class OrderServiceImplTest {
 
     @BeforeAll
     static void initials() {
-        user = User.builder().firstname("fname").lastname("lname").email("userTest@email.com").credit(500.0).password("1234QWear").build();
+        user = User.builder().firstname("name").lastname("name").email("userTest@email.com").credit(500.0).password("1234QWear").build();
 
         order = new Order(null, user, null, null, 100.0
-                , "jijiji", LocalDate.now(), "adrress", null);
+                , "test", LocalDate.now(), "test", null);
     }
 
     @BeforeEach

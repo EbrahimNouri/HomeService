@@ -1,7 +1,15 @@
 package ir.maktab.homeservice.service.offer;
 
 import ir.maktab.homeservice.entity.*;
+import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.enums.OrderType;
+import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
+import ir.maktab.homeservice.repository.expert.ExpertRepository;
+import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
+import ir.maktab.homeservice.repository.offer.OfferRepository;
+import ir.maktab.homeservice.repository.order.OrderRepository;
+import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
+import ir.maktab.homeservice.repository.user.UserRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
@@ -9,9 +17,7 @@ import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.order.OrderService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -65,6 +71,20 @@ class OfferServiceImplTest {
 
     @Autowired
     private ExpertTypeServiceService expertTypeServiceService;
+    @Autowired
+    private ExpertRepository expertRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private BasicServiceRepository basicServiceRepository;
+    @Autowired
+    private TypeServiceRepository typeServiceRepository;
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private ExpertTypeServiceRepository expertTypeServiceRepository;
+    @Autowired
+    private OfferRepository offerRepository;
 
 
     @BeforeAll
@@ -209,6 +229,31 @@ class OfferServiceImplTest {
             service.offerRegistrationOrUpdate(offer[i]);
         }
     }
+//    @AfterEach
+//    void purgeDatabase() {
+//
+//        for (int i = 0; i < 4; i++) {
+//            expertRepository.delete(expert[i]);
+//            userRepository.delete(user[i]);
+//            basicServiceRepository.delete(basicService[i]);
+//            typeServiceRepository.delete(typeService[i]);
+//            orderRepository.delete(order[i]);
+//            expertTypeServiceRepository.delete(expertTypeService[i]);
+//        }
+//        for (int i = 0; i < 12; i++) {
+//            offerRepository.delete(offer[i]);
+//        }
+//    }
+
+//    @AfterAll
+//    static void purgeObj(){
+//        user = null;
+//        expert = null;
+//        basicService = null;
+//        typeService = null;
+//        order = null;
+//        offer = null;
+//    }
 
 
     @Test

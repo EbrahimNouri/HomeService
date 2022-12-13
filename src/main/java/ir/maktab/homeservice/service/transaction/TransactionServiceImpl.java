@@ -30,7 +30,8 @@ public class TransactionServiceImpl implements TransactionService {
         User user = transaction1.getUser();
         Expert expert = transaction1.getExpert();
         double amount = transaction1.getTransfer();
-        if (transaction1.getTransfer() <= transaction1.getUser().getCredit()) {
+        if (transaction1.getTransfer() <= transaction1.getUser().getCredit()
+        && user.getId() != null && expert.getId() != null) {
 
             try {
                 user.setCredit(user.getCredit() - amount);

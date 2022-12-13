@@ -1,6 +1,7 @@
 package ir.maktab.homeservice.service.basicServices;
 
 import ir.maktab.homeservice.entity.BasicService;
+import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,7 @@ public class BasicServicesServiceImpl implements BasicServicesService {
                 log.error("error add basic service name is null");
         } catch (Exception e) {
             log.debug("error add basic service {} ", basicService, e);
+            throw new CustomExceptionSave("this name is invalid");
         }
     }
 

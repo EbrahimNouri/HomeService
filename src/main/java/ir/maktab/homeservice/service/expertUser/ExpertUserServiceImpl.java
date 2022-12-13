@@ -4,9 +4,11 @@ package ir.maktab.homeservice.service.expertUser;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertUser;
 import ir.maktab.homeservice.entity.enums.OrderType;
+import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.repository.expertUser.ExpertUserRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +16,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Log4j2
 public class ExpertUserServiceImpl implements ExpertUserService {
     private ExpertUserRepository repository;
     private ExpertRepository expertRepository;
@@ -22,16 +25,23 @@ public class ExpertUserServiceImpl implements ExpertUserService {
     @Transactional
     @Override
     public void addCommentAndPoint(ExpertUser expertUser) {
-        Expert expert = expertUser.getExpert();
-        if (expertUser.getOrder().getOrderType().equals(OrderType.DONE)
-                && expertUser.getPoint() <= 5.0 && expertUser.getPoint() >= 0.0
-                && expertUser.getComment() != null) {
+        try {
+            Expert expert = expertUser.getExpert();
+            if (expertUser.getOrder().getOrderType().equals(OrderType.DONE)
+                    && expertUser.getPoint() <= 5.0 && expertUser.getPoint() >= 0.0
+                    && expertUser.getComment() != null) {
 
-            repository.save(expertUser);
-            expert.setAverageScore(repository.getAveragePoint(expert.getId()));
-            expertRepository.save(expert);
+                repository.save(expertUser);
+                expert.setAverageScore(repository.getAveragePoint(expert.getId()));
+                expertRepository.save(expert);
 
+            }
+        }catch (Exception e){
+            log.error("error add comment point {} ", expertUser, e);
+//            throw new CustomExceptionSave("expert user not worked");
+            throw e;
         }
+
     }
 
     @Override

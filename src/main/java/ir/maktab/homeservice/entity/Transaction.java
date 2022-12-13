@@ -37,7 +37,5 @@ public class Transaction implements Serializable {
     @PrePersist
     void autoSet(){
         localDateTime = LocalDateTime.now();
-        transfer = 0.0;
     }
-
 }
