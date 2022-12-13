@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface OfferService {
     void offerRegistrationOrUpdate(Offer offer);
 
-    List<Offer> showOffersByOrderId(Long order);
+    List<Offer> showOffersByOrder(Order order);
 
     void chooseOffer(Offer offer);
 

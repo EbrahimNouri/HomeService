@@ -1,15 +1,16 @@
 package ir.maktab.homeservice.service.offer;
 
 
+import ir.maktab.homeservice.entity.ExpertTypeService;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.enums.OrderType;
+import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
 import ir.maktab.homeservice.repository.offer.OfferRepository;
 import ir.maktab.homeservice.repository.order.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ import java.util.Optional;
 @Log4j2
 @Transactional
 public class OfferServiceImpl implements OfferService {
+    private final ExpertTypeServiceRepository expertTypeServiceRepository;
     private OfferRepository repository;
     private OrderRepository orderRepository;
 
@@ -67,7 +69,7 @@ public class OfferServiceImpl implements OfferService {
         try {
             log.debug("debug found offer by order {}", order);
 
-            return repository.findByOrder(order);
+            return repository.findOfferByOrder_Id(order.getId());
 
         } catch (Exception e) {
             log.error("error found offer by order {} ", order, e);
@@ -149,8 +151,6 @@ public class OfferServiceImpl implements OfferService {
     }
 
     private boolean offerRegistrationCheck(Offer offer, Order order) {
-        List<ExpertTypeService> typeServices = expertTypeServiceRepository
-                .findExpertTypeServiceByExpertId(offer.getExpert().getId());
         return offer.getEndDate().isAfter(offer.getStartDate())
                 && order.getSuggestedPrice() >= order.getTypeService().getBasePrice()
                 && order.getId() != null
