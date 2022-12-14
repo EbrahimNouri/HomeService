@@ -5,18 +5,15 @@ import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
 import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.entity.id.ExpertTypeServiceId;
-import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
 
 import java.io.File;
 
@@ -24,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
 class ExpertTypeServiceServiceImplTest {
 
     private static ExpertTypeService expertTypeService;
@@ -44,8 +40,7 @@ class ExpertTypeServiceServiceImplTest {
 
     @Autowired
     BasicServicesService basicServicesService;
-    @Autowired
-    private TypeServiceRepository typeServiceRepository;
+
 
     @BeforeAll
     static void initialize() {
@@ -64,6 +59,22 @@ class ExpertTypeServiceServiceImplTest {
         typeServiceService.addSubService(typeService);
     }
 
+
+//    @AfterEach
+//    void purgeDatabase() {
+//        expertRepository.delete(expert);
+//        basicServiceRepository.delete(basicService);
+//        typeServiceRepository.delete(typeService);
+//    }
+
+    @AfterAll
+    static void purgeObj() {
+        expert = null;
+        basicService = null;
+        typeService = null;
+    }
+
+
     @Test
     void removeExpertFromBasicService() {
         service.addExpertToTypeService(new ExpertTypeService(expert, typeService));
@@ -74,8 +85,8 @@ class ExpertTypeServiceServiceImplTest {
                 () -> service.removeExpertFromBasicService(expert),
                 () -> assertNull(service.findById(new ExpertTypeServiceId(expert, typeService)).orElse(null))
         );
-
     }
+
 
     @Test
     void addExpertToTypeService() {
@@ -93,3 +104,4 @@ class ExpertTypeServiceServiceImplTest {
         );
     }
 }
+

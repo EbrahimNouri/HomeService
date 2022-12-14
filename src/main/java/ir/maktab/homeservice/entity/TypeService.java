@@ -1,7 +1,6 @@
 package ir.maktab.homeservice.entity;
 
 import ir.maktab.homeservice.entity.base.BaseEntity;
-import ir.maktab.homeservice.entity.id.ExpertTypeServiceId;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -27,10 +26,9 @@ public class TypeService extends BaseEntity {
     private List<ExpertTypeService> expertTypeServices;
 
     @OneToMany(mappedBy = "typeService")
-    @ToString.Exclude
     private List<Order> orders;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(/*fetch = FetchType.EAGER*/)
     @JoinColumn(nullable = false)
     private BasicService basicService;
 }

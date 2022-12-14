@@ -1,10 +1,7 @@
 package ir.maktab.homeservice.entity;
 
 import ir.maktab.homeservice.entity.base.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -21,7 +18,7 @@ public class BasicService extends BaseEntity {
     @Column(unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "basicService")
+    @OneToMany(mappedBy = "basicService", fetch = FetchType.EAGER)
     private List<TypeService> typeServices;
 
 }

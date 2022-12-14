@@ -1,31 +1,25 @@
 package ir.maktab.homeservice.service.expertUser;
 
 import ir.maktab.homeservice.entity.*;
-import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.enums.OrderType;
-import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
-import ir.maktab.homeservice.repository.expertUser.ExpertUserRepository;
-import ir.maktab.homeservice.repository.order.OrderRepository;
-import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
 import ir.maktab.homeservice.repository.user.UserRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.order.OrderService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.PropertySource;
 
 import java.io.File;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 class ExpertUserServiceImplTest {
@@ -33,7 +27,7 @@ class ExpertUserServiceImplTest {
     private static Expert expert;
     private static File avatar;
     private static User user;
-    private static ExpertUser expertUser;
+    private static ExpertUser expertUserMain;
     private static Order order;
 
     private static TypeService typeService;
@@ -60,14 +54,7 @@ class ExpertUserServiceImplTest {
 
     @Autowired
     BasicServicesService basicServicesService;
-    @Autowired
-    private BasicServiceRepository basicServiceRepository;
-    @Autowired
-    private TypeServiceRepository typeServiceRepository;
-    @Autowired
-    private OrderRepository orderRepository;
-    @Autowired
-    private ExpertUserRepository expertUserRepository;
+
 
     @BeforeAll
     static void initialize() {
@@ -83,7 +70,7 @@ class ExpertUserServiceImplTest {
         order = new Order(typeService, user, null, null, 111.0, "description Test"
                 , LocalDate.of(2022, 1, 1), "addrestest", OrderType.DONE);
 
-        expertUser = ExpertUser.builder().expert(expert).user(user).comment("comment").point(3.0).build();
+        expertUserMain = ExpertUser.builder().expert(expert).user(user).comment("comment").point(3.0).build();
     }
     @BeforeEach
     void setToDb() {
@@ -92,38 +79,17 @@ class ExpertUserServiceImplTest {
         basicServicesService.addBasicService(basicService);
         typeServiceService.addSubService(typeService);
         orderService.OrderRegistration(order);
-        expertUser.setOrder(order);
+        expertUserMain.setOrder(order);
         order.setOrderType(OrderType.DONE);
     }
 
-    @AfterEach
-    void purgeDatabase() {
-        expertRepository.delete(expert);
-        userRepository.delete(user);
-        basicServiceRepository.delete(basicService);
-        typeServiceRepository.delete(typeService);
-        orderRepository.delete(order);
-        expertUserRepository.delete(expertUser);
-    }
-
-    @AfterAll
-    static void purgeOb() {
-        expert = null;
-        avatar = null;
-        user = null;
-        typeService = null;
-        order = null;
-        expertUser = null;
-    }
-
-
     @Test
     void addCommentAndPoint() {
-        service.addCommentAndPoint(expertUser);
+        service.addCommentAndPoint(expertUserMain);
 
 
         assertAll(
-                () -> assertNotNull(service.findById(expertUser))
+                () -> assertNotNull(service.findById(expertUserMain))
         );
     }
 }
