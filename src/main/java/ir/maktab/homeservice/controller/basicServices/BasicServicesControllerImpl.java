@@ -1,15 +1,17 @@
 package ir.maktab.homeservice.controller.basicServices;
 
+
+import ir.maktab.homeservice.dto.BasicServiceDto;
 import ir.maktab.homeservice.entity.BasicService;
 import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
-import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 
 @RestController
 @Log4j2
@@ -21,31 +23,34 @@ public class BasicServicesControllerImpl implements BasicServicesController {
     private final BasicServicesService basicServicesService;
 
     @Override
-    @PostMapping("/addBasicService")
-    public void addBasicService(@RequestBody BasicService basicService) {
+    @PostMapping("/add")
+    public void addBasicService(@RequestBody @Valid BasicService basicService) {
         basicServicesService.addBasicService(basicService);
     }
 
     @Override
     @GetMapping("/all")
     public List<BasicServiceDto> showAllBasicServices() {
-        var x = basicServiceRepository.findAll().stream()
+        return basicServiceRepository.findAll().stream()
                 .map(bs -> new BasicServiceDto(bs.getId(), bs.getName())).toList();
-
-        List<BasicService> basicServices = basicServicesService.findAll();
-        for (BasicService b: basicServices) {
+//        var xx = basicServicesService.showAllBasicService();
+//        List<BasicServiceDto> returned = new ArrayList<>();
+//
+//        for (BasicService bts : xx) {
+//            returned.add(BasicServiceMapper.INSTANCE.entityToDTO(bts));
+//        }
+//        return returned;
+//        returned.add(BasicServiceMapper.INSTANCE(basicService));
+//        List<BasicService> basicServices = basicServicesService.findAll();
+//        for (BasicService b: basicServices) {
 //            BasicServiceDto destination = sourceToDestination();
-        }
-
-
-        return x;
-        // TODO: 12/14/2022 AD this method not work
     }
 
-    @AllArgsConstructor
-    public static class BasicServiceDto {
-        private Long dtoId;
-        private String dtoName;
-    }
+
+    // TODO: 12/14/2022 AD this method not work
 
 }
+
+
+
+
