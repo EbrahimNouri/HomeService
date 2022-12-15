@@ -56,5 +56,4 @@ public class TypeServiceServiceImpl implements TypeServiceService {
         }
         return showAll;
     }
-
 }

@@ -8,11 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 
 @Service
@@ -33,7 +30,7 @@ public class BasicServicesServiceImpl implements BasicServicesService {
                 repository.save(basicService);
 
             } else
-                log.error("error add basic service name is null");
+                log.error("error add basic service name is invalid");
         } catch (Exception e) {
             log.debug("error add basic service {} ", basicService, e);
             throw new CustomExceptionSave("this name is invalid");
@@ -58,6 +55,7 @@ public class BasicServicesServiceImpl implements BasicServicesService {
 
             } else
                 log.warn("warn add basic service  found name {} ", basicService);
+            // TODO: 12/15/2022 AD exception create
 
         } catch (Exception e) {
             log.error("error add basic service {} ", basicService);
@@ -68,13 +66,13 @@ public class BasicServicesServiceImpl implements BasicServicesService {
     @Override
     public List<BasicService> showAllBasicService() {
         List<BasicService> all = null;
-        try {
-            all = repository.findAll();
-
-        } catch (Exception e) {
-            log.error("error show all basic service");
-        }
-        return all;
+//        try {
+            return repository.findAllC();
+//
+//        } catch (Exception e) {
+//            log.error("error show all basic service");
+//        }
+//        return all;
     }
 
     @Override

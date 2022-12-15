@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 class ExpertUserServiceImplTest {
 
-    private static Expert expert;
+    private static Expert expertTest;
     private static File avatar;
     private static User user;
     private static ExpertUser expertUserMain;
@@ -58,7 +58,7 @@ class ExpertUserServiceImplTest {
 
     @BeforeAll
     static void initialize() {
-        expert = Expert.builder().firstname("testName").lastname("lname").lastname("testLastname").email("test@email.com")
+        expertTest = Expert.builder().firstname("testName").lastname("lname").lastname("testLastname").email("test@email.com")
                 .password("1234QWer").build();
         avatar = new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg");
 
@@ -68,16 +68,16 @@ class ExpertUserServiceImplTest {
         typeService = new TypeService("subTest", 110.0, null, null, basicService);
 
         order = new Order(typeService, user, null, null, 111.0, "description Test"
-                , LocalDate.of(2022, 1, 1), "addrestest", OrderType.DONE);
+                , LocalDate.of(2022, 1, 1), "addrestest", OrderType.WAITING_FOR_THE_SUGGESTIONS);
 
-        expertUserMain = ExpertUser.builder().expert(expert).user(user).comment("comment").point(3.0).build();
+        expertUserMain = ExpertUser.builder().expert(expertTest).user(user).comment("comment").point(3.0).build();
     }
     @BeforeEach
     void setToDb() {
-        expertService.registerExpert(expert, avatar);
-        userService.registerUser(user);
         basicServicesService.addBasicService(basicService);
         typeServiceService.addSubService(typeService);
+        expertService.registerExpert(expertTest, avatar);
+        userService.registerUser(user);
         orderService.OrderRegistration(order);
         expertUserMain.setOrder(order);
         order.setOrderType(OrderType.DONE);
