@@ -26,7 +26,7 @@ public abstract class Person extends BaseEntity {
     @NotEmpty(message = "Blank is not acceptable")
     private String lastname;
 
-    @Email(message = "email address is not valid")
+    @Email(/*groups = CustomPatternInvalidException.class,*/ message = "email address is not valid")
     @Column(unique = true, nullable = false)
     private String email;
 
@@ -34,7 +34,7 @@ public abstract class Person extends BaseEntity {
     @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$", message = "password is not valid")
     private String password;
 
-    private double credit;
+    private double credit = 0.0;
 
     @CreationTimestamp
     @Column(name = "signup_date_time")

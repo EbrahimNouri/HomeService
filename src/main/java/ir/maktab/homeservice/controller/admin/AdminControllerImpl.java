@@ -16,13 +16,13 @@ public class AdminControllerImpl implements AdminController {
 
     private AdminService service;
 
-    //    @PostMapping("/add")
+    @PostMapping("/add")
     @Override
     public void addAdmin(@RequestBody @Valid Admin admin) {
         service.addAdmin(admin);
     }
 
-    //    @PutMapping("/chPass")
+        @PutMapping("/chPass")
     @Override
     public void changePassword(@RequestBody @Valid adminPassDto admin) {
         Admin id_not_found = service.findById(admin.getId()).orElseThrow(() -> new CustomExceptionNotFind("id not found"));

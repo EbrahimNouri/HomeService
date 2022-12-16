@@ -25,10 +25,20 @@ public class ExpertServiceImpl implements ExpertService {
     private final ExpertTypeServiceRepository expertTypeServiceRepository;
     private ExpertRepository repository;
 
+    @Override
+    public void mainRegisterExpert(Expert expert){
+
+            expert.setExpertStatus(ExpertStatus.NEW);
+            repository.save(expert);
+
+    }
+
+
+
     @Transactional
     @Override
     public void registerExpert(Expert expert, File file) {
-        try {
+/*        try {*/
             if (expert.getId() == null) {
                 byte[] avatar = imageConverter(file);
                 expert.setAvatar(avatar);
@@ -36,12 +46,12 @@ public class ExpertServiceImpl implements ExpertService {
                 expert.setExpertStatus(ExpertStatus.NEW);
                 repository.save(expert);
                 log.debug("debug register expert {} ", expert);
-            } else
-                log.warn("warn register avatar larger than 300kb or not .jpg");
-        } catch (Exception e) {
+            } /*else
+                log.warn("warn register avatar larger than 300kb or not .jpg");*/
+/*        } catch (Exception e) {
             log.error("error register expert {} ", expert, e);
             throw new CustomPatternInvalidException("this email is invalid");
-        }
+        }*/
     }
 
     @Override
@@ -61,11 +71,12 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Override
     public Optional<Expert> findById(Long id) {
-        Optional<Expert> expert = null;
+        Optional<Expert> expert = Optional.empty();
         try {
             expert = repository.findById(id);
         } catch (Exception e) {
 
+            throw e;
             // TODO: 12/11/2022 AD  
         }
         return expert;
@@ -86,8 +97,8 @@ public class ExpertServiceImpl implements ExpertService {
                 log.warn("old password and new password is same");
         } catch (Exception e) {
             log.error("error change password expert {} to {}", expert, password, e);
-            throw e;
-            //            throw new CustomPatternInvalidException("invalid pattern");
+//            throw e;
+                        throw new CustomPatternInvalidException("invalid pattern");
         }
     }
 
