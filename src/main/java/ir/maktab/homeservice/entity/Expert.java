@@ -26,7 +26,7 @@ public class Expert extends Person {
     @Enumerated(EnumType.STRING)
     private ExpertStatus expertStatus;
 
-    @OneToMany(mappedBy = "expert", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "expert"/*, fetch = FetchType.EAGER*/)
     private List<ExpertTypeService> expertTypeServices;
 
     @OneToMany(mappedBy = "expert", fetch = FetchType.EAGER)

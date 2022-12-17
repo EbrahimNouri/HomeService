@@ -30,7 +30,6 @@ public class ExpertUser implements Serializable {
     @Id
     private Order order;
 
-
     private LocalDate localDate;
 
     @Column(nullable = false)

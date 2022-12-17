@@ -61,11 +61,11 @@ public class ExpertUserServiceImpl implements ExpertUserService {
     @Override
     public void deductPoints(int hours, Order order) {
 
-        Expert expert = new Expert();
-        User user = new User();
+        Expert expert = order.getExpertUser().getExpert();
+        User user = order.getExpertUser().getUser();
 
         addCommentAndPoint(new ExpertUser(expert, user, order
-                , LocalDate.now(), (double) hours, null));
+                , LocalDate.now(), (double) - hours, null));
 
         Double averagePoint = repository.countOfAllPointByExpertId(expert.getId());
 

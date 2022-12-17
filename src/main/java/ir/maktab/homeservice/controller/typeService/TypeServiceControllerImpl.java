@@ -1,8 +1,11 @@
 package ir.maktab.homeservice.controller.typeService;
 
 
+import ir.maktab.homeservice.entity.BasicService;
 import ir.maktab.homeservice.entity.TypeService;
+import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
+import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,13 +19,19 @@ import java.util.List;
 @RequestMapping("/api/v1/typeService")
 public class TypeServiceControllerImpl implements TypeServiceController {
     private final TypeServiceRepository typeServiceRepository;
-
-    private final TypeServiceService typeServiceService;
+    private final BasicServicesService basicServicesService;
+    private final TypeServiceService service;
 
 
     @PostMapping("/addTypeService")
     public void addTypeService(@RequestBody TypeService typeService) {
-        typeServiceService.addSubService(typeService);
+
+        BasicService basicService = basicServicesService.findById(typeService.getBasicService().getId())
+                .orElseThrow(() -> new CustomExceptionNotFind("basic Service not found"));
+
+        typeService.setBasicService(basicService);
+
+        service.addSubService(typeService);
         System.out.println(typeService);
     }
 
@@ -31,9 +40,10 @@ public class TypeServiceControllerImpl implements TypeServiceController {
         return typeServiceRepository.findByBasicServiceId(id);
     }
 
+    @PostMapping("/addSubService")
     @Override
-    public void addSubService(TypeService typeService) {
-
+    public void addSubService(@RequestBody TypeService typeService) {
+        service.addSubService(typeService);
     }
 
     @Override

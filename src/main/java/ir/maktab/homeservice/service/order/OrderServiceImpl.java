@@ -33,7 +33,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderRepository repository;
 
     @Override
-    public void OrderRegistration(Order order) {
+    public void orderRegistration(Order order) {
         try {
             if (order.getSuggestedPrice() != null
                     && order.getDescription() != null
