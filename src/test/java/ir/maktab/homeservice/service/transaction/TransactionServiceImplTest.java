@@ -1,19 +1,20 @@
 package ir.maktab.homeservice.service.transaction;
 
-import ir.maktab.homeservice.entity.BasicService;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Transaction;
 import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.entity.enums.TransactionType;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.repository.transaction.TransactionRepository;
 import ir.maktab.homeservice.repository.user.UserRepository;
-import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.user.UserService;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 
 import java.io.File;
 
@@ -49,7 +50,7 @@ class TransactionServiceImplTest {
         expert = Expert.builder().firstname("testName").lastname("lname").lastname("testLastname").credit(0.0).email("test@email.com")
                 .password("1234QWer").build();
         avatar = new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg");
-        transaction = new Transaction(expert, user, null, 100.0);
+        transaction = new Transaction(expert, user, null, 100.0, TransactionType.TRANSFER);
     }
 
     @BeforeEach

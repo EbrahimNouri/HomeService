@@ -68,7 +68,8 @@ class ExpertUserServiceImplTest {
         typeService = new TypeService("subTest", 110.0, null, null, basicService);
 
         order = new Order(typeService, user, null, null, 111.0, "description Test"
-                , LocalDate.of(2022, 1, 1), "addrestest", OrderType.WAITING_FOR_THE_SUGGESTIONS);
+                , LocalDate.of(2022, 1, 1), "addrestest", OrderType.WAITING_FOR_THE_SUGGESTIONS,
+                null);
 
         expertUserMain = ExpertUser.builder().expert(expertTest).user(user).comment("comment").point(3.0).build();
     }

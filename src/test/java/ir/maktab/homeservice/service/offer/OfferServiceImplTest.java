@@ -149,16 +149,16 @@ class OfferServiceImplTest {
         /*------------------------------ORDER-----------------------------*/
         order[0] = new Order(typeService[0], user[0], null, null
                 , 120.0, "description Test"
-                , LocalDate.now(), "addrestest", OrderType.DONE);
+                , LocalDate.now(), "addrestest", OrderType.DONE,null);
         order[1] = new Order(typeService[1], user[1], null, null
                 , 120.0, "description Test"
-                , LocalDate.now(), "addrestest", OrderType.DONE);
+                , LocalDate.now(), "addrestest", OrderType.DONE,null);
         order[2] = new Order(typeService[2], user[2], null, null
                 , 120.0, "description Test"
-                , LocalDate.now(), "addrestest", OrderType.DONE);
+                , LocalDate.now(), "addrestest", OrderType.DONE,null);
         order[3] = new Order(typeService[3], user[3], null, null
                 , 120.0, "description Test"
-                , LocalDate.now(), "addrestest", OrderType.DONE);
+                , LocalDate.now(), "addrestest", OrderType.DONE,null);
         /*-----------------------EXPERT USER-----------------------------------*/
         expertUser[0] = new ExpertUser(expert[0], user[0], order[0], null
                 , 5.0, "hello comment1");

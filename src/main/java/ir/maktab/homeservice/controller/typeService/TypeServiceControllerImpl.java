@@ -30,4 +30,19 @@ public class TypeServiceControllerImpl implements TypeServiceController {
     public List<TypeService> showAllBasicServicesByExpertId(@PathVariable Long id) {
         return typeServiceRepository.findByBasicServiceId(id);
     }
+
+    @Override
+    public void addSubService(TypeService typeService) {
+
+    }
+
+    @Override
+    public void paymentPriceChange(TypeService typeService, double price) {
+
+    }
+
+    @Override
+    public List<TypeService> showTypeServices(Long basicServiceId) {
+        return null;
+    }
 }

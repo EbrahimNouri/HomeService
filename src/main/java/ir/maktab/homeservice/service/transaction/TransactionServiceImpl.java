@@ -4,7 +4,7 @@ package ir.maktab.homeservice.service.transaction;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Transaction;
 import ir.maktab.homeservice.entity.User;
-import ir.maktab.homeservice.entity.id.TransactionId;
+import ir.maktab.homeservice.entity.enums.TransactionType;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.repository.transaction.TransactionRepository;
 import ir.maktab.homeservice.repository.user.UserRepository;
@@ -40,6 +40,7 @@ public class TransactionServiceImpl implements TransactionService {
                 expertRepository.save(expert);
                 transaction1.setUser(user);
                 transaction1.setExpert(expert);
+                transaction1.setTransactionType(TransactionType.TRANSFER);
                 repository.save(transaction1);
 
                 log.debug("error add transaction {} ", transaction1);
@@ -63,7 +64,7 @@ public class TransactionServiceImpl implements TransactionService {
             user.setCredit(user.getCredit() + amount);
             userRepository.save(user);
             Transaction transaction =
-                    new Transaction(null, user, null, amount);
+                    new Transaction(null, user, null, amount, TransactionType.DEPOSIT);
             repository.save(transaction);
 
             log.debug("debug add transaction to wallet user {} {} ", user, amount);

@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -146,7 +146,7 @@ public class OfferServiceImpl implements OfferService {
         return order.getOrderType().equals(orderType[0])
                 || order.getOrderType().equals(orderType[1])
                 && order.getId() != null && offer.getId() != null
-                && offer.getStartDate().isAfter(LocalDate.now());
+                && offer.getStartDate().isAfter(LocalDateTime.now());
     }
 
     private boolean offerRegistrationCheck(Offer offer, Order order) {

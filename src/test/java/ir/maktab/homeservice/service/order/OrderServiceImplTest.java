@@ -1,11 +1,14 @@
 package ir.maktab.homeservice.service.order;
 
+import ir.maktab.homeservice.entity.BasicService;
 import ir.maktab.homeservice.entity.Order;
+import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.entity.User;
 import ir.maktab.homeservice.entity.enums.OrderType;
+import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
 import ir.maktab.homeservice.repository.order.OrderRepository;
+import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
 import ir.maktab.homeservice.service.user.UserService;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,24 +25,35 @@ class OrderServiceImplTest {
 
     static User user;
     static Order order;
+    static BasicService basicService;
+    static TypeService typeService;
     @Autowired
     private OrderService service;
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private BasicServiceRepository basicServiceRepository;
+    @Autowired
+    private TypeServiceRepository typeServiceRepository;
 
     @BeforeAll
     static void initials() {
         user = User.builder().firstname("name").lastname("name").email("userTest@email.com").credit(500.0).password("1234QWear").build();
 
+        basicService = new BasicService("basicServiceName",null);
+        typeService= new TypeService("subService", 100.0, null, null, basicService);
         order = new Order(null, user, null, null, 100.0
-                , "test", LocalDate.now(), "test", null);
+                , "test", LocalDate.now(), "test", OrderType.WAITING_FOR_THE_SUGGESTIONS, null);
     }
 
     @BeforeEach
     void addToDatabase() {
         userService.registerUser(user);
+        basicServiceRepository.save(basicService);
+        typeServiceRepository.save(typeService);
+        service.OrderRegistration(order);
     }
 
     @Test

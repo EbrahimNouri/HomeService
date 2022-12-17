@@ -10,5 +10,7 @@ public interface OrderService {
 
     void setOrderToDone(Order order);
 
+    void setOrderToPaid(Order order);
+
     List<Order> showOrderSuggestionOrSelection();
 }

@@ -3,6 +3,7 @@ package ir.maktab.homeservice.entity;
 
 import ir.maktab.homeservice.entity.base.BaseEntity;
 import ir.maktab.homeservice.entity.enums.OrderType;
+import ir.maktab.homeservice.entity.enums.PaymentType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,10 +25,10 @@ public class Order extends BaseEntity {
     @ManyToOne
     private User user;
 
-    @OneToMany(mappedBy = "order")
-    private List<ExpertUser> expertUser;
+    @OneToOne(mappedBy = "order", fetch = FetchType.EAGER)
+    private ExpertUser expertUser;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
     private List<Offer> offers;
 
     private Double suggestedPrice;
@@ -40,5 +41,8 @@ public class Order extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private OrderType orderType;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentType paymentType;
 
 }
