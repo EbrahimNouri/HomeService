@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface OrderController {
 
-    void orderRegistration(Order order);
+    void OrderRegistration(Order order);
 
     void setOrderToDone(Order order);
 

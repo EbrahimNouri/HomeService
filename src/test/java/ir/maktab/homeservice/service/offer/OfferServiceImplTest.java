@@ -26,7 +26,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.File;
 import java.time.LocalDate;
 
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -173,41 +172,41 @@ class OfferServiceImplTest {
         expertUser[3] = new ExpertUser(expert[3], user[3], order[3], null
                 , 4.0, "hello comment4");
         /*------------------------------OFFER-------------------------------------*/
-        offer[0] = new Offer(order[0], expert[0], LocalDateTime.now().plusDays(1), "desss"
-                , 130.0, LocalDateTime.of(2023, 1, 1,0, 0));
+        offer[0] = new Offer(order[0], expert[0], LocalDate.now().plusDays(1), "desss"
+                , 130.0, LocalDate.of(2023, 1, 1));
 
-        offer[1] = new Offer(order[0], expert[0], LocalDateTime.now().plusDays(1), "desss"
-                , 112.0, LocalDateTime.of(2023, 1, 1, 0,0));
+        offer[1] = new Offer(order[0], expert[0], LocalDate.now().plusDays(1), "desss"
+                , 112.0, LocalDate.of(2023, 1, 1));
 
-        offer[2] = new Offer(order[0], expert[0], LocalDateTime.now().plusDays(1), "desss"
-                , 118.0, LocalDateTime.of(2023, 1, 1,0,0));
+        offer[2] = new Offer(order[0], expert[0], LocalDate.now().plusDays(1), "desss"
+                , 118.0, LocalDate.of(2023, 1, 1));
 
-        offer[3] = new Offer(order[0], expert[0], LocalDateTime.now().plusDays(1), "desss"
-                , 126.0, LocalDateTime.of(2023, 1, 1,0,0));
+        offer[3] = new Offer(order[0], expert[0], LocalDate.now().plusDays(1), "desss"
+                , 126.0, LocalDate.of(2023, 1, 1));
 
-        offer[4] = new Offer(order[1], expert[1], LocalDateTime.now().plusDays(1), "desss"
-                , 126.0, LocalDateTime.of(2023, 1, 1,0,0));
+        offer[4] = new Offer(order[1], expert[1], LocalDate.now().plusDays(1), "desss"
+                , 126.0, LocalDate.of(2023, 1, 1));
 
-        offer[5] = new Offer(order[1], expert[1], LocalDateTime.now().plusDays(1), "desss"
-                , 126.0, LocalDateTime.of(2023, 1, 1,0,0));
+        offer[5] = new Offer(order[1], expert[1], LocalDate.now().plusDays(1), "desss"
+                , 126.0, LocalDate.of(2023, 1, 1));
 
-        offer[6] = new Offer(order[1], expert[1], LocalDateTime.now().plusDays(1), "desss"
-                , 126.0, LocalDateTime.of(2023, 1, 1,0,0));
+        offer[6] = new Offer(order[1], expert[1], LocalDate.now().plusDays(1), "desss"
+                , 126.0, LocalDate.of(2023, 1, 1));
 
-        offer[7] = new Offer(order[1], expert[1], LocalDateTime.now().plusDays(1), "desss"
-                , 126.0, LocalDateTime.of(2023, 1, 1,0,0));
+        offer[7] = new Offer(order[1], expert[1], LocalDate.now().plusDays(1), "desss"
+                , 126.0, LocalDate.of(2023, 1, 1));
 
-        offer[8] = new Offer(order[2], expert[2], LocalDateTime.now().plusDays(1), "desss"
-                , 126.0, LocalDateTime.of(2023, 1, 1,0,0));
+        offer[8] = new Offer(order[2], expert[2], LocalDate.now().plusDays(1), "desss"
+                , 126.0, LocalDate.of(2023, 1, 1));
 
-        offer[9] = new Offer(order[2], expert[2], LocalDateTime.now().plusDays(1), "desss"
-                , 126.0, LocalDateTime.of(2023, 1, 1,0,0));
+        offer[9] = new Offer(order[2], expert[2], LocalDate.now().plusDays(1), "desss"
+                , 126.0, LocalDate.of(2023, 1, 1));
 
-        offer[10] = new Offer(order[2], expert[2], LocalDateTime.now().plusDays(1), "desss"
-                , 126.0, LocalDateTime.of(2023, 1, 1,0,0));
+        offer[10] = new Offer(order[2], expert[2], LocalDate.now().plusDays(1), "desss"
+                , 126.0, LocalDate.of(2023, 1, 1));
 
-        offer[11] = new Offer(order[2], expert[2], LocalDateTime.now().plusDays(1), "desss"
-                , 126.0, LocalDateTime.of(2023, 1, 1,0,0));
+        offer[11] = new Offer(order[2], expert[2], LocalDate.now().plusDays(1), "desss"
+                , 126.0, LocalDate.of(2023, 1, 1));
     }
 
     @BeforeEach

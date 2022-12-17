@@ -40,6 +40,7 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
                 repository.save(expertTypeService);
                 log.debug("debug add expert to basic service {} ", expertTypeService);
 
+
             } else {
                 log.error("error add expert to basic service expert type service is null or {} "
                         , expertTypeService.getTypeService());

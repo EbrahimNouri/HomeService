@@ -1,19 +1,19 @@
 package ir.maktab.homeservice.controller.expertTypeSerice;
 
 
+import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import ir.maktab.homeservice.entity.id.ExpertTypeServiceId;
+
+import java.util.Optional;
 
 public interface ExpertTypeServiceController {
-    void removeExpertFromBasicService(Long expert);
+    void removeExpertFromBasicService(Expert expert);
 
     void addExpertToTypeService(ExpertTypeService expertTypeService);
 
     void removeExpertFromTypeService(ExpertTypeService expertTypeService);
 
+    Optional<ExpertTypeService> findById(ExpertTypeServiceId expertTypeServiceId);
 
-    @GetMapping("findById/{expId}/{typId}")
-    ResponseEntity<ExpertTypeService> findById(@PathVariable Long expId, @PathVariable Long typId);
 }
