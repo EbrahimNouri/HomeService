@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface UserService {
 
+    void mainRegisterUser(User user);
+
     void registerUser(User user);
 
     void changePassword(User user, String password);

@@ -1,5 +1,6 @@
 package ir.maktab.homeservice.entity;
 
+import ir.maktab.homeservice.entity.enums.TransactionType;
 import ir.maktab.homeservice.entity.id.TransactionId;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,10 +35,11 @@ public class Transaction implements Serializable {
 
     private Double transfer;
 
+    @Enumerated(EnumType.STRING)
+    private TransactionType transactionType;
+
     @PrePersist
     void autoSet(){
         localDateTime = LocalDateTime.now();
-        transfer = 0.0;
     }
-
 }

@@ -21,6 +21,11 @@ public class UserServiceImpl implements UserService {
     private UserRepository repository;
 
     @Override
+    public void mainRegisterUser(User user){
+        repository.save(user);
+    }
+
+    @Override
     public void registerUser(User user) {
         try {
             if (user.getEmail() != null && user.getPassword() != null) {

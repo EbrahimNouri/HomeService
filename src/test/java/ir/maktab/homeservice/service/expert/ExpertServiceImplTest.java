@@ -2,99 +2,96 @@ package ir.maktab.homeservice.service.expert;
 
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
-import ir.maktab.homeservice.repository.expert.ExpertRepository;
-import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+import ir.maktab.homeservice.exception.CustomPatternInvalidException;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.PropertySource;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@ComponentScan(basePackages = "ir.maktab.homeservice")
 @SpringBootTest
-@PropertySource("applicationTest.properties")
-@ExtendWith(MockitoExtension.class)
 class ExpertServiceImplTest {
 
-    private static Expert expert;
-    private static File avatar;
+    private static Expert[] expert = new Expert[5];
     @Autowired
     private ExpertService service;
 
-    @Autowired
-    private ExpertRepository repository;
-    @Autowired
-    private ExpertTypeServiceRepository expertTypeServiceRepository;
 
     @BeforeAll
     static void initialize() {
-        expert = Expert.builder().firstname("testName").lastname("testLastname").email("test@email.com")
-                .password("1234QWer").build();
-        avatar = new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg");
+        for (int i = 0; i < 5; i++) {
+            expert[i] = Expert.builder().firstname("testName").lastname("testLastname").email("test" + i + "@email.com")
+                    .password("1234QWer").build();
+        }
+    }
+
+    @BeforeEach
+    void setToDatabase() {
+        for (int i = 0; i < 5; i++) {
+            service.registerExpert(expert[i], new File("/Users/ebrahimnouri/ss.jpg"));
+        }
+    }
+
+//    @AfterEach
+//    void removeFromDatabase() {
+//        for (int i = 0; i < 5; i++) {
+//            repository.delete(expert[i]);
+//        }
+//    }
+
+    @AfterAll
+    static void purgeObj(){
+        expert = null;
     }
 
     @Test
-    void registerExpert() throws IOException {
-
-        service.registerExpert(expert, avatar
-        );
-        Files.write(Path.of("/Users/ebrahimnouri/ss.jpg")
-                , service.findById(1L).orElseThrow().getAvatar());
+    void registerExpert() {
 
         assertAll(
-                () -> Assertions.assertEquals(expert.getEmail(), Objects.requireNonNull(service.findById(1L)
+                () -> Assertions.assertEquals(expert[0].getEmail(), Objects.requireNonNull(service.findById(expert[0].getId())
                         .orElse(null)).getEmail()),
+
                 () -> assertTrue(new File("/Users/ebrahimnouri/ss.jpg").isFile())
         );
     }
 
     @Test
     void acceptExpert() {
-        expert.setExpertStatus(ExpertStatus.NEW);
-        service.registerExpert(expert, avatar);
-        expert.setExpertStatus(ExpertStatus.CONFIRMED);
-        service.acceptExpert(expert);
-        assertEquals(ExpertStatus.CONFIRMED, service.findById(expert.getId()).orElseThrow().getExpertStatus());
-
+        expert[1].setExpertStatus(ExpertStatus.NEW);
+        service.acceptExpert(expert[1]);
+        assertEquals(ExpertStatus.CONFIRMED, service.findById(expert[1].getId()).orElseThrow().getExpertStatus());
     }
 
     @Test
     void changePassword() {
-        service.registerExpert(expert, avatar);
-        service.changePassword(expert, "123poIU");
+        String newPass = "newPassw0rd";
+        service.changePassword(expert[2], newPass);
+        assertEquals(newPass, Objects.requireNonNull(service.findById(expert[2].getId()).orElse(null)).getPassword());
     }
 
     @Test
     void passwordPatternTest() {
-        expert.setPassword("123");
-        assertThrows(Exception.class, () -> service.registerExpert(expert, avatar));
+        assertThrows(Exception.class, () -> service.changePassword(expert[3], "123"));
     }
 
     @Test
     void emailPatternTest() {
-        expert.setEmail("testemailcom");
-        assertThrows(Exception.class, () -> service.registerExpert(expert, avatar));
+        Expert expert1 = Expert.builder().firstname("testName")
+                .lastname("testLastname").email("testemailcom")
+                .password("1234QWer").build();
+
+        assertThrows(CustomPatternInvalidException.class
+                , () -> service.registerExpert(expert1, null));
     }
 
     @Test
-    void emailUniqueTest(){
-        service.registerExpert(expert, avatar);
+    void emailUniqueTest() {
         assertThrows(Exception.class
-                ,()-> service.registerExpert
-                        (Expert.builder().email("test@email.com").password("qwe123ASD").build(),avatar));
+                , () -> service.registerExpert
+                        (Expert.builder().email("test@email.com").password("qwe123ASD").build(),new File("/Users/ebrahimnouri/ss.jpg")));
     }
 }

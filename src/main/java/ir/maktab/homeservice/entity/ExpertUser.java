@@ -2,9 +2,7 @@ package ir.maktab.homeservice.entity;
 
 import ir.maktab.homeservice.entity.id.ExpertUserId;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -27,19 +25,20 @@ public class ExpertUser implements Serializable {
     @Id
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @OneToOne(/*fetch = FetchType.EAGER*/)
     @JoinColumn(name = "order_id")
     @Id
     private Order order;
 
-    @CreationTimestamp
     private LocalDate localDate;
 
-    @Max(5)
+    @Column(nullable = false)
     private Double point;
 
-    @Column(columnDefinition = "text")
     private String comment;
 
-
+    @PrePersist
+    void setDate(){
+        localDate = LocalDate.now();
+    }
 }

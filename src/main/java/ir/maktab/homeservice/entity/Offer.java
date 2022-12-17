@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -28,7 +28,7 @@ public class Offer extends BaseEntity {
     private Expert expert;
 
     @Column(nullable = false)
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
     @NotNull
     @NotEmpty
@@ -37,7 +37,7 @@ public class Offer extends BaseEntity {
     @NotNull
     private Double suggestedPrice;
 
-    private LocalDate EndDate;
+    private LocalDateTime EndDate;
 
     @Override
     public boolean equals(Object o) {

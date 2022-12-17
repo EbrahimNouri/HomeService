@@ -1,7 +1,6 @@
 package ir.maktab.homeservice.entity;
 
 
-
 import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import jakarta.persistence.*;
@@ -10,7 +9,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,7 +26,7 @@ public class Expert extends Person {
     @Enumerated(EnumType.STRING)
     private ExpertStatus expertStatus;
 
-    @OneToMany(mappedBy = "expert", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "expert"/*, fetch = FetchType.EAGER*/)
     private List<ExpertTypeService> expertTypeServices;
 
     @OneToMany(mappedBy = "expert", fetch = FetchType.EAGER)
@@ -37,7 +35,9 @@ public class Expert extends Person {
     @OneToMany(mappedBy = "expert")
     private List<Transaction> transactions;
 
+/*
     @ColumnDefault("0")
+*/
     private Double averageScore;
 
     @Lob

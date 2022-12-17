@@ -39,16 +39,18 @@ class AdminServiceImplTest {
 
     @Test
     void changePassword() {
-        service.addAdmin(admin);
         String oldPass = admin.getPassword();
-        admin.setPassword("#12@qwe");
-        admin.setEmail("email@admin.com");
-        System.out.println(admin.getId());
-        service.changePassword(admin, "!@#qwe12H");
 
+        assertAll(
 
-        assertNotEquals(oldPass, service.findById(admin.getId()).orElseThrow().getPassword());
+                () -> service.addAdmin(admin),
+                () -> admin.setPassword("#12@qwe"),
+                () -> admin.setEmail("email@admin.com"),
+                () -> System.out.println(admin.getId()),
+                () -> service.changePassword(admin, "!@#qwe12H"),
 
+                () -> assertNotEquals(oldPass, service.findById(admin.getId()).orElseThrow().getPassword())
+        );
 
     }
 }

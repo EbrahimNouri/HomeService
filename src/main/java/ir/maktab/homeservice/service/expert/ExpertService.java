@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface ExpertService {
 
+    void mainRegisterExpert(Expert expert);
+
     void registerExpert(Expert expert, File file);
 
     void acceptExpert(Expert expert);
