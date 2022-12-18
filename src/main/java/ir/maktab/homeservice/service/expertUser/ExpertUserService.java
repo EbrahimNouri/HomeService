@@ -14,6 +14,4 @@ public interface ExpertUserService {
     Optional<ExpertUser> findByOrderId(Long orderId);
 
     void deductPoints(int hours, Order order);
-
-
 }

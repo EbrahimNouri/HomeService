@@ -2,7 +2,6 @@ package ir.maktab.homeservice.service.typeService;
 
 
 import ir.maktab.homeservice.entity.TypeService;
-import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
 import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -17,15 +16,13 @@ import java.util.List;
 @Log4j2
 @Transactional
 public class TypeServiceServiceImpl implements TypeServiceService {
-    private final BasicServiceRepository basicServiceRepository;
 
     private TypeServiceRepository typeServiceRepository;
 
     @Override
     public void addSubService(TypeService typeService) {
         try {
-            if (typeService.getBasicService() != null)
-                typeServiceRepository.save(typeService);
+            typeServiceRepository.save(typeService);
 
             log.debug("debug add sub service {} ", typeService);
         } catch (Exception e) {

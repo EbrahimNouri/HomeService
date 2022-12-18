@@ -6,7 +6,7 @@ import ir.maktab.homeservice.entity.Order;
 import java.util.List;
 
 public interface OrderService {
-    void orderRegistration(Order order);
+    void OrderRegistration(Order order);
 
     void setOrderToDone(Order order);
 
