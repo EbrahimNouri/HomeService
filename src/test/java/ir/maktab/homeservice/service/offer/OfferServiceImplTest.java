@@ -1,15 +1,10 @@
 package ir.maktab.homeservice.service.offer;
 
 import ir.maktab.homeservice.entity.*;
-import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.enums.OrderType;
-import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
-import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
 import ir.maktab.homeservice.repository.offer.OfferRepository;
 import ir.maktab.homeservice.repository.order.OrderRepository;
-import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
-import ir.maktab.homeservice.repository.user.UserRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
@@ -17,15 +12,15 @@ import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.order.OrderService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
-import org.junit.jupiter.api.*;
-
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-
 import java.io.File;
 import java.time.LocalDate;
-
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -71,14 +66,6 @@ class OfferServiceImplTest {
 
     @Autowired
     private ExpertTypeServiceService expertTypeServiceService;
-    @Autowired
-    private ExpertRepository expertRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private BasicServiceRepository basicServiceRepository;
-    @Autowired
-    private TypeServiceRepository typeServiceRepository;
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
@@ -172,41 +159,41 @@ class OfferServiceImplTest {
         expertUser[3] = new ExpertUser(expert[3], user[3], order[3], null
                 , 4.0, "hello comment4");
         /*------------------------------OFFER-------------------------------------*/
-        offer[0] = new Offer(order[0], expert[0], LocalDate.now().plusDays(1), "desss"
-                , 130.0, LocalDate.of(2023, 1, 1));
+        offer[0] = new Offer(order[0], expert[0], LocalDateTime.now().plusDays(1), "desss"
+                , 130.0, LocalDateTime.of(2023, 1, 1, 1,1));
 
-        offer[1] = new Offer(order[0], expert[0], LocalDate.now().plusDays(1), "desss"
-                , 112.0, LocalDate.of(2023, 1, 1));
+        offer[1] = new Offer(order[0], expert[0], LocalDateTime.now().plusDays(1), "desss"
+                , 112.0, LocalDateTime.of(2023, 1, 1, 1,1));
 
-        offer[2] = new Offer(order[0], expert[0], LocalDate.now().plusDays(1), "desss"
-                , 118.0, LocalDate.of(2023, 1, 1));
+        offer[2] = new Offer(order[0], expert[0], LocalDateTime.now().plusDays(1), "desss"
+                , 118.0, LocalDateTime.of(2023, 1, 1, 1,1));
 
-        offer[3] = new Offer(order[0], expert[0], LocalDate.now().plusDays(1), "desss"
-                , 126.0, LocalDate.of(2023, 1, 1));
+        offer[3] = new Offer(order[0], expert[0], LocalDateTime.now().plusDays(1), "desss"
+                , 126.0, LocalDateTime.of(2023, 1, 1, 1,1));
 
-        offer[4] = new Offer(order[1], expert[1], LocalDate.now().plusDays(1), "desss"
-                , 126.0, LocalDate.of(2023, 1, 1));
+        offer[4] = new Offer(order[1], expert[1], LocalDateTime.now().plusDays(1), "desss"
+                , 126.0, LocalDateTime.of(2023, 1, 1, 1,1));
 
-        offer[5] = new Offer(order[1], expert[1], LocalDate.now().plusDays(1), "desss"
-                , 126.0, LocalDate.of(2023, 1, 1));
+        offer[5] = new Offer(order[1], expert[1], LocalDateTime.now().plusDays(1), "desss"
+                , 126.0, LocalDateTime.of(2023, 1, 1, 1,1));
 
-        offer[6] = new Offer(order[1], expert[1], LocalDate.now().plusDays(1), "desss"
-                , 126.0, LocalDate.of(2023, 1, 1));
+        offer[6] = new Offer(order[1], expert[1], LocalDateTime.now().plusDays(1), "desss"
+                , 126.0, LocalDateTime.of(2023, 1, 1, 1,1));
 
-        offer[7] = new Offer(order[1], expert[1], LocalDate.now().plusDays(1), "desss"
-                , 126.0, LocalDate.of(2023, 1, 1));
+        offer[7] = new Offer(order[1], expert[1], LocalDateTime.now().plusDays(1), "desss"
+                , 126.0, LocalDateTime.of(2023, 1, 1, 1,1));
 
-        offer[8] = new Offer(order[2], expert[2], LocalDate.now().plusDays(1), "desss"
-                , 126.0, LocalDate.of(2023, 1, 1));
+        offer[8] = new Offer(order[2], expert[2], LocalDateTime.now().plusDays(1), "desss"
+                , 126.0, LocalDateTime.of(2023, 1, 1, 1,1));
 
-        offer[9] = new Offer(order[2], expert[2], LocalDate.now().plusDays(1), "desss"
-                , 126.0, LocalDate.of(2023, 1, 1));
+        offer[9] = new Offer(order[2], expert[2], LocalDateTime.now().plusDays(1), "desss"
+                , 126.0, LocalDateTime.of(2023, 1, 1, 1,1));
 
-        offer[10] = new Offer(order[2], expert[2], LocalDate.now().plusDays(1), "desss"
-                , 126.0, LocalDate.of(2023, 1, 1));
+        offer[10] = new Offer(order[2], expert[2], LocalDateTime.now().plusDays(1), "desss"
+                , 126.0, LocalDateTime.of(2023, 1, 1, 1,1));
 
-        offer[11] = new Offer(order[2], expert[2], LocalDate.now().plusDays(1), "desss"
-                , 126.0, LocalDate.of(2023, 1, 1));
+        offer[11] = new Offer(order[2], expert[2], LocalDateTime.now().plusDays(1), "desss"
+                , 126.0, LocalDateTime.of(2023, 1, 1, 1,1));
     }
 
     @BeforeEach

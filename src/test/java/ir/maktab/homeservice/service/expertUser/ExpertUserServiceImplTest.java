@@ -2,7 +2,6 @@ package ir.maktab.homeservice.service.expertUser;
 
 import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.OrderType;
-import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.repository.user.UserRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
@@ -38,8 +37,7 @@ class ExpertUserServiceImplTest {
 
     @Autowired
     ExpertService expertService;
-    @Autowired
-    ExpertRepository expertRepository;
+
 
     @Autowired
     UserService userService;
