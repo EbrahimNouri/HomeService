@@ -34,7 +34,9 @@ public class OfferServiceImpl implements OfferService {
 
             if (offerRegistrationCheck(offer, offer.getOrder())) {
 
-                repository.save(offer);
+                if (repository.findById(offer.getId()).isEmpty()) {
+
+                    repository.save(offer);
 
                 log.debug("debug offer registered {} ", order);
                 if (order.getOrderType().equals(OrderType.WAITING_FOR_THE_SUGGESTIONS)
@@ -43,24 +45,23 @@ public class OfferServiceImpl implements OfferService {
                     order.setOrderType(OrderType.WAITING_EXPERT_SELECTION);
                     orderRepository.save(order);
 
+                        log.debug("debug order change to {} ", order.getOrderType());
+                    } else
+                        log.debug("debug order type It had already changed {} ", order.getOrderType());
 
-                    log.debug("debug order change to {} ", order.getOrderType());
-                } else
-                    log.debug("debug order type It had already changed {} ", order.getOrderType());
+                } else {
+                    repository.save(offer);
 
-            } else {
-                repository.save(offer);
-
-                log.debug("debug offer updated {} ", order);
-
-            }
-
+                    log.debug("debug offer updated {} ", order);
+                }
+            } else
+                log.warn("offer or order not invalid");
         } catch (Exception e) {
+
             log.error("error offer updated {} ", order, e);
 
             throw e;
         }
-
     }
 
     @Override
@@ -68,7 +69,7 @@ public class OfferServiceImpl implements OfferService {
         try {
             log.debug("debug found offer by order {}", order);
 
-            return repository.findByOrder(order);
+            return repository.findOfferByOrder_Id(order.getId());
 
         } catch (Exception e) {
             log.error("error found offer by order {} ", order, e);
@@ -80,7 +81,7 @@ public class OfferServiceImpl implements OfferService {
     public void chooseOffer(Offer offer) {
         Order order = offer.getOrder();
 
-        if (checkLevelWork(offer, OrderType.WAITING_FOR_THE_SUGGESTIONS, OrderType.WAITING_EXPERT_SELECTION)) {
+        if (checkLevelWork(offer, OrderType.WAITING_FOR_THE_SUGGESTIONS)) {
 
             try {
 
@@ -150,15 +151,13 @@ public class OfferServiceImpl implements OfferService {
     }
 
     private boolean offerRegistrationCheck(Offer offer, Order order) {
-        List<ExpertTypeService> typeServices = expertTypeServiceRepository
-                .findExpertTypeServiceByExpertId(offer.getExpert().getId());
         return offer.getEndDate().isAfter(offer.getStartDate())
                 && order.getSuggestedPrice() >= order.getTypeService().getBasePrice()
                 && order.getId() != null
                 && offer.getSuggestedPrice() >= order.getTypeService().getBasePrice()
-                && typeServices.stream()
+                && !expertTypeServiceRepository.findExpertTypeServiceByExpertId(offer.getExpert().getId()).stream()
                 .filter(expertTypeService -> expertTypeService.getTypeService()
-                        .getSubService().equals(order.getTypeService().getSubService())).toList().size() > 0;
+                        .getSubService().equals(order.getTypeService().getSubService())).toList().isEmpty();
     }
 
     @Override

@@ -18,4 +18,5 @@ public interface ExpertTypeServiceRepository extends JpaRepository<ExpertTypeSer
 
     Optional<ExpertTypeService> findByExpertIdAndTypeServiceId(Long expert, Long typeService);
 
+
 }
