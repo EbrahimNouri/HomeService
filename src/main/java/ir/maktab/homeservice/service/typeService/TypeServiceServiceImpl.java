@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -18,6 +19,11 @@ import java.util.List;
 public class TypeServiceServiceImpl implements TypeServiceService {
 
     private TypeServiceRepository typeServiceRepository;
+
+    @Override
+    public Optional<TypeService> findById(Long id){
+        return typeServiceRepository.findById(id);
+    }
 
     @Override
     public void addSubService(TypeService typeService) {

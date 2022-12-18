@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -33,7 +34,12 @@ public class OrderServiceImpl implements OrderService {
     private OrderRepository repository;
 
     @Override
-    public void OrderRegistration(Order order) {
+    public Optional<Order> findById(Long id){
+        return repository.findById(id);
+    }
+
+    @Override
+    public void orderRegistration(Order order) {
         try {
             if (order.getSuggestedPrice() != null
                     && order.getDescription() != null

@@ -42,11 +42,13 @@ public class OrderControllerImpl implements OrderController {
     @PutMapping("/setOrderToDone/{orderId}")
     @Override
     public void setOrderToDone(@PathVariable Long orderId) {
-
+        Order order = service.findById(orderId).orElseThrow(() -> new CustomExceptionNotFind("order not found."));
+        service.setOrderToDone(order);
     }
 
+    @GetMapping("/showOrderSuggestionOrSelection")
     @Override
     public List<Order> showOrderSuggestionOrSelection() {
-        return null;
+        return service.showOrderSuggestionOrSelection();
     }
 }

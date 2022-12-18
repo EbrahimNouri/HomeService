@@ -1,7 +1,9 @@
 package ir.maktab.homeservice.controller.typeService;
 
 
+import ir.maktab.homeservice.dto.PaymentPriceChangeDto;
 import ir.maktab.homeservice.dto.TypeServiceDto;
+import ir.maktab.homeservice.entity.BasicService;
 import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
@@ -45,17 +47,30 @@ public class TypeServiceControllerImpl implements TypeServiceController {
 
     @PostMapping("/addSubService")
     @Override
-    public void addSubService(@RequestBody TypeService typeService) {
-        service.addSubService(typeService);
+    public void addSubService(@RequestBody TypeServiceDto typeServiceDto) {
+
+       BasicService basicService = basicServicesService.findById(typeServiceDto.getBaseServiceId())
+               .orElseThrow(() -> new CustomExceptionNotFind("basic service not found."));
+
+       service.addSubService(TypeService.builder()
+               .basicService(basicService)
+               .subService(typeServiceDto.getName())
+               .basePrice(typeServiceDto.getPrice())
+               .build());
     }
 
     @Override
-    public void paymentPriceChange(TypeService typeService, double price) {
+    @PutMapping("/paymentPriceChange")
+    public void paymentPriceChange(@RequestBody PaymentPriceChangeDto paymentPriceChangeDto) {
+        TypeService typeService = service.findById(paymentPriceChangeDto.getTypeServiceId())
+                .orElseThrow(() -> new CustomExceptionNotFind("type service not found."));
 
+        service.paymentPriceChange(typeService, paymentPriceChangeDto.getPrice());
     }
 
     @Override
-    public List<TypeService> showTypeServices(Long basicServiceId) {
-        return null;
+    @GetMapping("/showTypeServices/{basicServiceId}")
+    public List<TypeService> showTypeServices(@PathVariable Long basicServiceId) {
+        return service.showTypeServices(basicServiceId);
     }
 }
