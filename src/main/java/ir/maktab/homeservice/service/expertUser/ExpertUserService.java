@@ -11,6 +11,8 @@ public interface ExpertUserService {
 
     Optional<ExpertUser> findById(ExpertUser expertUser);
 
+    Optional<ExpertUser> findByOrderId(Long orderId);
+
     void deductPoints(int hours, Order order);
 
 

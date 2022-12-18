@@ -19,4 +19,6 @@ public interface ExpertService {
     void changePassword(Expert expert, String password);
 
     Optional<Expert> findById(Long id, Path path);
+
+    void SetAveragePoint(Double point, Long expertId);
 }

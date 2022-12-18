@@ -26,19 +26,18 @@ public class ExpertServiceImpl implements ExpertService {
     private ExpertRepository repository;
 
     @Override
-    public void mainRegisterExpert(Expert expert){
+    public void mainRegisterExpert(Expert expert) {
 
-            expert.setExpertStatus(ExpertStatus.NEW);
-            repository.save(expert);
+        expert.setExpertStatus(ExpertStatus.NEW);
+        repository.save(expert);
 
     }
-
 
 
     @Transactional
     @Override
     public void registerExpert(Expert expert, File file) {
-/*        try {*/
+        try {
             if (expert.getId() == null) {
                 byte[] avatar = imageConverter(file);
                 expert.setAvatar(avatar);
@@ -46,12 +45,12 @@ public class ExpertServiceImpl implements ExpertService {
                 expert.setExpertStatus(ExpertStatus.NEW);
                 repository.save(expert);
                 log.debug("debug register expert {} ", expert);
-            } /*else
-                log.warn("warn register avatar larger than 300kb or not .jpg");*/
-/*        } catch (Exception e) {
+            } else
+                log.warn("warn register avatar larger than 300kb or not .jpg");
+        } catch (Exception e) {
             log.error("error register expert {} ", expert, e);
             throw new CustomPatternInvalidException("this email is invalid");
-        }*/
+        }
     }
 
     @Override
@@ -98,7 +97,7 @@ public class ExpertServiceImpl implements ExpertService {
         } catch (Exception e) {
             log.error("error change password expert {} to {}", expert, password, e);
 //            throw e;
-                        throw new CustomPatternInvalidException("invalid pattern");
+            throw new CustomPatternInvalidException("invalid pattern");
         }
     }
 
@@ -116,6 +115,12 @@ public class ExpertServiceImpl implements ExpertService {
 
     }
 
+    @Transactional
+    @Override
+    public void SetAveragePoint(Double point, Long expertId) {
+        repository.setAveragePont(point, expertId);
+    }
+
     private byte[] imageConverter(File file) {
         if (file != null) {
             try {
@@ -126,7 +131,7 @@ public class ExpertServiceImpl implements ExpertService {
             } catch (IOException e) {
                 return null;
             }
-        }else
+        } else
             return null;
     }
 
@@ -138,4 +143,5 @@ public class ExpertServiceImpl implements ExpertService {
         }
         return null;
     }
+
 }

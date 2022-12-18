@@ -60,6 +60,7 @@ public class BasicServicesServiceImpl implements BasicServicesService {
         } catch (Exception e) {
             log.error("error add basic service {} ", basicService);
 
+
         }
     }
 

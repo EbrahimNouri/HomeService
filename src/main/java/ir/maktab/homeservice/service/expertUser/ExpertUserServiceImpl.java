@@ -7,8 +7,10 @@ import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.User;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.entity.enums.OrderType;
+import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.repository.expertUser.ExpertUserRepository;
+import ir.maktab.homeservice.service.expert.ExpertService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import java.util.Optional;
 public class ExpertUserServiceImpl implements ExpertUserService {
     private ExpertUserRepository repository;
     private ExpertRepository expertRepository;
+    private ExpertService expertService;
 
 
     @Transactional
@@ -30,19 +33,17 @@ public class ExpertUserServiceImpl implements ExpertUserService {
     public void addCommentAndPoint(ExpertUser expertUser) {
         try {
             Expert expert = expertUser.getExpert();
-            if (expertUser.getOrder().getOrderType().equals(OrderType.DONE)
-                    && expertUser.getPoint() <= 5.0
-                    && expertUser.getComment() != null) {
+            if (expertUser.getOrder().getOrderType().equals(OrderType.PAID)
+                    && expertUser.getPoint() <= 5.0 && expertUser.getPoint() >= 0.0) {
+
+                Double average = repository.getAveragePoint(expert.getId());
+                expertService.SetAveragePoint(average, expert.getId());
 
                 repository.save(expertUser);
-                expert.setAverageScore(repository.getAveragePoint(expert.getId()));
-                expertRepository.save(expert);
-
             }
         } catch (Exception e) {
             log.error("error add comment point {} ", expertUser, e);
-//            throw new CustomExceptionSave("expert user not worked");
-            throw e;
+            throw new CustomExceptionSave("expert user not worked");
         }
 
     }
@@ -59,13 +60,24 @@ public class ExpertUserServiceImpl implements ExpertUserService {
     }
 
     @Override
+    public Optional<ExpertUser> findByOrderId(Long orderId) {
+        Optional<ExpertUser> expertUser1 = Optional.empty();
+        try {
+            expertUser1 = repository.findExpertUserByOrderId(orderId);
+        } catch (Exception e) {
+            /* TODO: 12/11/2022 AD */
+        }
+        return expertUser1;
+    }
+
+    @Override
     public void deductPoints(int hours, Order order) {
 
         Expert expert = order.getExpertUser().getExpert();
         User user = order.getExpertUser().getUser();
 
         addCommentAndPoint(new ExpertUser(expert, user, order
-                , LocalDate.now(), (double) - hours, null));
+                , LocalDate.now(), (double) -hours, null));
 
         Double averagePoint = repository.countOfAllPointByExpertId(expert.getId());
 

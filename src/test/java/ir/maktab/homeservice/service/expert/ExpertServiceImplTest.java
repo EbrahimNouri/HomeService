@@ -3,6 +3,7 @@ package ir.maktab.homeservice.service.expert;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.exception.CustomPatternInvalidException;
+import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,15 +17,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class ExpertServiceImplTest {
 
-    private static Expert[] expert = new Expert[5];
+    private static Expert[] registerExpert = new Expert[5];
     @Autowired
     private ExpertService service;
+    private ExpertRepository repository;
 
 
     @BeforeAll
     static void initialize() {
         for (int i = 0; i < 5; i++) {
-            expert[i] = Expert.builder().firstname("testName").lastname("testLastname").email("test" + i + "@email.com")
+            registerExpert[i] = Expert.builder().firstname("testName").lastname("testLastname").email("tesst" + i + "@email.com")
                     .password("1234QWer").build();
         }
     }
@@ -32,27 +34,29 @@ class ExpertServiceImplTest {
     @BeforeEach
     void setToDatabase() {
         for (int i = 0; i < 5; i++) {
-            service.registerExpert(expert[i], new File("/Users/ebrahimnouri/ss.jpg"));
+            service.registerExpert(registerExpert[i], new File("/Users/ebrahimnouri/ss.jpg"));
         }
     }
 
-//    @AfterEach
-//    void removeFromDatabase() {
-//        for (int i = 0; i < 5; i++) {
-//            repository.delete(expert[i]);
-//        }
-//    }
+/*
+    @AfterEach
+    void removeFromDatabase() {
+        for (int i = 0; i < 5; i++) {
+            repository.delete(expert[i]);
+        }
+    }
 
     @AfterAll
     static void purgeObj(){
         expert = null;
     }
+*/
 
     @Test
     void registerExpert() {
 
         assertAll(
-                () -> Assertions.assertEquals(expert[0].getEmail(), Objects.requireNonNull(service.findById(expert[0].getId())
+                () -> Assertions.assertEquals(registerExpert[0].getEmail(), Objects.requireNonNull(service.findById(registerExpert[0].getId())
                         .orElse(null)).getEmail()),
 
                 () -> assertTrue(new File("/Users/ebrahimnouri/ss.jpg").isFile())
@@ -61,21 +65,21 @@ class ExpertServiceImplTest {
 
     @Test
     void acceptExpert() {
-        expert[1].setExpertStatus(ExpertStatus.NEW);
-        service.acceptExpert(expert[1]);
-        assertEquals(ExpertStatus.CONFIRMED, service.findById(expert[1].getId()).orElseThrow().getExpertStatus());
+        registerExpert[1].setExpertStatus(ExpertStatus.NEW);
+        service.acceptExpert(registerExpert[1]);
+        assertEquals(ExpertStatus.CONFIRMED, service.findById(registerExpert[1].getId()).orElseThrow().getExpertStatus());
     }
 
     @Test
     void changePassword() {
         String newPass = "newPassw0rd";
-        service.changePassword(expert[2], newPass);
-        assertEquals(newPass, Objects.requireNonNull(service.findById(expert[2].getId()).orElse(null)).getPassword());
+        service.changePassword(registerExpert[2], newPass);
+        assertEquals(newPass, Objects.requireNonNull(service.findById(registerExpert[2].getId()).orElse(null)).getPassword());
     }
 
     @Test
     void passwordPatternTest() {
-        assertThrows(Exception.class, () -> service.changePassword(expert[3], "123"));
+        assertThrows(Exception.class, () -> service.changePassword(registerExpert[3], "123"));
     }
 
     @Test

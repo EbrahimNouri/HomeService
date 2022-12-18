@@ -218,7 +218,7 @@ class OfferServiceImplTest {
             userService.registerUser(user[i]);
             basicServicesService.addBasicService(basicService[i]);
             typeServiceService.addSubService(typeService[i]);
-            orderService.OrderRegistration(order[i]);
+            orderService.orderRegistration(order[i]);
             orderService.setOrderToDone(order[i]);
             expertTypeServiceService.addExpertToTypeService(expertTypeService[i]);
             order[i].setOrderType(OrderType.WAITING_EXPERT_SELECTION);

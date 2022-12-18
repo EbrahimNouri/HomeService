@@ -58,11 +58,11 @@ class ExpertUserServiceImplTest {
 
     @BeforeAll
     static void initialize() {
-        expertTest = Expert.builder().firstname("testName").lastname("lname").lastname("testLastname").email("test@email.com")
+        expertTest = Expert.builder().firstname("testName").lastname("lname").lastname("testLastname").email("testExpertUser@email.com")
                 .password("1234QWer").build();
         avatar = new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg");
 
-        user = User.builder().firstname("fname").lastname("lname").email("userTest@email.com").password("1234QWear").build();
+        user = User.builder().firstname("fname").lastname("lname").email("userTestExpertUser@email.com").password("1234QWear").build();
         basicService = new BasicService("basicServiceTest", null);
 
         typeService = new TypeService("subTest", 110.0, null, null, basicService);
@@ -79,9 +79,9 @@ class ExpertUserServiceImplTest {
         typeServiceService.addSubService(typeService);
         expertService.registerExpert(expertTest, avatar);
         userService.registerUser(user);
-        orderService.OrderRegistration(order);
+        orderService.orderRegistration(order);
         expertUserMain.setOrder(order);
-        order.setOrderType(OrderType.DONE);
+        order.setOrderType(OrderType.PAID);
     }
 
     @Test

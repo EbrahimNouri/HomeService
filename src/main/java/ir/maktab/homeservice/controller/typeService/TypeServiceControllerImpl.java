@@ -1,9 +1,10 @@
 package ir.maktab.homeservice.controller.typeService;
 
 
-import ir.maktab.homeservice.entity.BasicService;
+import ir.maktab.homeservice.dto.TypeServiceDto;
 import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
+import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
 import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
@@ -18,25 +19,27 @@ import java.util.List;
 @Log4j2
 @RequestMapping("/api/v1/typeService")
 public class TypeServiceControllerImpl implements TypeServiceController {
+    private final BasicServiceRepository basicServiceRepository;
     private final TypeServiceRepository typeServiceRepository;
     private final BasicServicesService basicServicesService;
     private final TypeServiceService service;
 
 
     @PostMapping("/addTypeService")
-    public void addTypeService(@RequestBody TypeService typeService) {
+    public void addTypeService(@RequestBody TypeServiceDto typeServiceDto) {
 
-        BasicService basicService = basicServicesService.findById(typeService.getBasicService().getId())
-                .orElseThrow(() -> new CustomExceptionNotFind("basic Service not found"));
-
-        typeService.setBasicService(basicService);
+        TypeService typeService = TypeService.builder()
+                .subService(typeServiceDto.getName())
+                .basicService(basicServiceRepository.findById(typeServiceDto.getBaseServiceId()).orElseThrow(
+                        () ->  new CustomExceptionNotFind("basic service not found")))
+                .basePrice(typeServiceDto.getPrice())
+                .build();
 
         service.addSubService(typeService);
-        System.out.println(typeService);
     }
 
     @GetMapping("/showAllTypeService/{id}")
-    public List<TypeService> showAllBasicServicesByExpertId(@PathVariable Long id) {
+    public List<TypeService> findByBasicServiceId(@PathVariable Long id) {
         return typeServiceRepository.findByBasicServiceId(id);
     }
 

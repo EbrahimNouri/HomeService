@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,8 +41,8 @@ class BasicServicesServiceTest {
     @BeforeAll
     static void initialise() {
         for (int i = 0; i < 5; i++) {
-            basicService[i] = new BasicService("hello" + i, null);
-            typeServices[i] = new TypeService("ss"+i, 150.0,null, null, basicService[i]);
+            basicService[i] = new BasicService("basicNameTest" + i+1, null);
+//            typeServices[i] = new TypeService("typeNameTest"+i+1, 150.0,null, null, basicService[i]);
         }
     }
 
@@ -49,7 +50,7 @@ class BasicServicesServiceTest {
     void setToDataBase() {
         for (int i = 0; i < 5; i++) {
             service.addBasicService(basicService[i]);
-            typeServiceRepository.save(typeServices[i]);
+//            typeServiceRepository.save(typeServices[i]);
         }
     }
 
@@ -78,26 +79,29 @@ class BasicServicesServiceTest {
 
     @Test
     void addBasicService() {
-        assertNotEquals(basicService[0],repository.findBasicServiceById(basicService[0].getId()).orElse(null));
+        BasicService basicServiceAdd = new BasicService("basicNameTestAdd", null);
+
+        service.addBasicService(basicServiceAdd);
+        assertNotNull(Objects.requireNonNull(repository.findById(basicServiceAdd.getId()).orElse(null)).getId());
     }
 
     @Test
     void removeBasicService() {
-        service.removeBasicService(basicService[3]);
-        assertNull(repository.findBasicServiceById(basicService[3].getId()).orElse(null));
+        service.removeBasicService(basicService[4]);
+        assertNull(repository.findBasicServiceById(basicService[4].getId()).orElse(null));
     }
 
     @Test
     void showAllBasicService() {
 
         List<BasicService> showAllBasicService = service.showAllBasicService();
-        assertEquals(5, service.showAllBasicService().size());
+        assertTrue(service.showAllBasicService().size() >= 5);
         service.showAllBasicService().forEach(System.out::println);
     }
 
     @Test
     void uniqueNameTest() {
-        var save = BasicService.builder().name("hello1").build();
+        var save = BasicService.builder().name(basicService[1].getName()).build();
         service.addBasicService(save);
 
         assertNull(save.getId());

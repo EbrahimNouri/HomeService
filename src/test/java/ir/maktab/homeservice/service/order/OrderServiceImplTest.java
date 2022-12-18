@@ -53,12 +53,12 @@ class OrderServiceImplTest {
         userService.registerUser(user);
         basicServiceRepository.save(basicService);
         typeServiceRepository.save(typeService);
-        service.OrderRegistration(order);
+        service.orderRegistration(order);
     }
 
     @Test
     void orderRegistration() {
-        service.OrderRegistration(order);
+        service.orderRegistration(order);
         assertEquals(order.getDescription(), Objects.requireNonNull
                 (orderRepository.findById(order.getId()).orElse(null)).getDescription());
     }

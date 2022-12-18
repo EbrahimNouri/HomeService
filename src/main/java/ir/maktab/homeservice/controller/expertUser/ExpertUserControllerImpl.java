@@ -16,12 +16,8 @@ import ir.maktab.homeservice.repository.user.UserRepository;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Log4j2
@@ -64,8 +60,11 @@ public class ExpertUserControllerImpl implements ExpertUserController {
         service.addCommentAndPoint(expertUser);
     }
 
+    @GetMapping("/{orderId}")
     @Override
-    public Optional<ExpertUser> findById(ExpertUser expertUser) {
-        return Optional.empty();
+    public ResponseEntity<ExpertUser> findByOrderId(@PathVariable Long orderId) {
+        return service.findByOrderId(orderId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
