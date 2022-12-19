@@ -6,7 +6,6 @@ import ir.maktab.homeservice.dto.PersonRegisterDto;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
-import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -22,8 +21,6 @@ import java.util.Optional;
 @AllArgsConstructor
 @RequestMapping("api/v1/expert")
 public class ExpertControllerImpl implements ExpertController {
-    private final ExpertRepository expertRepository;
-
     private ExpertService expertService;
 
 
@@ -70,7 +67,7 @@ public class ExpertControllerImpl implements ExpertController {
     @PutMapping("/chPass")
     @Override
     public void changePassword(@RequestBody @Valid PersonChangePasswordDto personChangePasswordDto) {
-        Expert expert = expertRepository.findById(personChangePasswordDto.getId())
+        Expert expert = expertService.findById(personChangePasswordDto.getId())
                 .orElseThrow(()-> new CustomExceptionNotFind("expert not found"));
         expertService.changePassword(expert, personChangePasswordDto.getPassword());
     }

@@ -10,10 +10,9 @@ import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.repository.expertUser.ExpertUserRepository;
-import ir.maktab.homeservice.repository.offer.OfferRepository;
-import ir.maktab.homeservice.repository.order.OrderRepository;
-import ir.maktab.homeservice.repository.user.UserRepository;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
+import ir.maktab.homeservice.service.order.OrderService;
+import ir.maktab.homeservice.service.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +23,12 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RequestMapping("api/v1/expertUser")
 public class ExpertUserControllerImpl implements ExpertUserController {
-    private final OfferRepository offerRepository;
-    private final OrderRepository orderRepository;
+
     private final ExpertUserRepository expertUserRepository;
-    private final UserRepository userRepository;
     private final ExpertRepository expertRepository;
-
     private ExpertUserService service;
-
+    private UserService userService;
+    private OrderService orderService;
 
     @PostMapping("/addCommentAndPoint")
     @Override
@@ -41,10 +38,10 @@ public class ExpertUserControllerImpl implements ExpertUserController {
         Expert expert = expertRepository.findById(expertUserDto.getExpId())
                 .orElseThrow(() -> new CustomExceptionNotFind("user not found"));
 
-        User user = userRepository.findUserById(expertUserDto.getUserId())
+        User user = userService.findById(expertUserDto.getUserId())
                 .orElseThrow(() -> new CustomExceptionNotFind("user not found"));
 
-        Order order = orderRepository.findById(expertUserDto.getOrderId())
+        Order order = orderService.findById(expertUserDto.getOrderId())
                 .orElseThrow(() -> new CustomExceptionNotFind("user not found"));
         // TODO: 12/17/2022 AD this is for test ⬇︎
         order.setOrderType(OrderType.DONE);

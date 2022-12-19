@@ -25,7 +25,8 @@ public class AdminControllerImpl implements AdminController {
         @PutMapping("/chPass")
     @Override
     public void changePassword(@RequestBody @Valid adminPassDto admin) {
-        Admin id_not_found = service.findById(admin.getId()).orElseThrow(() -> new CustomExceptionNotFind("id not found"));
+        Admin id_not_found = service.findById(admin.getId())
+                .orElseThrow(() -> new CustomExceptionNotFind("id not found"));
 
         service.changePassword(id_not_found, admin.getPassword());
     }

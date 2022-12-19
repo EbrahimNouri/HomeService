@@ -80,4 +80,7 @@ class OrderServiceImplTest {
         service.setOrderToDone(order);
         assertTrue(() -> order.getOrderType().equals(OrderType.DONE));
     }
+
+    @Test
+    void setOrderToPaid(){}
 }

@@ -28,9 +28,7 @@ class ExpertUserServiceImplTest {
     private static User user;
     private static ExpertUser expertUserMain;
     private static Order order;
-
     private static TypeService typeService;
-
     private static BasicService basicService;
     @Autowired
     ExpertUserService service;
@@ -71,6 +69,7 @@ class ExpertUserServiceImplTest {
 
         expertUserMain = ExpertUser.builder().expert(expertTest).user(user).comment("comment").point(3.0).build();
     }
+
     @BeforeEach
     void setToDb() {
         basicServicesService.addBasicService(basicService);
@@ -84,10 +83,9 @@ class ExpertUserServiceImplTest {
 
     @Test
     void addCommentAndPoint() {
-        service.addCommentAndPoint(expertUserMain);
-
-
         assertAll(
+                () -> service.addCommentAndPoint(expertUserMain),
+
                 () -> assertNotNull(service.findById(expertUserMain))
         );
     }

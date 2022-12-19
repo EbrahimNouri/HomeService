@@ -40,7 +40,7 @@ class OfferServiceImplTest {
     static User[] user = new User[4];
     static ExpertUser[] expertUser = new ExpertUser[4];
     static Order[] order = new Order[4];
-    static Offer[] offer = new Offer[4];
+    static Offer[][] offer = new Offer[4][3];
     static TypeService[] typeService = new TypeService[4];
     static BasicService[] basicService = new BasicService[4];
 
@@ -89,29 +89,30 @@ class OfferServiceImplTest {
 
         for (int i = 0; i < 4; i++) {
 
-            expert[i] = Expert.builder().firstname("testName4").lastname("lname4").email("testss4"+i+"@email.com")
+            expert[i] = Expert.builder().firstname("testName4").lastname("lname4").email("testss4" + i + "@email.com")
                     .password("1234QWer").build();
             avatar[i] = new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg");
 
             user[i] = User.builder().firstname("fname4").lastname("lname4")
-                    .email("userTesddta4"+i+"@email.com").password("1234QWear").build();
+                    .email("userTesddta4" + i + "@email.com").password("1234QWear").build();
 
-            basicService[i] = new BasicService("basicServiceTsest4"+i, null);
+            basicService[i] = new BasicService("basicServiceTsest4" + i, null);
 
-            typeService[i] = new TypeService("subTest4sa"+i, 100.0, null
+            typeService[i] = new TypeService("subTest4sa" + i, 100.0, null
                     , null, basicService[i]);
 
             expertTypeService[i] = new ExpertTypeService(expert[i], typeService[i]);
 
             order[i] = new Order(typeService[i], user[i], null, null
-                    , 120.0, "description Test"+i
+                    , 120.0, "description Test" + i
                     , LocalDate.now(), "addrestest", OrderType.DONE, null);
 
             expertUser[i] = new ExpertUser(expert[i], user[i], order[i], null
-                    , 4.0, "hello comment4"+i);
-
-            offer[i] = new Offer(order[i], expert[i], LocalDateTime.now().plusDays(1), "desss"
-                    , 126.0, LocalDateTime.now().plusDays(5));
+                    , 4.0, "hello comment4" + i);
+            for (int j = 0; j < 3; j++) {
+                offer[i][j] = new Offer(order[i], expert[i], LocalDateTime.now().plusDays(1), "desss"
+                        , 126.0, LocalDateTime.now().plusDays(5));
+            }
         }
     }
 
@@ -128,7 +129,10 @@ class OfferServiceImplTest {
             orderService.setOrderToDone(order[i]);
             expertTypeServiceService.addExpertToTypeService(expertTypeService[i]);
             order[i].setOrderType(OrderType.WAITING_EXPERT_SELECTION);
-            service.offerRegistrationOrUpdate(offer[i]);
+            for (int j = 0; j < 3; j++) {
+                service.offerRegistrationOrUpdate(offer[i][j]);
+
+            }
         }
     }
 //    @AfterEach
@@ -171,7 +175,7 @@ class OfferServiceImplTest {
 //        order[0].setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
 //        service.offerRegistrationOrUpdate(offer[0]);
 
-        assertEquals(offer[0], Objects.requireNonNull(service.findById(offer[0].getId()).orElse(null)));
+        assertEquals(offer[0][0], Objects.requireNonNull(service.findById(offer[0][0].getId()).orElse(null)));
     }
 
     @Test
@@ -180,19 +184,19 @@ class OfferServiceImplTest {
                 () -> assertTrue(
 
                         () -> service.showOffersByOrder(order[0]).stream()
-                                .map((offer) -> offer.getOrder().getId()).toList().size() == 1,
+                                .map((offer) -> offer.getOrder().getId()).toList().size() == 3,
 
-                        () -> String.valueOf(service.showOffersByOrder(order[0]).size() == 1))
+                        () -> String.valueOf(service.showOffersByOrder(order[0]).size() == 3))
 
         );
     }
 
     @Test
     void chooseOffer() {
-        offer[0].getOrder().setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
-        service.chooseOffer(offer[0]);
+        offer[0][1].getOrder().setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
+        service.chooseOffer(offer[0][1]);
         assertAll(
-                () -> assertEquals(Objects.requireNonNull(service.findById(offer[0].getId())
+                () -> assertEquals(Objects.requireNonNull(service.findById(offer[0][1].getId())
                                         .orElse(null)).getOrder()
                                 .getOrderType(), OrderType.WAITING_FOR_COME_TO_YOUR_PLACE
                         /*|| OrderType.WAITING_FOR_THE_SUGGESTIONS*/)
@@ -201,10 +205,10 @@ class OfferServiceImplTest {
 
     @Test
     void startOfWork() {
-        offer[0].getOrder().setOrderType(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE);
-        service.startOfWork(offer[0]);
+        offer[1][2].getOrder().setOrderType(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE);
+        service.startOfWork(offer[1][2]);
         assertAll(
-                () -> assertEquals(Objects.requireNonNull(service.findById(offer[0].getId())
+                () -> assertEquals(Objects.requireNonNull(service.findById(offer[1][2].getId())
                                 .orElse(null)).getOrder()
                         .getOrderType(), OrderType.STARTED)
         );
@@ -212,10 +216,10 @@ class OfferServiceImplTest {
 
     @Test
     void endOfTheWork() {
-        offer[0].getOrder().setOrderType(OrderType.STARTED);
-        service.endOfTheWork(offer[0]);
+        offer[2][2].getOrder().setOrderType(OrderType.STARTED);
+        service.endOfTheWork(offer[2][2]);
         assertAll(
-                () -> assertEquals(Objects.requireNonNull(service.findById(offer[0].getId())
+                () -> assertEquals(Objects.requireNonNull(service.findById(offer[2][2].getId())
                                 .orElse(null)).getOrder()
                         .getOrderType(), OrderType.DONE)
         );
@@ -226,16 +230,27 @@ class OfferServiceImplTest {
 
         assertNotNull(service.findById(1L));
 
-        assertEquals(1, service.findByOrder(order[0]).size());
+        assertEquals(3, service.findByOrder(order[0]).size());
 //        assertEquals(4,service.findByOrder(order).size()) ;
     }
 
     @Test
     void findByOrderIdSortedPrice() {
         assertNotNull(service.findById(1L));
-        assertEquals( service.findByOrder(offer[1].getOrder()).stream()
-                        .map((Offer::getSuggestedPrice)).sorted(Comparator.reverseOrder()).toList()
-                , service.findByOrderIdSortedPrice(offer[1].getOrder().getId()).stream()
-                        .map(Offer::getSuggestedPrice).toList());
+        assertEquals(service.findByOrder(offer[3][2].getOrder()).stream()
+                        .map((Offer::getSuggestedPrice)).sorted(Comparator.reverseOrder()).toList().get(1)
+                , service.findByOrderIdSortedPrice(offer[3][2].getOrder().getId()).stream()
+                        .map(Offer::getSuggestedPrice).toList().get(1));
+    }
+
+    @Test
+    void findByOrderIdSortedPoint() {
+//        assertNotNull(service.findById(1L));
+        assertEquals(service.findByOrder(offer[3][0].getOrder()).stream()
+                        .map((Offer::getSuggestedPrice)).sorted(Comparator.reverseOrder()).toList().get(1)
+                , service.findByOrderIdSortedPrice(offer[3][0].getOrder().getId()).stream()
+                        .map(Offer::getSuggestedPrice).toList().get(1));
+
     }
 }
+

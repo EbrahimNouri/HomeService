@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExpertRepository extends JpaRepository<Expert, Long> {
+    @Modifying
     @Query("update Expert e set e.expertStatus = :expertStatus where e.id = :id")
     void deactivate(Long id, ExpertStatus expertStatus);
 

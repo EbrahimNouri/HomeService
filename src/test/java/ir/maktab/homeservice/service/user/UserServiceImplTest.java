@@ -2,15 +2,14 @@ package ir.maktab.homeservice.service.user;
 
 import ir.maktab.homeservice.entity.User;
 import ir.maktab.homeservice.repository.user.UserRepository;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 //@EnableConfigurationProperties
@@ -53,6 +52,7 @@ class UserServiceImplTest {
     void changePassword() {
         String newPass = "newPassw0rd";
         service.changePassword(user, newPass );
-        assertEquals(newPass, service.findById(user.getId()).orElse(null).getPassword());
+        assertEquals(newPass, Objects
+                .requireNonNull(service.findById(user.getId()).orElse(null)).getPassword());
     }
 }

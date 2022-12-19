@@ -19,8 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class BasicServicesServiceTest {
 
-    private static BasicService[] basicService = new BasicService[5];
-    private static TypeService[] typeServices = new TypeService[5];
+    private static final BasicService[] basicService = new BasicService[5];
+    private static final TypeService[] typeServices = new TypeService[5];
 
     @Autowired
     private BasicServicesService service;

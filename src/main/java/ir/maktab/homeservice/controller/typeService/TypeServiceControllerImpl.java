@@ -6,8 +6,6 @@ import ir.maktab.homeservice.dto.TypeServiceDto;
 import ir.maktab.homeservice.entity.BasicService;
 import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
-import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
-import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +19,8 @@ import java.util.List;
 @Log4j2
 @RequestMapping("/api/v1/typeService")
 public class TypeServiceControllerImpl implements TypeServiceController {
-    private final BasicServiceRepository basicServiceRepository;
-    private final TypeServiceRepository typeServiceRepository;
     private final BasicServicesService basicServicesService;
+    private final TypeServiceService typeServiceService;
     private final TypeServiceService service;
 
 
@@ -32,7 +29,7 @@ public class TypeServiceControllerImpl implements TypeServiceController {
 
         TypeService typeService = TypeService.builder()
                 .subService(typeServiceDto.getName())
-                .basicService(basicServiceRepository.findById(typeServiceDto.getBaseServiceId()).orElseThrow(
+                .basicService(basicServicesService.findById(typeServiceDto.getBaseServiceId()).orElseThrow(
                         () ->  new CustomExceptionNotFind("basic service not found")))
                 .basePrice(typeServiceDto.getPrice())
                 .build();
@@ -42,7 +39,7 @@ public class TypeServiceControllerImpl implements TypeServiceController {
 
     @GetMapping("/showAllTypeService/{id}")
     public List<TypeService> findByBasicServiceId(@PathVariable Long id) {
-        return typeServiceRepository.findByBasicServiceId(id);
+        return typeServiceService.showTypeServices(id);
     }
 
     @PostMapping("/addSubService")

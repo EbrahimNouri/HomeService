@@ -3,12 +3,10 @@ package ir.maktab.homeservice.controller.basicServices;
 
 import ir.maktab.homeservice.dto.BasicServiceDto;
 import ir.maktab.homeservice.entity.BasicService;
-import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,8 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("api/v1/basicService")
 public class BasicServicesControllerImpl implements BasicServicesController {
-    private final BasicServiceRepository basicServiceRepository;
-
     private final BasicServicesService basicServicesService;
 
     @Override
@@ -31,7 +27,7 @@ public class BasicServicesControllerImpl implements BasicServicesController {
     @Override
     @GetMapping("/all")
     public List<BasicServiceDto> showAllBasicServices() {
-        return basicServiceRepository.findAll().stream()
+        return basicServicesService.findAll().stream()
                 .map(bs -> new BasicServiceDto(bs.getId(), bs.getName())).toList();
 //        var xx = basicServicesService.showAllBasicService();
 //        List<BasicServiceDto> returned = new ArrayList<>();

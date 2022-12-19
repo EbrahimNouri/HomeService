@@ -63,10 +63,11 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void setOrderToDone(Order order) {
-        if (orderChecker(order))
+        if (orderChecker(order)) {
             // TODO: 12/16/2022 AD   {
             order.setOrderType(OrderType.DONE);
-        repository.save(order);
+            repository.save(order);
+        }
     }
 
 

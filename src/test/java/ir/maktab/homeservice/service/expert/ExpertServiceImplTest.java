@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +35,8 @@ class ExpertServiceImplTest {
     @BeforeEach
     void setToDatabase() {
         for (int i = 0; i < 5; i++) {
-            service.registerExpert(registerExpert[i], new File("/Users/ebrahimnouri/ss.jpg"));
+            service.registerExpert(registerExpert[i]
+                    , new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg"));
         }
     }
 
@@ -56,10 +58,13 @@ class ExpertServiceImplTest {
     void registerExpert() {
 
         assertAll(
-                () -> Assertions.assertEquals(registerExpert[0].getEmail(), Objects.requireNonNull(service.findById(registerExpert[0].getId())
+                () -> Assertions.assertEquals(registerExpert[0].getEmail(), Objects.requireNonNull
+                        (service.findById(registerExpert[0].getId(),
+                                        Path.of("/Users/ebrahimnouri/IdeaProjects/homeService/temp.jpg"))
                         .orElse(null)).getEmail()),
 
-                () -> assertTrue(new File("/Users/ebrahimnouri/ss.jpg").isFile())
+                // TODO: 12/19/2022 AD find it 
+                () -> assertTrue(new File("/Users/ebrahimnouri/IdeaProjects/homeService/temp.jpg").isFile())
         );
     }
 
@@ -80,6 +85,11 @@ class ExpertServiceImplTest {
     @Test
     void passwordPatternTest() {
         assertThrows(Exception.class, () -> service.changePassword(registerExpert[3], "123"));
+    }
+
+    @Test
+    void passwordUnchangedTest() {
+        assertThrows(Exception.class, () -> service.changePassword(registerExpert[3], registerExpert[3].getPassword()));
     }
 
     @Test

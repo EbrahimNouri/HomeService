@@ -3,6 +3,8 @@ package ir.maktab.homeservice.service.expert;
 
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
+import ir.maktab.homeservice.exception.CustomExceptionNotFind;
+import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.exception.CustomPatternInvalidException;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
@@ -13,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -92,8 +94,11 @@ public class ExpertServiceImpl implements ExpertService {
                 repository.save(expert);
 
                 log.debug("debug change password expert {} to {} ", expert, password);
-            } else
+            } else {
                 log.warn("old password and new password is same");
+
+                throw new CustomExceptionSave("password not changed");
+            }
         } catch (Exception e) {
             log.error("error change password expert {} to {}", expert, password, e);
 //            throw e;
@@ -107,9 +112,11 @@ public class ExpertServiceImpl implements ExpertService {
         try {
             expert = repository.findById(id);
 
-            fileWriter(Path.of("/home"), expert.orElseThrow().getAvatar());
+            fileWriter(path, expert.orElseThrow(
+                    () -> new CustomExceptionNotFind("expert not have image"))
+                    .getAvatar());
         } catch (Exception e) {
-            // TODO: 12/11/2022 AD
+          throw e;
         }
         return expert;
 
@@ -122,7 +129,7 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     private byte[] imageConverter(File file) {
-        if (file != null) {
+        if (file.exists()) {
             try {
                 FileInputStream fileInputStream = new FileInputStream(file);
                 byte[] imageByte = fileInputStream.readAllBytes();
@@ -135,13 +142,12 @@ public class ExpertServiceImpl implements ExpertService {
             return null;
     }
 
-    private Path fileWriter(Path path, byte[] bytes) throws IOException {
-        try {
-            return Files.write(path, bytes);
-        } catch (IOException io) {
-            // TODO: 12/13/2022 AD
+    private void fileWriter(Path path, byte[] bytes) {
+        try (FileOutputStream fos = new FileOutputStream(path.toFile())) {
+            fos.write(bytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
 }

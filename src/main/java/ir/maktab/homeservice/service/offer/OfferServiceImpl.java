@@ -99,6 +99,7 @@ public class OfferServiceImpl implements OfferService {
 
                 order.setOrderType(OrderType.STARTED);
                 orderRepository.save(order);
+                repository.save(offer);
 
                 log.debug("debug start of work {} ", order);
             } else
@@ -169,6 +170,28 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public List<Offer> findByOrderIdSortedPrice(Long orderId) {
+        List<Offer> offers = new ArrayList<>();
+        try {
+            offers = repository.findOfferSortedByPrice(orderId);
+        } catch (Exception e) {
+            // TODO: 12/12/2022 AD
+        }
+        return offers;
+    }
+
+    @Override
+    public List<Offer> findByOrderIdSortedByPoint(Long orderId){
+        List<Offer> offers = new ArrayList<>();
+        try {
+            offers = repository.findByOrderIdSortedByPoint(orderId);
+        } catch (Exception e) {
+            // TODO: 12/12/2022 AD
+        }
+        return offers;
+    }
+
+
+    public List<Offer> findByOrderIdSortedPoint(Long orderId){
         List<Offer> offers = new ArrayList<>();
         try {
             offers = repository.findOfferSortedByPrice(orderId);

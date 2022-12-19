@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    @Query("select od from Order od where od.orderType = \"WAITING_FOR_THE_SUGGESTIONS\" and od.orderType = \"WAITING_EXPERT_SELECTION\"")
+    @Query("select od from Order od where od.orderType = \"WAITING_FOR_THE_SUGGESTIONS\" OR od.orderType = \"WAITING_EXPERT_SELECTION\"")
     List<Order> findByOrderTypeBeforeStart();
 
 }

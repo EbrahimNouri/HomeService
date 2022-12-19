@@ -2,6 +2,7 @@ package ir.maktab.homeservice.service.user;
 
 
 import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -54,6 +55,8 @@ public class UserServiceImpl implements UserService {
 
                 log.debug("debug change password user {} to {} ", user, password);
             }else {
+                throw new CustomExceptionSave("password not changed");
+
                 // TODO: 12/11/2022 AD
             }
         } catch (Exception e) {
