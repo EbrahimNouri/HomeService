@@ -1,6 +1,7 @@
 package ir.maktab.homeservice.service.basicServices;
 
 import ir.maktab.homeservice.entity.BasicService;
+import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
 import jakarta.transaction.Transactional;
@@ -24,60 +25,49 @@ public class BasicServicesServiceImpl implements BasicServicesService {
     @Override
     public void addBasicService(BasicService basicService) {
 
-        try {
-            if (!repository.existsByName(basicService.getName())) {
+        if (!repository.existsByName(basicService.getName())) {
 
-                repository.save(basicService);
+            repository.save(basicService);
 
-            } else
-                log.error("error add basic service name is invalid");
-        } catch (Exception e) {
-            log.debug("error add basic service {} ", basicService, e);
+        } else {
+            log.error("error add basic service name is invalid");
             throw new CustomExceptionSave("this name is invalid");
         }
     }
 
     @Override
-    public List<BasicService> findAll(){
+    public List<BasicService> findAll() {
         return repository.findAll();
     }
 
 
     @Override
     public void removeBasicService(BasicService basicService) {
-        try {
 
-            if (repository.existsByName(basicService.getName())) {
+        if (findByName(basicService.getName())) {
 
-                repository.delete(basicService);
+            repository.delete(basicService);
 
-                log.debug("debug remove basic service {} ", basicService);
+            log.debug("debug remove basic service {} ", basicService);
 
-            } else
-                log.warn("warn add basic service  found name {} ", basicService);
-            // TODO: 12/15/2022 AD exception create
-
-        } catch (Exception e) {
-            log.error("error add basic service {} ", basicService);
-
-
+        } else {
+            log.warn("warn add basic service  found name {} ", basicService);
+            throw new CustomExceptionNotFind("basicService not found");
         }
     }
 
     @Override
     public List<BasicService> showAllBasicService() {
-        List<BasicService> all = null;
-//        try {
-            return repository.findAllC();
-//
-//        } catch (Exception e) {
-//            log.error("error show all basic service");
-//        }
-//        return all;
+        return repository.findAll();
     }
 
     @Override
     public Optional<BasicService> findById(Long id) {
         return repository.findBasicServiceById(id);
+    }
+
+    @Override
+    public boolean findByName(String name){
+        return repository.existsByName(name);
     }
 }

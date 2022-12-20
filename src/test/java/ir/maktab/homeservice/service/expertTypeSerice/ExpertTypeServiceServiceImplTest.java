@@ -5,13 +5,14 @@ import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
 import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.entity.id.ExpertTypeServiceId;
+import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
+import ir.maktab.homeservice.repository.expert.ExpertRepository;
+import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
+import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -41,6 +42,15 @@ class ExpertTypeServiceServiceImplTest {
     @Autowired
     BasicServicesService basicServicesService;
 
+    @Autowired
+    ExpertRepository expertRepository;
+    @Autowired
+    BasicServiceRepository basicServiceRepository;
+    @Autowired
+    TypeServiceRepository typeServiceRepository;
+    @Autowired
+    private ExpertTypeServiceRepository expertTypeServiceRepository;
+
 
     @BeforeAll
     static void initialize() {
@@ -54,24 +64,29 @@ class ExpertTypeServiceServiceImplTest {
 
     @BeforeEach
     void setToDb() {
+        expert.setId(null);
+        basicService.setId(null);
+        typeService.setId(null);
         expertService.registerExpert(expert, avatar);
         basicServicesService.addBasicService(basicService);
         typeServiceService.addSubService(typeService);
     }
 
 
-//    @AfterEach
-//    void purgeDatabase() {
-//        expertRepository.delete(expert);
-//        basicServiceRepository.delete(basicService);
-//        typeServiceRepository.delete(typeService);
-//    }
+    @AfterEach
+    void purgeDatabase() {
+        expertTypeServiceRepository.delete(expertTypeService);
+        expertRepository.delete(expert);
+        typeServiceRepository.delete(typeService);
+        basicServiceRepository.delete(basicService);
+    }
 
     @AfterAll
     static void purgeObj() {
         expert = null;
         basicService = null;
         typeService = null;
+        expertTypeService = null;
     }
 
 

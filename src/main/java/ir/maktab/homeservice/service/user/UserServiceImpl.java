@@ -22,58 +22,41 @@ public class UserServiceImpl implements UserService {
     private UserRepository repository;
 
     @Override
-    public void mainRegisterUser(User user){
+    public void mainRegisterUser(User user) {
         repository.save(user);
     }
 
     @Override
     public void registerUser(User user) {
-        try {
-            if (user.getEmail() != null && user.getPassword() != null) {
+        if (user.getEmail() != null && user.getPassword() != null) {
 
-                repository.save(user);
+            repository.save(user);
 
-                log.debug("debug user service iml {} ", user);
-            } else
-                log.warn("warn register user  username or password is is null {} ", user);
+            log.debug("debug user service iml {} ", user);
+        } else {
+            log.warn("warn register user  username or password is is null {} ", user);
 
-        } catch (Exception e) {
-
-            log.error("error register user {} ", user, e);
+            throw new CustomExceptionSave("user not saved");
         }
-
     }
 
     @Override
     public void changePassword(User user, String password) {
-        try {
-            if (!user.getPassword().equals(password)
-                    && user.getPassword().equals(Objects.requireNonNull(findById(user.getId())
-                    .orElse(null)).getPassword())) {
-                user.setPassword(password);
-                repository.save(user);
+        if (!user.getPassword().equals(password)
+                && user.getPassword().equals(Objects.requireNonNull(findById(user.getId())
+                .orElse(null)).getPassword())) {
+            user.setPassword(password);
+            repository.save(user);
 
-                log.debug("debug change password user {} to {} ", user, password);
-            }else {
-                throw new CustomExceptionSave("password not changed");
-
-                // TODO: 12/11/2022 AD
-            }
-        } catch (Exception e) {
-
-            log.error("error change password user {} to {}", user, password, e);
-
+            log.debug("debug change password user {} to {} ", user, password);
+        } else {
+            throw new CustomExceptionSave("password not changed");
         }
     }
 
     @Override
-    public Optional<User> findById(Long id){
-        Optional<User> user = Optional.empty();
-        try {
-            user = repository.findUserById(id);
-        }catch (Exception e){
-            // TODO: 12/11/2022 AD
-        }
-        return user;
+    public Optional<User> findById(Long id) {
+        return repository.findUserById(id);
     }
+
 }

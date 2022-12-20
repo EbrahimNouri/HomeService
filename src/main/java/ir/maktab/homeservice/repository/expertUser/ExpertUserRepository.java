@@ -1,8 +1,6 @@
 package ir.maktab.homeservice.repository.expertUser;
 
-import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertUser;
-import ir.maktab.homeservice.entity.User;
 import ir.maktab.homeservice.entity.id.ExpertUserId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,7 +17,11 @@ public interface ExpertUserRepository extends JpaRepository<ExpertUser, ExpertUs
     @Query("select count(eu.point) from ExpertUser eu where eu.expert.id = :ExpertId")
     Double countOfAllPointByExpertId(Long ExpertId);
 
-    Optional<ExpertUser> findByExpertAndUser(Expert expert, User user);
+    Optional<ExpertUser> findByExpertIdAndUserIdAndOrderId(Long expert, Long user, Long order);
 
-    Optional<ExpertUser> findExpertUserByOrderId(Long orderId);
+    @Query(value = "select * from comment_point where order_id = :orderId", nativeQuery = true)
+    Optional<ExpertUser> findByOrderIdNative(Long orderId);
+
+    @Query("select e from ExpertUser e where e.order.id = :orderId")
+    Optional<ExpertUser> findByOrderIdQ(Long orderId);
 }

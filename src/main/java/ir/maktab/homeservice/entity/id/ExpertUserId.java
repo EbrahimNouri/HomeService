@@ -4,27 +4,27 @@ package ir.maktab.homeservice.entity.id;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.User;
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 
 @EqualsAndHashCode
-@Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExpertUserId implements Serializable {
-    @ManyToOne
-    @JoinColumn(name = "expert_id")
+//    @ManyToOne
+//    @JoinColumn(name = "expert_id")
     private Expert expert;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+//
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "order_id")
+//    @OneToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "order_id")
     private Order order;
 
 }

@@ -31,43 +31,36 @@ public class ExpertUserServiceImpl implements ExpertUserService {
     @Transactional
     @Override
     public void addCommentAndPoint(ExpertUser expertUser) {
-        try {
-            Expert expert = expertUser.getExpert();
-            if (expertUser.getOrder().getOrderType().equals(OrderType.PAID)
-                    && expertUser.getPoint() <= 5.0 && expertUser.getPoint() >= 0.0) {
+        Expert expert = expertUser.getExpert();
+        if (expertUser.getOrder().getOrderType().equals(OrderType.PAID)
+                && expertUser.getPoint() <= 5.0 && expertUser.getPoint() >= 0.0) {
 
-                Double average = repository.getAveragePoint(expert.getId());
-                expertService.SetAveragePoint(average, expert.getId());
+            Double average = repository.getAveragePoint(expert.getId());
+            expertService.SetAveragePoint(average, expert.getId());
 
-                repository.save(expertUser);
-            }
-        } catch (Exception e) {
-            log.error("error add comment point {} ", expertUser, e);
+            repository.save(expertUser);
+        } else {
+            log.warn("error add comment point {} ", expertUser);
             throw new CustomExceptionSave("expert user not worked");
         }
-
     }
 
     @Override
-    public Optional<ExpertUser> findById(ExpertUser expertUser) {
-        Optional<ExpertUser> expertUser1 = Optional.empty();
-        try {
-            expertUser1 = repository.findByExpertAndUser(expertUser.getExpert(), expertUser.getUser());
-        } catch (Exception e) {
-            /* TODO: 12/11/2022 AD */
-        }
-        return expertUser1;
+    public Optional<ExpertUser> findByExpertUserOrder(ExpertUser expertUser) {
+
+        return repository.findByExpertIdAndUserIdAndOrderId(
+                expertUser.getExpert().getId()
+                , expertUser.getUser().getId()
+                , expertUser.getOrder().getId()
+        );
+
     }
 
     @Override
     public Optional<ExpertUser> findByOrderId(Long orderId) {
-        Optional<ExpertUser> expertUser1 = Optional.empty();
-        try {
-            expertUser1 = repository.findExpertUserByOrderId(orderId);
-        } catch (Exception e) {
-            /* TODO: 12/11/2022 AD */
-        }
-        return expertUser1;
+
+        return repository.findByOrderIdNative(orderId);
+
     }
 
     @Override
@@ -87,4 +80,5 @@ public class ExpertUserServiceImpl implements ExpertUserService {
         } else
             expertRepository.save(expert);
     }
+
 }

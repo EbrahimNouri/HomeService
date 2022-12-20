@@ -3,11 +3,10 @@ package ir.maktab.homeservice.service.expert;
 
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
-import ir.maktab.homeservice.exception.CustomExceptionNotFind;
-import ir.maktab.homeservice.exception.CustomExceptionSave;
+import ir.maktab.homeservice.exception.CustomExceptionUpdate;
 import ir.maktab.homeservice.exception.CustomPatternInvalidException;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
-import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
+import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,7 @@ import java.util.Optional;
 @Log4j2
 @AllArgsConstructor
 public class ExpertServiceImpl implements ExpertService {
-    private final ExpertTypeServiceRepository expertTypeServiceRepository;
+    private final ExpertTypeServiceService expertTypeServiceService;
     private ExpertRepository repository;
 
     @Override
@@ -39,18 +38,19 @@ public class ExpertServiceImpl implements ExpertService {
     @Transactional
     @Override
     public void registerExpert(Expert expert, File file) {
-        try {
-            if (expert.getId() == null) {
+        if (expert.getId() == null) {
+            if (file != null) {
+
                 byte[] avatar = imageConverter(file);
                 expert.setAvatar(avatar);
-                expert.setExpertTypeServices(null);
-                expert.setExpertStatus(ExpertStatus.NEW);
-                repository.save(expert);
-                log.debug("debug register expert {} ", expert);
-            } else
-                log.warn("warn register avatar larger than 300kb or not .jpg");
-        } catch (Exception e) {
-            log.error("error register expert {} ", expert, e);
+
+            }
+            expert.setExpertTypeServices(null);
+            expert.setExpertStatus(ExpertStatus.NEW);
+            repository.save(expert);
+            log.debug("debug register expert {} ", expert);
+        } else {
+            log.warn("warn register avatar larger than 300kb or not .jpg");
             throw new CustomPatternInvalidException("this email is invalid");
         }
     }
@@ -58,66 +58,48 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public void acceptExpert(Expert expert) {
 
-        try {
-            if (expert.getId() != null) {
-                expert.setExpertStatus(ExpertStatus.CONFIRMED);
-                repository.save(expert);
-                log.debug("debug accept expert {} ", expert);
-            } else
-                log.error("warn expert is null {} ", expert);
-        } catch (Exception e) {
-            log.error("error accept expert {} ", expert, e);
+        if (expert.getId() != null) {
+            expert.setExpertStatus(ExpertStatus.CONFIRMED);
+            repository.save(expert);
+            log.debug("debug accept expert {} ", expert);
+        } else {
+            log.error("warn expert is null {} ", expert);
+            throw new CustomExceptionUpdate("expert not accepted");
         }
     }
 
     @Override
     public Optional<Expert> findById(Long id) {
-        Optional<Expert> expert = Optional.empty();
-        try {
-            expert = repository.findById(id);
-        } catch (Exception e) {
-
-            throw e;
-            // TODO: 12/11/2022 AD  
-        }
-        return expert;
+        return repository.findById(id);
     }
 
     @Override
     public void changePassword(Expert expert, String password) {
-        try {
-            if (!expert.getPassword().equals(password)
-                    && expert.getId() != null
-                    && expert.equals(findById(expert.getId()).orElse(null))) {
 
-                expert.setPassword(password);
-                repository.save(expert);
+        if (!expert.getPassword().equals(password)
+                && expert.getId() != null
+                && expert.equals(findById(expert.getId()).orElse(null))) {
 
-                log.debug("debug change password expert {} to {} ", expert, password);
-            } else {
-                log.warn("old password and new password is same");
+            expert.setPassword(password);
+            repository.save(expert);
 
-                throw new CustomExceptionSave("password not changed");
-            }
-        } catch (Exception e) {
-            log.error("error change password expert {} to {}", expert, password, e);
-//            throw e;
-            throw new CustomPatternInvalidException("invalid pattern");
+            log.debug("debug change password expert {} to {} ", expert, password);
+        } else {
+            log.warn("old password and new password is same");
+
+            throw new CustomPatternInvalidException("password not changed");
         }
+
     }
 
     @Override
     public Optional<Expert> findById(Long id, Path path) {
-        Optional<Expert> expert = null;
-        try {
-            expert = repository.findById(id);
+        Optional<Expert> expert;
 
-            fileWriter(path, expert.orElseThrow(
-                    () -> new CustomExceptionNotFind("expert not have image"))
-                    .getAvatar());
-        } catch (Exception e) {
-          throw e;
-        }
+        expert = repository.findById(id);
+
+        expert.ifPresent(value -> fileWriter(path, value.getAvatar()));
+
         return expert;
 
     }
@@ -149,5 +131,4 @@ public class ExpertServiceImpl implements ExpertService {
             throw new RuntimeException(e);
         }
     }
-
 }

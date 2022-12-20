@@ -2,6 +2,7 @@ package ir.maktab.homeservice.service.admin;
 
 
 import ir.maktab.homeservice.entity.Admin;
+import ir.maktab.homeservice.exception.CustomExceptionUpdate;
 import ir.maktab.homeservice.repository.admin.AdminRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -17,50 +18,36 @@ public class AdminServiceImpl implements AdminService {
 
     private AdminRepository adminRepository;
 
-@Transactional
+    @Transactional
     @Override
     public void addAdmin(Admin admin) {
-        try {
 
+        adminRepository.save(admin);
+
+        log.debug("admin created {} ", admin);
+
+    }
+
+    @Transactional
+    @Override
+    public void changePassword(Admin admin, String password) {
+        if (!admin.getPassword().equals(password)
+                && admin.getId() != null) {
+
+            admin.setPassword(password);
             adminRepository.save(admin);
 
             log.debug("admin created {} ", admin);
-
-        } catch (Exception e) {
-            log.error("error admin create {} ", admin, e);
-        }
-    }
-@Transactional
-    @Override
-    public void changePassword(Admin admin, String password) {
-        try {
-
-
-            if (!admin.getPassword().equals(password)
-                    && admin.getId() != null) {
-
-                admin.setPassword(password);
-                adminRepository.save(admin);
-
-                log.debug("admin created {} ", admin);
-            }else {
-                log.warn("warn new password same old password");
-            }
-        }catch (Exception e){
-            log.error("error admin change password {} ", admin, e);
+        } else {
+            log.warn("warn new password same old password");
+            throw new CustomExceptionUpdate("admin password not changed");
         }
     }
 
     @Override
-    public Optional<Admin> findById(Long adminId){
-        Optional<Admin> admin = Optional.empty();
-        try {
-            admin = adminRepository.findById(adminId);
+    public Optional<Admin> findById(Long adminId) {
 
-            log.debug("debug found admin by id {} ", adminId);
-        }catch (Exception e){
-            log.debug("debug found admin by id {} ", adminId);
-        }
-        return admin;
+        return adminRepository.findById(adminId);
+
     }
 }

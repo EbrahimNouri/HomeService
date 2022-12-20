@@ -7,6 +7,8 @@ import ir.maktab.homeservice.entity.Transaction;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.entity.enums.PaymentType;
 import ir.maktab.homeservice.entity.enums.TransactionType;
+import ir.maktab.homeservice.exception.CustomExceptionSave;
+import ir.maktab.homeservice.exception.CustomExceptionUpdate;
 import ir.maktab.homeservice.exception.CustomNotChoosingException;
 import ir.maktab.homeservice.repository.offer.OfferRepository;
 import ir.maktab.homeservice.repository.order.OrderRepository;
@@ -40,7 +42,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void orderRegistration(Order order) {
-        try {
             if (order.getSuggestedPrice() != null
                     && order.getDescription() != null
                     && order.getStartOfWork() != null
@@ -53,11 +54,10 @@ public class OrderServiceImpl implements OrderService {
             } else {
 
                 log.error("debug order registration the fields are not filled {} ", order);
-            }
-        } catch (Exception e) {
 
-            log.error("debug order registration {} ", order);
-        }
+                throw new CustomExceptionSave("order not valid");
+            }
+
     }
 
     @Transactional
@@ -67,6 +67,8 @@ public class OrderServiceImpl implements OrderService {
             // TODO: 12/16/2022 AD   {
             order.setOrderType(OrderType.DONE);
             repository.save(order);
+        }else {
+            throw new CustomExceptionUpdate("order not valid");
         }
     }
 

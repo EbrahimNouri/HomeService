@@ -21,20 +21,15 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
 
     @Override
     public void removeExpertFromBasicService(Expert expert) {
-        try {
 
             repository.removeByExpert(expert);
 
             log.debug("debug remove expert from basic service {} ", expert);
-        } catch (Exception e) {
 
-            log.error("error remove expert from basic service {} ", expert);
-        }
     }
 
     @Override
     public void addExpertToTypeService(ExpertTypeService expertTypeService) {
-        try {
 
             if (!repository.existsById(new ExpertTypeServiceId(expertTypeService.getExpert(), expertTypeService.getTypeService()))) {
                 repository.save(expertTypeService);
@@ -45,18 +40,12 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
                 log.error("error add expert to basic service expert type service is null or {} "
                         , expertTypeService.getTypeService());
             }
-        } catch (Exception e) {
-            log.error("error add expert to basic service {} ", expertTypeService, e);
-
-            throw e;
-        }
 
     }
 
     @Override
     public void removeExpertFromTypeService(ExpertTypeService expertTypeService) {
 
-        try {
             Optional<ExpertTypeService> temp = repository
                     .findByExpertIdAndTypeServiceId(expertTypeService.getExpert().getId()
                             , expertTypeService.getTypeService().getId());
@@ -64,21 +53,10 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
             temp.ifPresent(typeService -> repository.delete(expertTypeService));
 
             log.debug("debug remove expert type service {} ", expertTypeService);
-
-        } catch (Exception e) {
-
-            log.error("error remove expert type service {} ", expertTypeService, e);
-        }
     }
 
     @Override
     public Optional<ExpertTypeService> findById(ExpertTypeServiceId expertTypeServiceId) {
-        Optional<ExpertTypeService> expertTypeService = Optional.empty();
-        try {
-            expertTypeService = repository.findById(expertTypeServiceId);
-        } catch (Exception e) {
-            // TODO: 12/11/2022 AD
-        }
-        return expertTypeService;
+            return repository.findById(expertTypeServiceId);
     }
 }

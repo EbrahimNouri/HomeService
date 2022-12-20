@@ -26,7 +26,7 @@ public class ExpertUser implements Serializable {
     private User user;
 
     @OneToOne(/*fetch = FetchType.EAGER*/)
-    @JoinColumn(name = "order_id")
+//    @JoinColumn(name = "order_id")
     @Id
     private Order order;
 

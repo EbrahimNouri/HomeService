@@ -5,6 +5,7 @@ import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Transaction;
 import ir.maktab.homeservice.entity.User;
 import ir.maktab.homeservice.entity.enums.TransactionType;
+import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.repository.transaction.TransactionRepository;
 import ir.maktab.homeservice.repository.user.UserRepository;
@@ -31,9 +32,8 @@ public class TransactionServiceImpl implements TransactionService {
         Expert expert = transaction1.getExpert();
         double amount = transaction1.getTransfer();
         if (transaction1.getTransfer() <= transaction1.getUser().getCredit()
-        && user.getId() != null && expert.getId() != null) {
+                && user.getId() != null && expert.getId() != null) {
 
-            try {
                 user.setCredit(user.getCredit() - amount);
                 expert.setCredit(expert.getCredit() + amount);
                 userRepository.save(user);
@@ -44,34 +44,26 @@ public class TransactionServiceImpl implements TransactionService {
                 repository.save(transaction1);
 
                 log.debug("error add transaction {} ", transaction1);
-            } catch (Exception e) {
 
-                log.error("error add transaction {} ", transaction1, e);
-
-            }
         } else {
-
             log.warn("warn Transfers are more than inventory {} ", transaction1);
 
+            throw new CustomExceptionSave("amount greater than wallet");
         }
     }
 
     @Transactional
     @Override
     public void chargeAccountBalance(User user, Double amount) {
-        try {
 
-            user.setCredit(user.getCredit() + amount);
-            userRepository.save(user);
-            Transaction transaction =
-                    new Transaction(null, user, null, amount, TransactionType.DEPOSIT);
-            repository.save(transaction);
+        user.setCredit(user.getCredit() + amount);
+        userRepository.save(user);
+        Transaction transaction =
+                new Transaction(null, user, null, amount, TransactionType.DEPOSIT);
+        repository.save(transaction);
 
-            log.debug("debug add transaction to wallet user {} {} ", user, amount);
-        } catch (Exception e) {
+        log.debug("debug add transaction to wallet user {} {} ", user, amount);
 
-            log.error("error add transaction to wallet user {} {} ", user, amount, e);
-        }
     }
 
 

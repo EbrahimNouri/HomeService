@@ -1,8 +1,6 @@
 package ir.maktab.homeservice.service.basicServices;
 
 import ir.maktab.homeservice.entity.BasicService;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,4 +19,6 @@ public interface BasicServicesService {
 
 
     Optional<BasicService> findById(Long id);
+
+    boolean findByName(String name);
 }

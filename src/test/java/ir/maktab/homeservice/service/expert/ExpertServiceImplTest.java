@@ -2,8 +2,8 @@ package ir.maktab.homeservice.service.expert;
 
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
-import ir.maktab.homeservice.exception.CustomPatternInvalidException;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,13 +21,17 @@ class ExpertServiceImplTest {
     private static Expert[] registerExpert = new Expert[5];
     @Autowired
     private ExpertService service;
+    @Autowired
     private ExpertRepository repository;
 
 
     @BeforeAll
     static void initialize() {
         for (int i = 0; i < 5; i++) {
-            registerExpert[i] = Expert.builder().firstname("testName").lastname("testLastname").email("tesst" + i + "@email.com")
+            registerExpert[i] = Expert.builder()
+                    .firstname("testName")
+                    .lastname("testLastname")
+                    .email("tesst" + i + "@email.com")
                     .password("1234QWer").build();
         }
     }
@@ -35,19 +39,20 @@ class ExpertServiceImplTest {
     @BeforeEach
     void setToDatabase() {
         for (int i = 0; i < 5; i++) {
+            registerExpert[i].setId(null);
             service.registerExpert(registerExpert[i]
                     , new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg"));
         }
     }
 
-/*
+
     @AfterEach
     void removeFromDatabase() {
         for (int i = 0; i < 5; i++) {
-            repository.delete(expert[i]);
+            repository.delete(registerExpert[i]);
         }
     }
-
+/*
     @AfterAll
     static void purgeObj(){
         expert = null;
@@ -85,6 +90,7 @@ class ExpertServiceImplTest {
     @Test
     void passwordPatternTest() {
         assertThrows(Exception.class, () -> service.changePassword(registerExpert[3], "123"));
+        registerExpert[3].setPassword("1234QWer");
     }
 
     @Test
@@ -95,17 +101,17 @@ class ExpertServiceImplTest {
     @Test
     void emailPatternTest() {
         Expert expert1 = Expert.builder().firstname("testName")
-                .lastname("testLastname").email("testemailcom")
+                .lastname("testLastname").email("tesst1emailcom")
                 .password("1234QWer").build();
 
-        assertThrows(CustomPatternInvalidException.class
+        assertThrows(ConstraintViolationException.class
                 , () -> service.registerExpert(expert1, null));
     }
 
     @Test
     void emailUniqueTest() {
-        assertThrows(Exception.class
+        assertThrows(ConstraintViolationException.class
                 , () -> service.registerExpert
-                        (Expert.builder().email("test@email.com").password("qwe123ASD").build(),new File("/Users/ebrahimnouri/ss.jpg")));
+                        (Expert.builder().email("tesst1@email.com").password("qwe123ASD").build(),new File("/Users/ebrahimnouri/ss.jpg")));
     }
 }

@@ -1,17 +1,12 @@
 package ir.maktab.homeservice.service.basicServices;
 
 import ir.maktab.homeservice.entity.BasicService;
-import ir.maktab.homeservice.entity.TypeService;
+import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
-import ir.maktab.homeservice.repository.offer.OfferRepository;
-import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
-import ir.maktab.homeservice.service.typeService.TypeServiceService;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,91 +14,88 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class BasicServicesServiceTest {
 
-    private static final BasicService[] basicService = new BasicService[5];
-    private static final TypeService[] typeServices = new TypeService[5];
+    private static BasicService[] basicService = new BasicService[5];
 
     @Autowired
     private BasicServicesService service;
-    @Autowired
-    private OfferRepository offerRepository;
     @Autowired
     private BasicServiceRepository basicServiceRepository;
 
     @Autowired
     private BasicServiceRepository repository;
 
-    @Autowired
-    private TypeServiceService typeServiceService;
-    @Autowired
-    private TypeServiceRepository typeServiceRepository;
 
+//    @BeforeAll
+//    static void initialise() {
+//        for (int i = 0; i < 5; i++) {
+//            basicService[i] = new BasicService("basicNameTest" + i+"23", null);
+//        }
+//
+//    }
 
-    @BeforeAll
-    static void initialise() {
-        for (int i = 0; i < 5; i++) {
-            basicService[i] = new BasicService("basicNameTest" + i+1, null);
-//            typeServices[i] = new TypeService("typeNameTest"+i+1, 150.0,null, null, basicService[i]);
-        }
-    }
-
-    @BeforeEach
-    void setToDataBase() {
-        for (int i = 0; i < 5; i++) {
-            service.addBasicService(basicService[i]);
-//            typeServiceRepository.save(typeServices[i]);
-        }
-    }
+//    @BeforeEach
+//    void setToDataBase() {
+//        for (int i = 0; i < 5; i++) {
+//            service.addBasicService(basicService[i]);
+//        }
+//    }
 
 //    @AfterEach
 //    void purgeDb() {
 //        for (int i = 0; i < 5; i++) {
-//            basicServiceRepository.delete(basicService[i]);
+//            repository.delete(basicService[i]);
 //        }
-//    }
 //
+//    }
+
 //    @AfterAll
 //    static void purgeOb() {
 //        for (int i = 0; i < 5; i++) {
 //            basicService[i] = null;
 //        }
-//    }
-
-//    @AfterEach
-//    void removeFromDatabase() {
-//        for (int i = 0; i < 5; i++) {
-//            repository.delete(basicService[i]);
-//            typeServiceRepository.delete(typeServices[i]);
-//        }
+//
 //    }
 
 
     @Test
+    @Order(1)
     void addBasicService() {
-        BasicService basicServiceAdd = new BasicService("basicNameTestAdd", null);
-
-        service.addBasicService(basicServiceAdd);
-        assertNotNull(Objects.requireNonNull(repository.findById(basicServiceAdd.getId()).orElse(null)).getId());
+        basicService[0] = new BasicService("basicNameTestxc23", null);
+        service.addBasicService(basicService[0]);
+        assertNotNull(basicService[0].getId());
     }
 
     @Test
+    @Order(4)
     void removeBasicService() {
-        service.removeBasicService(basicService[4]);
-        assertNull(repository.findBasicServiceById(basicService[4].getId()).orElse(null));
+        basicService[1] = new BasicService("basicNameTeskltxc23", null);
+        service.addBasicService(basicService[1]);
+        assertTrue(service.findByName(basicService[1].getName()));
+        repository.delete(basicService[1]);
+        assertFalse(service.findByName(basicService[1].getName()));
     }
 
     @Test
+    @Order(3)
     void showAllBasicService() {
-
-        List<BasicService> showAllBasicService = service.showAllBasicService();
-        assertTrue(service.showAllBasicService().size() >= 5);
+        for (int i = 0; i < 5; i++) {
+            service.addBasicService(new BasicService("qwert"+i, null));
+        }
+        assertEquals(5, service.showAllBasicService().size());
         service.showAllBasicService().forEach(System.out::println);
     }
 
     @Test
+    @Order(2)
     void uniqueNameTest() {
-        var save = BasicService.builder().name(basicService[1].getName()).build();
-        service.addBasicService(save);
+        basicService[2] = new BasicService("basicName78Teskltxc23", null);
+        service.addBasicService(basicService[2]);
+        assertTrue(service.findByName(basicService[2].getName()));
 
-        assertNull(save.getId());
+        BasicService tempBase = new BasicService("basicName78Teskltxc23", null);
+        assertThrows(CustomExceptionSave.class
+                , ()->service.addBasicService(tempBase)
+                , "this name is invalid") ;
+        assertNull(tempBase.getId());
     }
 }

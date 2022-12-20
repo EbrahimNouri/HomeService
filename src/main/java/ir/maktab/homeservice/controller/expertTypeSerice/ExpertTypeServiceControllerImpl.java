@@ -49,10 +49,10 @@ class ExpertTypeServiceControllerImpl implements ExpertTypeServiceController {
     @Override
     @GetMapping("/findById/")
     public ResponseEntity<ExpertTypeService> findById(@RequestBody ExpertTypeServiceDto expertTypeServiceDto) {
-        Expert expert = findExpertTypeServiceByDto(expertTypeServiceDto).getExpert();
-        TypeService typeService = findExpertTypeServiceByDto(expertTypeServiceDto).getTypeService();
 
-        return service.findById(new ExpertTypeServiceId(expert, typeService)).map(ResponseEntity::ok)
+        ExpertTypeService expertTypeService = findExpertTypeServiceByDto(expertTypeServiceDto);
+        return service.findById(new ExpertTypeServiceId(expertTypeService.getExpert()
+                        , expertTypeService.getTypeService())).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 

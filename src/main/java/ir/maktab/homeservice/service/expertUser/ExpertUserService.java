@@ -9,7 +9,7 @@ public interface ExpertUserService {
 
     void addCommentAndPoint(ExpertUser expertUser);
 
-    Optional<ExpertUser> findById(ExpertUser expertUser);
+    Optional<ExpertUser> findByExpertUserOrder(ExpertUser expertUser);
 
     Optional<ExpertUser> findByOrderId(Long orderId);
 
