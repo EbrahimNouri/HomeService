@@ -23,7 +23,6 @@ import java.util.Optional;
 public class ExpertControllerImpl implements ExpertController {
     private ExpertService expertService;
 
-
     @PostMapping("/regExpert")
     @Override
     public void registerExpert(@RequestBody @Valid PersonRegisterDto personRegisterDto) {
@@ -71,5 +70,4 @@ public class ExpertControllerImpl implements ExpertController {
                 .orElseThrow(()-> new CustomExceptionNotFind("expert not found"));
         expertService.changePassword(expert, personChangePasswordDto.getPassword());
     }
-
 }

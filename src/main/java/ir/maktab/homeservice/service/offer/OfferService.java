@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface OfferService {
 
+    List<Offer> findOfferByOrder_Id(Long orderId);
+
     void offerRegistrationOrUpdate(Offer offer);
 
     List<Offer> showOffersByOrder(Order order);

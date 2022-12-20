@@ -4,6 +4,7 @@ import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
+import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
 import ir.maktab.homeservice.repository.offer.OfferRepository;
 import ir.maktab.homeservice.repository.order.OrderRepository;
@@ -16,6 +17,7 @@ import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.order.OrderService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +50,8 @@ class OfferServiceImplTest {
 
     @Autowired
     ExpertUserService expertUserService;
+    @Autowired
+    ExpertRepository expertRepository;
 
     @Autowired
     ExpertService expertService;
@@ -117,7 +121,7 @@ class OfferServiceImplTest {
     }
 
     @BeforeEach
-    void setToDb() {
+    public void setToDb() {
 
         for (int i = 0; i < 4; i++) {
             expertService.registerExpert(expert[i], avatar[i]);
@@ -131,7 +135,6 @@ class OfferServiceImplTest {
             order[i].setOrderType(OrderType.WAITING_EXPERT_SELECTION);
             for (int j = 0; j < 3; j++) {
                 service.offerRegistrationOrUpdate(offer[i][j]);
-
             }
         }
     }
@@ -140,26 +143,33 @@ class OfferServiceImplTest {
 //
 //        for (int i = 0; i < 4; i++) {
 //            expertRepository.delete(expert[i]);
+//            expert[i].setId(null);
 //            userRepository.delete(user[i]);
+//            user[i].setId(null);
 //            basicServiceRepository.delete(basicService[i]);
+//            basicService[i].setId(null);
 //            typeServiceRepository.delete(typeService[i]);
+//            typeService[i].setId(null);
 //            orderRepository.delete(order[i]);
+//            order[i].setId(null);
 //            expertTypeServiceRepository.delete(expertTypeService[i]);
+//            for (int j = 0; j < 3; j++) {
+//                offerRepository.delete(offer[i][j]);
+//                offer[i][j].setId(null);
+//            }
 //        }
-//        for (int i = 0; i < 12; i++) {
-//            offerRepository.delete(offer[i]);
-//        }
-//    }
 //
-//    @AfterAll
-//    static void purgeObj(){
-//        user = null;
-//        expert = null;
-//        basicService = null;
-//        typeService = null;
-//        order = null;
-//        offer = null;
 //    }
+
+    @AfterAll
+    static void purgeObj(){
+        user = null;
+        expert = null;
+        basicService = null;
+        typeService = null;
+        order = null;
+        offer = null;
+    }
 
 
     @Test
@@ -237,7 +247,7 @@ class OfferServiceImplTest {
     @Test
     void findByOrderIdSortedPrice() {
         assertNotNull(service.findById(1L));
-        assertEquals(service.findByOrder(offer[3][2].getOrder()).stream()
+        assertEquals(service.findByOrder(offer[0][0].getOrder()).stream()
                         .map((Offer::getSuggestedPrice)).sorted(Comparator.reverseOrder()).toList().get(1)
                 , service.findByOrderIdSortedPrice(offer[3][2].getOrder().getId()).stream()
                         .map(Offer::getSuggestedPrice).toList().get(1));

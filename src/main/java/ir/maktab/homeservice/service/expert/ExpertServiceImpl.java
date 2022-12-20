@@ -7,6 +7,7 @@ import ir.maktab.homeservice.exception.CustomExceptionUpdate;
 import ir.maktab.homeservice.exception.CustomPatternInvalidException;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class ExpertServiceImpl implements ExpertService {
     private ExpertRepository repository;
 
     @Override
-    public void mainRegisterExpert(Expert expert) {
+    public void mainRegisterExpert(@Valid Expert expert) {
 
         expert.setExpertStatus(ExpertStatus.NEW);
         repository.save(expert);
@@ -37,7 +38,7 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Transactional
     @Override
-    public void registerExpert(Expert expert, File file) {
+    public void registerExpert(@Valid Expert expert, File file) {
         if (expert.getId() == null) {
             if (file != null) {
 
@@ -74,7 +75,7 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     @Override
-    public void changePassword(Expert expert, String password) {
+    public void changePassword(@Valid Expert expert, String password) {
 
         if (!expert.getPassword().equals(password)
                 && expert.getId() != null
@@ -130,5 +131,15 @@ public class ExpertServiceImpl implements ExpertService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void deactivate(Expert expert){
+        repository.deactivate(expert.getId(), ExpertStatus.DEACTIVATE);
+    }
+
+    @Override
+    public void save(Expert expert){
+        repository.save(expert);
     }
 }

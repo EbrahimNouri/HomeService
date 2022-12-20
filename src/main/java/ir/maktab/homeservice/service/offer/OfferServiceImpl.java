@@ -5,9 +5,9 @@ import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.exception.CustomExceptionUpdate;
-import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
 import ir.maktab.homeservice.repository.offer.OfferRepository;
-import ir.maktab.homeservice.repository.order.OrderRepository;
+import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
+import ir.maktab.homeservice.service.order.OrderService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,11 +22,15 @@ import java.util.Optional;
 @Log4j2
 @Transactional
 public class OfferServiceImpl implements OfferService {
-    private final ExpertTypeServiceRepository expertTypeServiceRepository;
+    private final ExpertTypeServiceService expertTypeServiceService;
     private OfferRepository repository;
-    private OrderRepository orderRepository;
+    private OrderService orderService;
 
 
+    @Override
+    public List<Offer> findOfferByOrder_Id(Long orderId){
+        return repository.findOfferByOrder_Id(orderId);
+    }
     @Override
     public void offerRegistrationOrUpdate(Offer offer) {
         Order order = offer.getOrder();
@@ -39,7 +43,7 @@ public class OfferServiceImpl implements OfferService {
                     || order.getOrderType().equals(OrderType.WAITING_EXPERT_SELECTION)) {
 
                 order.setOrderType(OrderType.WAITING_EXPERT_SELECTION);
-                orderRepository.save(order);
+                orderService.save(order);
 
                 log.debug("debug order change to {} ", order.getOrderType());
             } else
@@ -69,7 +73,7 @@ public class OfferServiceImpl implements OfferService {
 
 
             order.setOrderType(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE);
-            orderRepository.save(order);
+            orderService.save(order);
 
             log.debug("debug choose offer {} ", offer);
         } else {
@@ -83,7 +87,7 @@ public class OfferServiceImpl implements OfferService {
         if (checkLevelWork(offer, OrderType.WAITING_FOR_COME_TO_YOUR_PLACE)) {
 
             order.setOrderType(OrderType.STARTED);
-            orderRepository.save(order);
+            orderService.save(order);
             repository.save(offer);
 
             log.debug("debug start of work {} ", order);
@@ -99,7 +103,7 @@ public class OfferServiceImpl implements OfferService {
         if (checkLevelWork(offer, OrderType.STARTED)) {
 
             order.setOrderType(OrderType.DONE);
-            orderRepository.save(order);
+            orderService.save(order);
 
             log.debug("debug done of work {} ", order);
         } else
@@ -128,7 +132,7 @@ public class OfferServiceImpl implements OfferService {
                 && order.getSuggestedPrice() >= order.getTypeService().getBasePrice()
                 && order.getId() != null
                 && offer.getSuggestedPrice() >= order.getTypeService().getBasePrice()
-                && !expertTypeServiceRepository.findExpertTypeServiceByExpertId(offer.getExpert().getId()).stream()
+                && !expertTypeServiceService.findExpertTypeServiceByExpertId(offer.getExpert().getId()).stream()
                 .filter(expertTypeService -> expertTypeService.getTypeService()
                         .getSubService().equals(order.getTypeService().getSubService())).toList().isEmpty();
     }

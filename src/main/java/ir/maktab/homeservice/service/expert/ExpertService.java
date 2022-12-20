@@ -21,4 +21,8 @@ public interface ExpertService {
     Optional<Expert> findById(Long id, Path path);
 
     void SetAveragePoint(Double point, Long expertId);
+
+    void deactivate(Expert expert)
+
+    void save(Expert expert);
 }

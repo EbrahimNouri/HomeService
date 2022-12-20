@@ -5,6 +5,7 @@ import ir.maktab.homeservice.entity.Admin;
 import ir.maktab.homeservice.exception.CustomExceptionUpdate;
 import ir.maktab.homeservice.repository.admin.AdminRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional
     @Override
-    public void changePassword(Admin admin, String password) {
+    public void changePassword(@Valid Admin admin, String password) {
         if (!admin.getPassword().equals(password)
                 && admin.getId() != null) {
 

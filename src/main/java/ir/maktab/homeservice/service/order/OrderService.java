@@ -9,6 +9,8 @@ import java.util.Optional;
 public interface OrderService {
     Optional<Order> findById(Long id);
 
+    void save(Order order);
+
     void orderRegistration(Order order);
 
     void setOrderToDone(Order order);

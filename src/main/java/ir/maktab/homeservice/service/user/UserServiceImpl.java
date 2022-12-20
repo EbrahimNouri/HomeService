@@ -5,6 +5,7 @@ import ir.maktab.homeservice.entity.User;
 import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -22,12 +23,16 @@ public class UserServiceImpl implements UserService {
     private UserRepository repository;
 
     @Override
-    public void mainRegisterUser(User user) {
+    public void save(User user){
+        repository.save(user);
+    }
+    @Override
+    public void mainRegisterUser(@Valid User user) {
         repository.save(user);
     }
 
     @Override
-    public void registerUser(User user) {
+    public void registerUser(@Valid User user) {
         if (user.getEmail() != null && user.getPassword() != null) {
 
             repository.save(user);
@@ -41,7 +46,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(User user, String password) {
+    public void changePassword(@Valid User user, String password) {
         if (!user.getPassword().equals(password)
                 && user.getPassword().equals(Objects.requireNonNull(findById(user.getId())
                 .orElse(null)).getPassword())) {
@@ -56,6 +61,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findById(Long id) {
+
         return repository.findUserById(id);
     }
 

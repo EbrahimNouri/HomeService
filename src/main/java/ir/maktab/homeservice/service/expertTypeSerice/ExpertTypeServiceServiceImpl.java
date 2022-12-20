@@ -59,4 +59,9 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
     public Optional<ExpertTypeService> findById(ExpertTypeServiceId expertTypeServiceId) {
             return repository.findById(expertTypeServiceId);
     }
+
+    @Override
+    public Optional<ExpertTypeService> findExpertTypeServiceByExpertId(Long expertId){
+        return repository.findExpertTypeServiceByExpertId(expertId);
+    }
 }

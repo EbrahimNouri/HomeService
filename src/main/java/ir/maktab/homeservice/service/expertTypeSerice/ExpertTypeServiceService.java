@@ -16,4 +16,6 @@ public interface ExpertTypeServiceService {
     void removeExpertFromTypeService(ExpertTypeService expertTypeService);
 
     Optional<ExpertTypeService> findById(ExpertTypeServiceId expertTypeServiceId);
+
+    Optional<ExpertTypeService> findExpertTypeServiceByExpertId(Long expertId);
 }

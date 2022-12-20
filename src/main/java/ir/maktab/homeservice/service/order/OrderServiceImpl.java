@@ -10,9 +10,9 @@ import ir.maktab.homeservice.entity.enums.TransactionType;
 import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.exception.CustomExceptionUpdate;
 import ir.maktab.homeservice.exception.CustomNotChoosingException;
-import ir.maktab.homeservice.repository.offer.OfferRepository;
 import ir.maktab.homeservice.repository.order.OrderRepository;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
+import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.transaction.TransactionService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ import java.util.Optional;
 @Log4j2
 @Transactional
 public class OrderServiceImpl implements OrderService {
-    private final OfferRepository offerRepository;
+    private final OfferService offerService;
     private final ExpertUserService expertUserService;
 
     private final TransactionService transactionService;
@@ -38,6 +38,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Optional<Order> findById(Long id){
         return repository.findById(id);
+    }
+
+    @Override
+    public void save(Order order){
+        repository.save(order);
     }
 
     @Override
@@ -76,7 +81,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void setOrderToPaid(Order order) {
-        Offer offer = offerRepository.findOfferByOrder_Id(order.getId())
+        Offer offer = offerService.findOfferByOrder_Id(order.getId())
                 .stream().filter((x) -> x.getOrder().getOrderType().equals(OrderType.DONE)).toList().get(0);
 
         if (orderChecker(order)

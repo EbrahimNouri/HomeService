@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface UserService {
 
+    void save(User user);
+
     void mainRegisterUser(User user);
 
     void registerUser(User user);

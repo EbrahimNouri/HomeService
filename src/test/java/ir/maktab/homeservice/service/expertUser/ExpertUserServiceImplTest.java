@@ -9,7 +9,6 @@ import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.order.OrderService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
-import org.assertj.core.api.AbstractBigDecimalAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.File;
 import java.time.LocalDate;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
@@ -103,11 +101,11 @@ class ExpertUserServiceImplTest {
 //                assertAll(
 //                () -> service.addCommentAndPoint(expertUserMain),
 
-                /*() ->*/ assertNotNull(service.findByOrderId(order.getId()).orElse(null));
-        assertThat(orderRepository.findById(order.getId()).get()).isEqualTo(user);
+        /*() ->*/
+        assertNotNull(service.findByOrderId(order.getId()).orElse(null));
+//        assertThat(orderRepository.findById(order.getId()).get()).isEqualTo(user);
 
 //        );
     }
 
-    }
 }

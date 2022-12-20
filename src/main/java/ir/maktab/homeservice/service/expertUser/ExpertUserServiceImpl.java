@@ -5,10 +5,8 @@ import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertUser;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.User;
-import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.exception.CustomExceptionSave;
-import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.repository.expertUser.ExpertUserRepository;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import lombok.AllArgsConstructor;
@@ -24,7 +22,6 @@ import java.util.Optional;
 @Log4j2
 public class ExpertUserServiceImpl implements ExpertUserService {
     private ExpertUserRepository repository;
-    private ExpertRepository expertRepository;
     private ExpertService expertService;
 
 
@@ -75,10 +72,10 @@ public class ExpertUserServiceImpl implements ExpertUserService {
         Double averagePoint = repository.countOfAllPointByExpertId(expert.getId());
 
         if (averagePoint < 0) {
-            expertRepository.deactivate(expert.getId(), ExpertStatus.DEACTIVATE);
+            expertService.deactivate(expert);
 
         } else
-            expertRepository.save(expert);
+            expertService.save(expert);
     }
 
 }

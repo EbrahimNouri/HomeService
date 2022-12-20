@@ -1,13 +1,18 @@
 package ir.maktab.homeservice.controller.admin;
 
 
+import ir.maktab.homeservice.dto.BasicServiceDto;
 import ir.maktab.homeservice.dto.adminPassDto;
 import ir.maktab.homeservice.entity.Admin;
+import ir.maktab.homeservice.entity.BasicService;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.service.admin.AdminService;
+import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -15,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 public class AdminControllerImpl implements AdminController {
 
     private AdminService service;
+    private final BasicServicesService basicServicesService;
+
 
     @PostMapping("/add")
     @Override
@@ -22,7 +29,7 @@ public class AdminControllerImpl implements AdminController {
         service.addAdmin(admin);
     }
 
-        @PutMapping("/chPass")
+    @PutMapping("/chPass")
     @Override
     public void changePassword(@RequestBody @Valid adminPassDto admin) {
         Admin id_not_found = service.findById(admin.getId())
@@ -36,5 +43,18 @@ public class AdminControllerImpl implements AdminController {
     public Admin findById(@PathVariable Long id) {
 //        return new ResponseEntity.ok(service.findById(adminId)
         return service.findById(id).orElseThrow(() -> new CustomExceptionNotFind("id not found"));
+    }
+
+    @Override
+    @PostMapping("/addBasicService")
+    public void addBasicService(@RequestBody @Valid BasicService basicService) {
+        basicServicesService.addBasicService(basicService);
+    }
+
+    @Override
+    @GetMapping("/showAllBasicServices")
+    public List<BasicServiceDto> showAllBasicServices() {
+        return basicServicesService.findAll().stream()
+                .map(bs -> new BasicServiceDto(bs.getId(), bs.getName())).toList();
     }
 }
