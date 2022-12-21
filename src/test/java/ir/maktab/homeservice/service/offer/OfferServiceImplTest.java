@@ -222,6 +222,11 @@ class OfferServiceImplTest {
                 () -> assertEquals(Objects.requireNonNull(service.findById(offer[1][2].getId())
                                 .orElse(null)).getOrder()
                         .getOrderType(), OrderType.STARTED)
+
+        );
+        offer[2][2].getOrder().setOrderType(OrderType.PAID);
+        assertAll(
+                () -> assertThrows(Exception.class, () -> service.endOfTheWork(offer[2][2]))
         );
     }
 
@@ -233,6 +238,11 @@ class OfferServiceImplTest {
                 () -> assertEquals(Objects.requireNonNull(service.findById(offer[2][2].getId())
                                 .orElse(null)).getOrder()
                         .getOrderType(), OrderType.DONE)
+        );
+
+        offer[2][2].getOrder().setOrderType(OrderType.PAID);
+        assertAll(
+                () -> assertThrows(Exception.class, () -> service.endOfTheWork(offer[2][2]))
         );
     }
 

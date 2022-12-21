@@ -29,12 +29,12 @@ import java.util.Optional;
 @Log4j2
 @Transactional
 public class OrderServiceImpl implements OrderService {
+
     private final ExpertUserService expertUserService;
-
     private final TransactionService transactionService;
-
     private OrderRepository repository;
     private ApplicationContextProvider applicationContextProvider;
+
 
     @Override
     public Optional<Order> findById(Long id) {
@@ -52,7 +52,7 @@ public class OrderServiceImpl implements OrderService {
                 && order.getDescription() != null
                 && order.getStartOfWork() != null
                 && order.getUser() != null) {
-// TODO: 12/12/2022 AD if 
+
             order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
             repository.save(order);
 
@@ -70,15 +70,19 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void setOrderToDone(Order order) {
         if (orderChecker(order)) {
-            // TODO: 12/16/2022 AD   {
-            order.setOrderType(OrderType.DONE);
-            repository.save(order);
+            if (order.getOrderType().equals(OrderType.STARTED)) {
+                order.setOrderType(OrderType.DONE);
+                repository.save(order);
+
+            } else {
+                throw new CustomExceptionUpdate("order not valid");
+            }
         } else {
-            throw new CustomExceptionUpdate("order not valid");
+            throw new CustomExceptionUpdate("order have empty variable");
         }
     }
 
-
+    // TODO: 12/21/2022 AD PHASE3
     @Transactional
     @Override
     public void setOrderToPaid(Order order) {
@@ -124,7 +128,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-
+    // TODO: 12/21/2022 AD PHASE3
     public void onlinePayment(Order order) {
 
     }
@@ -142,5 +146,3 @@ public class OrderServiceImpl implements OrderService {
                 && order.getId() != null;
     }
 }
-
-

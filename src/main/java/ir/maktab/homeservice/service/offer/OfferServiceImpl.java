@@ -57,7 +57,6 @@ public class OfferServiceImpl implements OfferService {
 
             log.debug("debug offer updated {} ", order);
         }
-
     }
 
     @Override
@@ -101,30 +100,36 @@ public class OfferServiceImpl implements OfferService {
             repository.save(offer);
 
             log.debug("debug start of work {} ", order);
-        } else
+        } else {
             log.warn("warn start of work not worked order id or offer id is null or order type is invalid {} "
                     , offer);
+            throw new CustomExceptionUpdate("this order not valid");
 
+        }
     }
 
     @Override
     public void endOfTheWork(Offer offer) {
         Order order = offer.getOrder();
-        if (checkLevelWork(offer, OrderType.STARTED)) {
-            if (LocalDateTime.now().isAfter(offer.getEndDate())) {
+        try {
+            if (checkLevelWork(offer, OrderType.STARTED)) {
+                if (LocalDateTime.now().isAfter(offer.getEndDate())) {
 
-                offer.setDelay(ChronoUnit.HOURS.between(LocalDateTime.now(), offer.getEndDate()));
-                repository.save(offer);
+                    offer.setDelay(ChronoUnit.HOURS.between(LocalDateTime.now(), offer.getEndDate()));
+                    repository.save(offer);
 
-                log.debug("debug done of work {} ", order);
+                    log.debug("debug done of work {} ", order);
+                }
+
+                order.setOrderType(OrderType.DONE);
+                orderService.save(order);
+
             }
-
-            order.setOrderType(OrderType.DONE);
-            orderService.save(order);
-
-        } else
+        } catch (Exception e) {
             log.warn("warn done work not worked order id or offer id is null or order type is invalid {} "
                     , offer);
+            throw new CustomExceptionUpdate("this order not valid");
+        }
 
     }
 
