@@ -6,9 +6,11 @@ import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.entity.enums.PaymentType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @AllArgsConstructor
@@ -45,4 +47,18 @@ public class Order extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
 
+    private Long delayEndWorkHours;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Order order = (Order) o;
+        return getId() != null && Objects.equals(getId(), order.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

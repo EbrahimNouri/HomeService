@@ -94,17 +94,19 @@ public class OfferServiceImpl implements OfferService {
     public void startOfWork(Offer offer) {
         Order order = offer.getOrder();
         if (checkLevelWork(offer, OrderType.WAITING_FOR_COME_TO_YOUR_PLACE)) {
+            if (offer.getStartDate().isAfter(LocalDateTime.now())) {
 
-            order.setOrderType(OrderType.STARTED);
-            orderService.save(order);
-            repository.save(offer);
+                order.setOrderType(OrderType.STARTED);
+                orderService.save(order);
+                repository.save(offer);
+            } else
+                throw new CustomExceptionUpdate("start of work is after offer set");
 
             log.debug("debug start of work {} ", order);
         } else {
             log.warn("warn start of work not worked order id or offer id is null or order type is invalid {} "
                     , offer);
             throw new CustomExceptionUpdate("this order not valid");
-
         }
     }
 
@@ -115,8 +117,8 @@ public class OfferServiceImpl implements OfferService {
             if (checkLevelWork(offer, OrderType.STARTED)) {
                 if (LocalDateTime.now().isAfter(offer.getEndDate())) {
 
-                    offer.setDelay(ChronoUnit.HOURS.between(LocalDateTime.now(), offer.getEndDate()));
-                    repository.save(offer);
+                    order.setDelayEndWorkHours(ChronoUnit.HOURS.between(LocalDateTime.now(), offer.getEndDate()));
+                    orderService.save(order);
 
                     log.debug("debug done of work {} ", order);
                 }
@@ -186,5 +188,4 @@ public class OfferServiceImpl implements OfferService {
                 .filter(expertTypeService -> expertTypeService.getTypeService()
                         .getSubService().equals(order.getTypeService().getSubService())).toList().isEmpty();
     }
-
 }
