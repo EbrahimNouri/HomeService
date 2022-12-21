@@ -64,7 +64,8 @@ class ExpertUserServiceImplTest {
         user = User.builder().firstname("fname").lastname("lname").email("userTestExpertUser@email.com").password("1234QWear").build();
         basicService = new BasicService("basicServiceTest", null);
 
-        typeService = new TypeService("subTest", 110.0, null, null, basicService);
+        typeService = new TypeService("subTest", 110.0
+                , null, null, basicService,"description");
 
         order = new Order(typeService, user, expertUserMain, null, 111.0, "description Test"
                 , LocalDate.of(2022, 1, 1), "addrestest", OrderType.WAITING_FOR_THE_SUGGESTIONS,

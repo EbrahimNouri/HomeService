@@ -14,4 +14,6 @@ public interface TypeServiceService {
     void paymentPriceChange(TypeService typeService, double price);
 
     List<TypeService> showTypeServices(Long basicServiceId);
+
+    void descriptionChange(TypeService typeService, String description);
 }

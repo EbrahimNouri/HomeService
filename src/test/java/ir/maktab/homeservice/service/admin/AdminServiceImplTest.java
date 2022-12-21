@@ -33,6 +33,7 @@ class AdminServiceImplTest {
         service.addAdmin(admin);
         assertAll(
                 () -> assertNotNull(admin.getId()),
+
                 () -> assertEquals(Optional.ofNullable(admin), service.findById(Objects.requireNonNull(admin).getId())));
     }
 

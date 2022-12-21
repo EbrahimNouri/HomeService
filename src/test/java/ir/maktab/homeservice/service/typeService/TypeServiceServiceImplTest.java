@@ -67,4 +67,13 @@ class TypeServiceServiceImplTest {
         service.showTypeServices(basicService.getId()).forEach(System.out::println);
 
     }
+
+    @Test
+    void changeDescription(){
+        String newDescription = "newDescription";
+        service.descriptionChange(typeService, newDescription);
+        assertEquals(newDescription
+                , Objects.requireNonNull(service.findById(typeService.getId()).orElse(null)).getDescription());
+
+    }
 }

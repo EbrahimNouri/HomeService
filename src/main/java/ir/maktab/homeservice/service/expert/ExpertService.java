@@ -22,7 +22,7 @@ public interface ExpertService {
 
     void SetAveragePoint(Double point, Long expertId);
 
-    void deactivate(Expert expert)
+    void deactivate(Expert expert);
 
     void save(Expert expert);
 }

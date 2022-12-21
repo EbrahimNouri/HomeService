@@ -5,6 +5,7 @@ import ir.maktab.homeservice.dto.BasicServiceDto;
 import ir.maktab.homeservice.dto.adminPassDto;
 import ir.maktab.homeservice.entity.Admin;
 import ir.maktab.homeservice.entity.BasicService;
+import ir.maktab.homeservice.entity.TypeService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,4 +25,6 @@ public interface AdminController {
 
     @GetMapping("/all")
     List<BasicServiceDto> showAllBasicServices();
+
+    void descriptionChange(TypeService typeService, String description);
 }

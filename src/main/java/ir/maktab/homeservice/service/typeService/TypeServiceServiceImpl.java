@@ -50,4 +50,11 @@ public class TypeServiceServiceImpl implements TypeServiceService {
 
     }
 
+    @Override
+    public void descriptionChange(TypeService typeService, String description){
+
+        typeService.setDescription(description);
+        typeServiceRepository.save(typeService);
+
+    }
 }

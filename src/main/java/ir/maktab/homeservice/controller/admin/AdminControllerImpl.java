@@ -5,6 +5,7 @@ import ir.maktab.homeservice.dto.BasicServiceDto;
 import ir.maktab.homeservice.dto.adminPassDto;
 import ir.maktab.homeservice.entity.Admin;
 import ir.maktab.homeservice.entity.BasicService;
+import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.service.admin.AdminService;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
@@ -56,5 +57,10 @@ public class AdminControllerImpl implements AdminController {
     public List<BasicServiceDto> showAllBasicServices() {
         return basicServicesService.findAll().stream()
                 .map(bs -> new BasicServiceDto(bs.getId(), bs.getName())).toList();
+    }
+
+    @Override
+    public void descriptionChange(TypeService typeService, String description){
+
     }
 }

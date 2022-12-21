@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -61,7 +62,7 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
     }
 
     @Override
-    public Optional<ExpertTypeService> findExpertTypeServiceByExpertId(Long expertId){
+    public List<ExpertTypeService> findExpertTypeServiceByExpertId(Long expertId){
         return repository.findExpertTypeServiceByExpertId(expertId);
     }
 }

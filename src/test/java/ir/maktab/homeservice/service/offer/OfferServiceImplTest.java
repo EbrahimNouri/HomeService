@@ -103,7 +103,7 @@ class OfferServiceImplTest {
             basicService[i] = new BasicService("basicServiceTsest4" + i, null);
 
             typeService[i] = new TypeService("subTest4sa" + i, 100.0, null
-                    , null, basicService[i]);
+                    , null, basicService[i],"description");
 
             expertTypeService[i] = new ExpertTypeService(expert[i], typeService[i]);
 

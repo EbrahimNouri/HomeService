@@ -43,7 +43,8 @@ class OrderServiceImplTest {
         user = User.builder().firstname("name").lastname("name").email("userTest@email.com").credit(500.0).password("1234QWear").build();
 
         basicService = new BasicService("basicServiceName",null);
-        typeService= new TypeService("subService", 100.0, null, null, basicService);
+        typeService= new TypeService("subService", 100.0
+                , null, null, basicService, "description");
         order = new Order(null, user, null, null, 100.0
                 , "test", LocalDate.now(), "test", OrderType.WAITING_FOR_THE_SUGGESTIONS, null);
     }

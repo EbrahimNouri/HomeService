@@ -1,6 +1,7 @@
 package ir.maktab.homeservice.service.order;
 
 
+import ir.maktab.homeservice.config.ApplicationContextProvider;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.Transaction;
@@ -28,40 +29,40 @@ import java.util.Optional;
 @Log4j2
 @Transactional
 public class OrderServiceImpl implements OrderService {
-    private final OfferService offerService;
     private final ExpertUserService expertUserService;
 
     private final TransactionService transactionService;
 
     private OrderRepository repository;
+    private ApplicationContextProvider applicationContextProvider;
 
     @Override
-    public Optional<Order> findById(Long id){
+    public Optional<Order> findById(Long id) {
         return repository.findById(id);
     }
 
     @Override
-    public void save(Order order){
+    public void save(Order order) {
         repository.save(order);
     }
 
     @Override
     public void orderRegistration(Order order) {
-            if (order.getSuggestedPrice() != null
-                    && order.getDescription() != null
-                    && order.getStartOfWork() != null
-                    && order.getUser() != null) {
+        if (order.getSuggestedPrice() != null
+                && order.getDescription() != null
+                && order.getStartOfWork() != null
+                && order.getUser() != null) {
 // TODO: 12/12/2022 AD if 
-                order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
-                repository.save(order);
+            order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
+            repository.save(order);
 
-                log.debug("debug order registration {} ", order);
-            } else {
+            log.debug("debug order registration {} ", order);
+        } else {
 
-                log.error("debug order registration the fields are not filled {} ", order);
+            log.error("debug order registration the fields are not filled {} ", order);
 
-                throw new CustomExceptionSave("order not valid");
-            }
+            throw new CustomExceptionSave("order not valid");
+        }
 
     }
 
@@ -72,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
             // TODO: 12/16/2022 AD   {
             order.setOrderType(OrderType.DONE);
             repository.save(order);
-        }else {
+        } else {
             throw new CustomExceptionUpdate("order not valid");
         }
     }
@@ -81,6 +82,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void setOrderToPaid(Order order) {
+        OfferService offerService = applicationContextProvider.getContext().getBean(OfferService.class);
         Offer offer = offerService.findOfferByOrder_Id(order.getId())
                 .stream().filter((x) -> x.getOrder().getOrderType().equals(OrderType.DONE)).toList().get(0);
 

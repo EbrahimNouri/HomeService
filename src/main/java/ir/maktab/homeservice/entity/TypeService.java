@@ -34,6 +34,8 @@ public class TypeService extends BaseEntity {
     @JoinColumn(nullable = false)
     private BasicService basicService;
 
+    private String description;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
