@@ -3,7 +3,6 @@ package ir.maktab.homeservice.service.expertTypeSerice;
 
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
-import ir.maktab.homeservice.entity.id.ExpertTypeServiceId;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +15,8 @@ public interface ExpertTypeServiceService {
 
     void removeExpertFromTypeService(ExpertTypeService expertTypeService);
 
-    Optional<ExpertTypeService> findById(ExpertTypeServiceId expertTypeServiceId);
 
     List<ExpertTypeService> findExpertTypeServiceByExpertId(Long expertId);
-}
+
+    public Optional<ExpertTypeService> findById(Long expertId , Long expertTypeServiceId) ;
+    }

@@ -8,7 +8,6 @@ import java.util.Optional;
 public interface BasicServicesService {
 
 
-
     void addBasicService(BasicService basicService);
 
     List<BasicService> findAll();
@@ -20,5 +19,5 @@ public interface BasicServicesService {
 
     Optional<BasicService> findById(Long id);
 
-    boolean findByName(String name);
+    boolean checkByName(String name);
 }

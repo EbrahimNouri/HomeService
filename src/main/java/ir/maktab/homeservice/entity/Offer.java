@@ -39,6 +39,10 @@ public class Offer extends BaseEntity {
 
     private LocalDateTime EndDate;
 
+    private Long delay;
+
+    private boolean choose;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

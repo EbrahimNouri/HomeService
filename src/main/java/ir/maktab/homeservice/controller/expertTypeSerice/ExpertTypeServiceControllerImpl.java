@@ -4,7 +4,6 @@ import ir.maktab.homeservice.dto.ExpertTypeServiceDto;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
 import ir.maktab.homeservice.entity.TypeService;
-import ir.maktab.homeservice.entity.id.ExpertTypeServiceId;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
@@ -51,8 +50,8 @@ class ExpertTypeServiceControllerImpl implements ExpertTypeServiceController {
     public ResponseEntity<ExpertTypeService> findById(@RequestBody ExpertTypeServiceDto expertTypeServiceDto) {
 
         ExpertTypeService expertTypeService = findExpertTypeServiceByDto(expertTypeServiceDto);
-        return service.findById(new ExpertTypeServiceId(expertTypeService.getExpert()
-                        , expertTypeService.getTypeService())).map(ResponseEntity::ok)
+        return service.findById(expertTypeService.getExpert().getId()
+                        , expertTypeService.getTypeService().getId()).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 

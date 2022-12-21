@@ -20,7 +20,6 @@ class BasicServicesServiceTest {
     private BasicServicesService service;
     @Autowired
     private BasicServiceRepository basicServiceRepository;
-
     @Autowired
     private BasicServiceRepository repository;
 
@@ -69,17 +68,20 @@ class BasicServicesServiceTest {
     @Order(4)
     void removeBasicService() {
         basicService[1] = new BasicService("basicNameTeskltxc23", null);
-        service.addBasicService(basicService[1]);
-        assertTrue(service.findByName(basicService[1].getName()));
-        repository.delete(basicService[1]);
-        assertFalse(service.findByName(basicService[1].getName()));
+
+        assertAll(
+                () -> service.addBasicService(basicService[1]),
+                () -> assertTrue(service.checkByName(basicService[1].getName())),
+                () -> repository.delete(basicService[1]),
+                () -> assertFalse(service.checkByName(basicService[1].getName()))
+        );
     }
 
     @Test
     @Order(3)
     void showAllBasicService() {
         for (int i = 0; i < 5; i++) {
-            service.addBasicService(new BasicService("qwert"+i, null));
+            service.addBasicService(new BasicService("qwert" + i, null));
         }
         assertEquals(5, service.showAllBasicService().size());
         service.showAllBasicService().forEach(System.out::println);
@@ -88,14 +90,20 @@ class BasicServicesServiceTest {
     @Test
     @Order(2)
     void uniqueNameTest() {
-        basicService[2] = new BasicService("basicName78Teskltxc23", null);
-        service.addBasicService(basicService[2]);
-        assertTrue(service.findByName(basicService[2].getName()));
-
         BasicService tempBase = new BasicService("basicName78Teskltxc23", null);
-        assertThrows(CustomExceptionSave.class
-                , ()->service.addBasicService(tempBase)
-                , "this name is invalid") ;
-        assertNull(tempBase.getId());
+        assertAll(
+
+                () -> basicService[2] = new BasicService("basicName78Teskltxc23", null),
+
+                () -> service.addBasicService(basicService[2]),
+
+                () -> assertTrue(service.checkByName(basicService[2].getName())),
+
+                () -> assertThrows(CustomExceptionSave.class
+                        , () -> service.addBasicService(tempBase)
+                        , "this name is invalid"),
+
+                () -> assertNull(tempBase.getId())
+        );
     }
 }

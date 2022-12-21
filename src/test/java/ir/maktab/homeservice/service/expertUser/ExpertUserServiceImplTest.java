@@ -12,16 +12,15 @@ import ir.maktab.homeservice.service.user.UserService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 import java.time.LocalDate;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-@DataJpaTest
 class ExpertUserServiceImplTest {
 
     private static Expert expertTest;
@@ -42,18 +41,14 @@ class ExpertUserServiceImplTest {
     UserService userService;
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     OrderService orderService;
-
     @Autowired
     TypeServiceService typeServiceService;
-
     @Autowired
     BasicServicesService basicServicesService;
     @Autowired
     private OrderRepository orderRepository;
-
 
     @BeforeAll
     static void initialize() {
@@ -65,7 +60,7 @@ class ExpertUserServiceImplTest {
         basicService = new BasicService("basicServiceTest", null);
 
         typeService = new TypeService("subTest", 110.0
-                , null, null, basicService,"description");
+                , null, null, basicService, "description");
 
         order = new Order(typeService, user, expertUserMain, null, 111.0, "description Test"
                 , LocalDate.of(2022, 1, 1), "addrestest", OrderType.WAITING_FOR_THE_SUGGESTIONS,
@@ -97,16 +92,13 @@ class ExpertUserServiceImplTest {
         expertUserMain.setOrder(order);
         order.setOrderType(OrderType.PAID);
         orderRepository.save(order);
-        service.addCommentAndPoint(expertUserMain);
 
-//                assertAll(
-//                () -> service.addCommentAndPoint(expertUserMain),
+        assertAll(
+                () -> service.addCommentAndPoint(expertUserMain),
 
-        /*() ->*/
-        assertNotNull(service.findByOrderId(order.getId()).orElse(null));
+                () -> assertNotNull(service.findByOrderId(order.getId()).orElse(null))
 //        assertThat(orderRepository.findById(order.getId()).get()).isEqualTo(user);
 
-//        );
+        );
     }
-
 }

@@ -103,7 +103,7 @@ class OfferServiceImplTest {
             basicService[i] = new BasicService("basicServiceTsest4" + i, null);
 
             typeService[i] = new TypeService("subTest4sa" + i, 100.0, null
-                    , null, basicService[i],"description");
+                    , null, basicService[i], "description");
 
             expertTypeService[i] = new ExpertTypeService(expert[i], typeService[i]);
 
@@ -115,7 +115,7 @@ class OfferServiceImplTest {
                     , 4.0, "hello comment4" + i);
             for (int j = 0; j < 3; j++) {
                 offer[i][j] = new Offer(order[i], expert[i], LocalDateTime.now().plusDays(1), "desss"
-                        , 126.0, LocalDateTime.now().plusDays(5));
+                        , 126.0, LocalDateTime.now().plusDays(5), null, false);
             }
         }
     }
@@ -162,7 +162,7 @@ class OfferServiceImplTest {
 //    }
 
     @AfterAll
-    static void purgeObj(){
+    static void purgeObj() {
         user = null;
         expert = null;
         basicService = null;
@@ -209,7 +209,8 @@ class OfferServiceImplTest {
                 () -> assertEquals(Objects.requireNonNull(service.findById(offer[0][1].getId())
                                         .orElse(null)).getOrder()
                                 .getOrderType(), OrderType.WAITING_FOR_COME_TO_YOUR_PLACE
-                        /*|| OrderType.WAITING_FOR_THE_SUGGESTIONS*/)
+                        /*|| OrderType.WAITING_FOR_THE_SUGGESTIONS*/),
+                () -> assertTrue(offer[0][1].isChoose())
         );
     }
 

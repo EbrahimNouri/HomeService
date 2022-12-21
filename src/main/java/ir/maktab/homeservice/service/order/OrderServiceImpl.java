@@ -83,8 +83,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void setOrderToPaid(Order order) {
         OfferService offerService = applicationContextProvider.getContext().getBean(OfferService.class);
+
         Offer offer = offerService.findOfferByOrder_Id(order.getId())
-                .stream().filter((x) -> x.getOrder().getOrderType().equals(OrderType.DONE)).toList().get(0);
+                .stream().filter(Offer::isChoose).toList().get(0);
 
         if (orderChecker(order)
                 && order.getOrderType().equals(OrderType.DONE)) {

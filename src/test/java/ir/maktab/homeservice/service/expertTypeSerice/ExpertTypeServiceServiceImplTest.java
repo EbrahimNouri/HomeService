@@ -4,7 +4,6 @@ import ir.maktab.homeservice.entity.BasicService;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
 import ir.maktab.homeservice.entity.TypeService;
-import ir.maktab.homeservice.entity.id.ExpertTypeServiceId;
 import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
@@ -96,9 +95,9 @@ class ExpertTypeServiceServiceImplTest {
         assertAll(
                 () -> assertNotNull(expert.getId()),
                 () -> assertNotNull(typeService.getId()),
-                () -> assertNotNull(service.findById(new ExpertTypeServiceId(expert, typeService))),
+                () -> assertNotNull(service.findById(expert.getId(), typeService.getId())),
                 () -> service.removeExpertFromBasicService(expert),
-                () -> assertNull(service.findById(new ExpertTypeServiceId(expert, typeService)).orElse(null))
+                () -> assertNull(service.findById(expert.getId(), typeService.getId()).orElse(null))
         );
     }
 
@@ -106,16 +105,16 @@ class ExpertTypeServiceServiceImplTest {
     @Test
     void addExpertToTypeService() {
         service.addExpertToTypeService(expertTypeService);
-        assertNotNull(service.findById(new ExpertTypeServiceId(expert, typeService)).orElse(null));
+        assertNotNull(service.findById(expert.getId(), typeService.getId()).orElse(null));
     }
 
     @Test
     void removeExpertFromTypeService() {
         assertAll(
                 () -> service.addExpertToTypeService(expertTypeService),
-                () -> assertNotNull(service.findById(new ExpertTypeServiceId(expert, typeService))),
+                () -> assertNotNull(service.findById(expert.getId(), typeService.getId())),
                 () -> service.removeExpertFromTypeService(expertTypeService),
-                () -> assertNull(service.findById(new ExpertTypeServiceId(expert, typeService)).orElse(null))
+                () -> assertNull(service.findById(expert.getId(), typeService.getId()).orElse(null))
         );
     }
 }

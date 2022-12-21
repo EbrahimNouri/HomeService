@@ -3,6 +3,7 @@ package ir.maktab.homeservice.service.expert;
 
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
+import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.exception.CustomExceptionUpdate;
 import ir.maktab.homeservice.exception.CustomPatternInvalidException;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
@@ -39,20 +40,24 @@ public class ExpertServiceImpl implements ExpertService {
     @Transactional
     @Override
     public void registerExpert(@Valid Expert expert, File file) {
-        if (expert.getId() == null) {
-            if (file != null) {
+        try {
+            if (expert.getId() == null) {
+                if (file != null) {
 
-                byte[] avatar = imageConverter(file);
-                expert.setAvatar(avatar);
+                    byte[] avatar = imageConverter(file);
+                    expert.setAvatar(avatar);
 
+                }
+                expert.setExpertTypeServices(null);
+                expert.setExpertStatus(ExpertStatus.NEW);
+                repository.save(expert);
+                log.debug("debug register expert {} ", expert);
+            } else {
+                log.warn("warn register avatar larger than 300kb or not .jpg");
+                throw new CustomPatternInvalidException("this email is invalid");
             }
-            expert.setExpertTypeServices(null);
-            expert.setExpertStatus(ExpertStatus.NEW);
-            repository.save(expert);
-            log.debug("debug register expert {} ", expert);
-        } else {
-            log.warn("warn register avatar larger than 300kb or not .jpg");
-            throw new CustomPatternInvalidException("this email is invalid");
+        }catch (Exception e){
+            throw new CustomExceptionSave("expert not saved");
         }
     }
 

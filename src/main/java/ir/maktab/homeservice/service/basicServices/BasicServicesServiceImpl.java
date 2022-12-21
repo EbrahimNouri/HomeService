@@ -44,7 +44,7 @@ public class BasicServicesServiceImpl implements BasicServicesService {
     @Override
     public void removeBasicService(BasicService basicService) {
 
-        if (findByName(basicService.getName())) {
+        if (checkByName(basicService.getName())) {
 
             repository.delete(basicService);
 
@@ -67,7 +67,7 @@ public class BasicServicesServiceImpl implements BasicServicesService {
     }
 
     @Override
-    public boolean findByName(String name){
+    public boolean checkByName(String name){
         return repository.existsByName(name);
     }
 }
