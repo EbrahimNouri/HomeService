@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,45 +51,53 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void orderRegistration(Order order) {
-        if (order.getSuggestedPrice() != null
-                && order.getDescription() != null
-                && order.getStartOfWork() != null
-                && order.getUser() != null) {
+        try {
+            if (order.getSuggestedPrice() != null
+                    && order.getDescription() != null
+                    && order.getStartOfWork() != null
+                    && order.getUser() != null) {
 
-            order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
-            repository.save(order);
+                order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
+                repository.save(order);
 
-            log.debug("debug order registration {} ", order);
-        } else {
+                log.debug("debug order registration {} ", order);
+            } else {
 
-            log.error("debug order registration the fields are not filled {} ", order);
+                log.error("debug order registration the fields are not filled {} ", order);
 
-            throw new CustomExceptionSave("order not valid");
+                throw new CustomExceptionSave("order not valid");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
     }
 
     @Override
     public void startOfWork(Order order) {
-        Offer offer = getOffer(order);
-        if (checkLevelWork(offer)) {
-            if (order.getOrderType().equals( OrderType.WAITING_FOR_COME_TO_YOUR_PLACE)) {
-                if (offer.getStartDate().isAfter(LocalDateTime.now())) {
+        try {
+            Offer offer = getOffer(order);
+            if (checkLevelWork(offer)) {
+                if (order.getOrderType().equals(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE)) {
+                    if (offer.getStartDate().isAfter(LocalDateTime.now())) {
 
-                    order.setOrderType(OrderType.STARTED);
-                    repository.save(order);
+                        order.setOrderType(OrderType.STARTED);
+                        repository.save(order);
 
-                } else
-                    throw new CustomExceptionUpdate("start of work is after offer set");
+                    } else
+                        throw new CustomExceptionUpdate("start of work is after offer set");
 
-                log.debug("debug start of work {} ", order);
-            }else {
-                throw new CustomExceptionUpdate("order type not invalid");
+                    log.debug("debug start of work {} ", order);
+                } else {
+                    throw new CustomExceptionUpdate("order type not invalid");
+                }
+            } else {
+                log.warn("warn start of work not worked order id or offer id is null or order type is invalid {} "
+                        , offer);
+                throw new CustomExceptionUpdate("this order not valid");
             }
-        } else {
-            log.warn("warn start of work not worked order id or offer id is null or order type is invalid {} "
-                    , offer);
-            throw new CustomExceptionUpdate("this order not valid");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -120,6 +129,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void endOfTheWork(Order order) {
         Offer offer = getOffer(order);
+        try {
             if (checkLevelWork(offer)) {
                 if (order.getOrderType().equals(OrderType.STARTED)) {
                     if (LocalDateTime.now().isAfter(offer.getEndDate())) {
@@ -141,23 +151,28 @@ public class OrderServiceImpl implements OrderService {
                 throw new CustomExceptionUpdate("order check level work error");
 
             }
-
-
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Transactional
     @Override
     public void setOrderToDone(Order order) {
-        if (orderChecker(order)) {
-            if (order.getOrderType().equals(OrderType.STARTED)) {
-                order.setOrderType(OrderType.DONE);
-                repository.save(order);
+        try {
+            if (orderChecker(order)) {
+                if (order.getOrderType().equals(OrderType.STARTED)) {
+                    order.setOrderType(OrderType.DONE);
+                    repository.save(order);
 
+                } else {
+                    throw new CustomExceptionUpdate("order not valid");
+                }
             } else {
-                throw new CustomExceptionUpdate("order not valid");
+                throw new CustomExceptionUpdate("order have empty variable");
             }
-        } else {
-            throw new CustomExceptionUpdate("order have empty variable");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -165,44 +180,47 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void setOrderToPaid(Order order) {
+        try {
+            Offer offer = offerService.findOfferByOrder_Id(order.getId())
+                    .stream().filter(Offer::isChoose).toList().get(0);
 
-        Offer offer = offerService.findOfferByOrder_Id(order.getId())
-                .stream().filter(Offer::isChoose).toList().get(0);
-
-        if (orderChecker(order)
-                && order.getOrderType().equals(OrderType.DONE)) {
-
-
-            if (order.getPaymentType().equals(PaymentType.CREDIT_PAYMENT)) {
-
-                transactionService.addTransaction(Transaction.builder()
-                        .expert(offer.getExpert())
-                        .user(order.getUser())
-                        .transactionType(TransactionType.TRANSFER)
-                        .transfer(offer.getSuggestedPrice())
-                        .build());
-
-            } else if (order.getPaymentType().equals(PaymentType.ONLINE_PAYMENT)) {
-
-                onlinePayment(order);
-                // TODO: 12/17/2022 AD Online payment
-
-            } else
-                throw new CustomNotChoosingException("didn't choose any of the payment methods");
-
-            order.setOrderType(OrderType.PAID);
+            if (orderChecker(order)
+                    && order.getOrderType().equals(OrderType.DONE)) {
 
 
-            if (LocalDateTime.now().isAfter(offer.getEndDate())) {
+                if (order.getPaymentType().equals(PaymentType.CREDIT_PAYMENT)) {
 
-                repository.save(order);
+                    transactionService.addTransaction(Transaction.builder()
+                            .expert(offer.getExpert())
+                            .user(order.getUser())
+                            .transactionType(TransactionType.TRANSFER)
+                            .transfer(offer.getSuggestedPrice())
+                            .build());
 
-            } else if (offer.getEndDate().isAfter(LocalDateTime.now())) {
+                } else if (order.getPaymentType().equals(PaymentType.ONLINE_PAYMENT)) {
 
-                int hour = offer.getEndDate().getHour() - LocalDateTime.now().getHour();
-                expertUserService.deductPoints(hour, order);
+                    onlinePayment(order);
+                    // TODO: 12/17/2022 AD Online payment
 
+                } else
+                    throw new CustomNotChoosingException("didn't choose any of the payment methods");
+
+                order.setOrderType(OrderType.PAID);
+
+
+                if (LocalDateTime.now().isAfter(offer.getEndDate())) {
+
+                    repository.save(order);
+
+                } else if (offer.getEndDate().isAfter(LocalDateTime.now())) {
+
+                    int hour = offer.getEndDate().getHour() - LocalDateTime.now().getHour();
+                    expertUserService.deductPoints(hour, order);
+
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -213,7 +231,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> showOrderSuggestionOrSelection() {
-        return repository.findByOrderTypeBeforeStart();
+        try {
+            return repository.findByOrderTypeBeforeStart();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     private boolean orderChecker(Order order) {

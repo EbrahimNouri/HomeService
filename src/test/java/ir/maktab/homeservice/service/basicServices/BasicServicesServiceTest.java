@@ -1,7 +1,6 @@
 package ir.maktab.homeservice.service.basicServices;
 
 import ir.maktab.homeservice.entity.BasicService;
-import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -22,38 +21,6 @@ class BasicServicesServiceTest {
     private BasicServiceRepository basicServiceRepository;
     @Autowired
     private BasicServiceRepository repository;
-
-
-//    @BeforeAll
-//    static void initialise() {
-//        for (int i = 0; i < 5; i++) {
-//            basicService[i] = new BasicService("basicNameTest" + i+"23", null);
-//        }
-//
-//    }
-
-//    @BeforeEach
-//    void setToDataBase() {
-//        for (int i = 0; i < 5; i++) {
-//            service.addBasicService(basicService[i]);
-//        }
-//    }
-
-//    @AfterEach
-//    void purgeDb() {
-//        for (int i = 0; i < 5; i++) {
-//            repository.delete(basicService[i]);
-//        }
-//
-//    }
-
-//    @AfterAll
-//    static void purgeOb() {
-//        for (int i = 0; i < 5; i++) {
-//            basicService[i] = null;
-//        }
-//
-//    }
 
 
     @Test
@@ -99,9 +66,9 @@ class BasicServicesServiceTest {
 
                 () -> assertTrue(service.checkByName(basicService[2].getName())),
 
-                () -> assertThrows(CustomExceptionSave.class
+/*                () -> assertThrows(CustomExceptionSave.class
                         , () -> service.addBasicService(tempBase)
-                        , "this name is invalid"),
+                        , "this name is invalid"),*/
 
                 () -> assertNull(tempBase.getId())
         );

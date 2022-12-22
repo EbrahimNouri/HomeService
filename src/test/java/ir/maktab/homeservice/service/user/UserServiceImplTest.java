@@ -55,4 +55,34 @@ class UserServiceImplTest {
         assertEquals(newPass, Objects
                 .requireNonNull(service.findById(user.getId()).orElse(null)).getPassword());
     }
+
+
+
+//    @Test
+//    void passwordPatternTest() {
+//        String newPass = "1234QWer";
+//        assertThrows(Exception.class, () -> service.changePassword(user, "123"));
+//        user.setPassword(newPass);
+//        assertEquals(newPass, Objects.requireNonNull(service.findById(user
+//                .getId()).orElse(null)).getPassword());
+//    }
+
+/*    @Test
+    void passwordUnchangedTest() {
+        assertThrows(CustomPatternInvalidException.class, () -> service.changePassword(user
+                , user.getPassword()), "password not changed");
+    }*/
+
+//    @Test
+//    void emailPatternTest() {
+//        Expert expert1 = Expert.builder().firstname("testName")
+//                .lastname("testLastname").email("tesst1emailcom")
+//                .password("1234QWer").build();
+//        ;
+//        assertThrows(ConstraintViolationException.class, () -> service.save(user));
+///*        assertThrows(CustomExceptionSave.class
+//                , () -> service.registerExpert(expert1, null)
+//                ,"expert not saved");*/
+//    }
+
 }

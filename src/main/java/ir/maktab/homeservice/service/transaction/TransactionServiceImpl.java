@@ -31,49 +31,60 @@ public class TransactionServiceImpl implements TransactionService {
         User user = transaction1.getUser();
         Expert expert = transaction1.getExpert();
         double amount = transaction1.getTransfer();
-        if (transaction1.getTransfer() <= transaction1.getUser().getCredit()
-                && user.getId() != null && expert.getId() != null) {
+        try {
 
-            user.setCredit(user.getCredit() - amount);
-            expert.setCredit(expert.getCredit() + amount);
-            userService.save(user);
-            expertService.save(expert);
-            transaction1.setUser(user);
-            transaction1.setExpert(expert);
-            transaction1.setTransactionType(TransactionType.TRANSFER);
-            repository.save(transaction1);
+            if (transaction1.getTransfer() <= transaction1.getUser().getCredit()
+                    && user.getId() != null && expert.getId() != null) {
 
-            log.debug("error add transaction {} ", transaction1);
+                user.setCredit(user.getCredit() - amount);
+                expert.setCredit(expert.getCredit() + amount);
+                userService.save(user);
+                expertService.save(expert);
+                transaction1.setUser(user);
+                transaction1.setExpert(expert);
+                transaction1.setTransactionType(TransactionType.TRANSFER);
+                repository.save(transaction1);
 
-        } else {
-            log.warn("warn Transfers are more than inventory {} ", transaction1);
+                log.debug("error add transaction {} ", transaction1);
 
-            throw new CustomExceptionSave("amount greater than wallet");
+            } else {
+                log.warn("warn Transfers are more than inventory {} ", transaction1);
+
+                throw new CustomExceptionSave("amount greater than wallet");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Transactional
     @Override
     public void chargeAccountBalance(User user, Double amount) {
+        try {
+            user.setCredit(user.getCredit() + amount);
+            userService.save(user);
+            Transaction transaction =
+                    new Transaction(null, user, null, amount, TransactionType.DEPOSIT);
+            repository.save(transaction);
 
-        user.setCredit(user.getCredit() + amount);
-        userService.save(user);
-        Transaction transaction =
-                new Transaction(null, user, null, amount, TransactionType.DEPOSIT);
-        repository.save(transaction);
-
-        log.debug("debug add transaction to wallet user {} {} ", user, amount);
-
+            log.debug("debug add transaction to wallet user {} {} ", user, amount);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
     @Override
     public Optional<Transaction> findById(Transaction transaction) {
         Optional<Transaction> transaction1 = Optional.empty();
+        try {
+            return repository.findByExpertIdAndUserId(
+                    transaction.getExpert().getId(),
+                    transaction.getUser().getId());
 
-        return repository.findByExpertIdAndUserId(
-                transaction.getExpert().getId(),
-                transaction.getUser().getId());
-
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 }

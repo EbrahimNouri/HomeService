@@ -42,11 +42,6 @@ class TypeServiceServiceImplTest {
         typeService = null;
     }
 
-//    @AfterEach
-//    void purgeDatabase() {
-//        typeServiceRepository.delete(typeService);
-//        basicServiceRepository.delete(basicService);
-//    }
 
     @Test
     void addSubService() {

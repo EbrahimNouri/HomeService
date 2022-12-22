@@ -69,18 +69,6 @@ class ExpertUserServiceImplTest {
         expertUserMain = ExpertUser.builder().expert(expertTest).user(user).order(order).comment("commedddnt").point(3.0).build();
     }
 
-/*    @BeforeEach
-    void setToDb() {
-        basicServicesService.addBasicService(basicService);
-        typeServiceService.addSubService(typeService);
-        expertService.registerExpert(expertTest, avatar);
-        userService.registerUser(user);
-        orderService.orderRegistration(order);
-        expertUserMain.setOrder(order);
-        order.setOrderType(OrderType.PAID);
-        orderRepository.save(order);
-    }*/
-
     @Test
     void addCommentAndPoint() {
 

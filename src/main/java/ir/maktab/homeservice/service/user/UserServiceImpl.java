@@ -23,9 +23,10 @@ public class UserServiceImpl implements UserService {
     private UserRepository repository;
 
     @Override
-    public void save(User user){
+    public void save(User user) {
         repository.save(user);
     }
+
     @Override
     public void mainRegisterUser(@Valid User user) {
         repository.save(user);
@@ -33,36 +34,48 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void registerUser(@Valid User user) {
-        if (user.getEmail() != null && user.getPassword() != null) {
+        try {
+            if (user.getEmail() != null && user.getPassword() != null) {
 
-            repository.save(user);
+                repository.save(user);
 
-            log.debug("debug user service iml {} ", user);
-        } else {
-            log.warn("warn register user  username or password is is null {} ", user);
+                log.debug("debug user service iml {} ", user);
+            } else {
+                log.warn("warn register user  username or password is is null {} ", user);
 
-            throw new CustomExceptionSave("user not saved");
+                throw new CustomExceptionSave("user not saved");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public void changePassword(@Valid User user, String password) {
-        if (!user.getPassword().equals(password)
-                && user.getPassword().equals(Objects.requireNonNull(findById(user.getId())
-                .orElse(null)).getPassword())) {
-            user.setPassword(password);
-            repository.save(user);
+        try {
+            if (!user.getPassword().equals(password)
+                    && user.getPassword().equals(Objects.requireNonNull(findById(user.getId())
+                    .orElse(null)).getPassword())) {
+                user.setPassword(password);
+                repository.save(user);
 
-            log.debug("debug change password user {} to {} ", user, password);
-        } else {
-            throw new CustomExceptionSave("password not changed");
+                log.debug("debug change password user {} to {} ", user, password);
+            } else {
+                throw new CustomExceptionSave("password not changed");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public Optional<User> findById(Long id) {
-
-        return repository.findUserById(id);
+        try {
+            return repository.findUserById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 
 }

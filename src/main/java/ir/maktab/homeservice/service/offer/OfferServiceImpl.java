@@ -16,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,46 +31,66 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public void save(Offer offer) {
-        repository.save(offer);
+        try {
+            repository.save(offer);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public List<Offer> findOfferByOrder_Id(Long orderId) {
-        return repository.findOfferByOrder_Id(orderId);
+        try {
+            return repository.findOfferByOrder_Id(orderId);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     @Override
     public void offerRegistrationOrUpdate(Offer offer) {
         OrderService orderService = applicationContextProvider.getContext().getBean(OrderService.class);
         Order order = offer.getOrder();
-        if (offerRegistrationCheck(offer, offer.getOrder())) {
+        try {
 
-            repository.save(offer);
+            if (offerRegistrationCheck(offer, offer.getOrder())) {
 
-            log.debug("debug offer registered {} ", order);
-            if (order.getOrderType().equals(OrderType.WAITING_FOR_THE_SUGGESTIONS)
-                    || order.getOrderType().equals(OrderType.WAITING_EXPERT_SELECTION)) {
+                repository.save(offer);
 
-                order.setOrderType(OrderType.WAITING_EXPERT_SELECTION);
-                orderService.save(order);
+                log.debug("debug offer registered {} ", order);
+                if (order.getOrderType().equals(OrderType.WAITING_FOR_THE_SUGGESTIONS)
+                        || order.getOrderType().equals(OrderType.WAITING_EXPERT_SELECTION)) {
 
-                log.debug("debug order change to {} ", order.getOrderType());
-            } else
-                log.debug("debug order type It had already changed {} ", order.getOrderType());
+                    order.setOrderType(OrderType.WAITING_EXPERT_SELECTION);
+                    orderService.save(order);
 
-        } else {
-            repository.save(offer);
+                    log.debug("debug order change to {} ", order.getOrderType());
+                } else
+                    log.debug("debug order type It had already changed {} ", order.getOrderType());
 
-            log.debug("debug offer updated {} ", order);
+            } else {
+                repository.save(offer);
+
+                log.debug("debug offer updated {} ", order);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public List<Offer> showOffersByOrder(Order order) {
+        try {
+            log.debug("debug found offer by order {}", order);
+            return repository.findOfferByOrder_Id(order.getId());
 
-        log.debug("debug found offer by order {}", order);
-        return repository.findOfferByOrder_Id(order.getId());
-
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     @Override
@@ -77,64 +98,87 @@ public class OfferServiceImpl implements OfferService {
         OrderService orderService = applicationContextProvider.getContext().getBean(OrderService.class);
 
         Order order = offer.getOrder();
+        try {
+            if (orderService.findById(order.getId()).orElseThrow(() -> new CustomExceptionNotFind("order Not found"))
+                    .getOffers().stream().anyMatch(offer1 -> !offer1.isChoose())) {
 
-        if (orderService.findById(order.getId()).orElseThrow(() -> new CustomExceptionNotFind("order Not found"))
-                .getOffers().stream().anyMatch(offer1 -> !offer1.isChoose())) {
+                if (order.getOrderType().equals(OrderType.WAITING_EXPERT_SELECTION)) {
+                    if (checkLevelWork(offer)) {
 
-            if (order.getOrderType().equals(OrderType.WAITING_EXPERT_SELECTION)) {
-                if (checkLevelWork(offer)) {
+                        offer.setChoose(true);
+                        repository.save(offer);
 
-                    offer.setChoose(true);
-                    repository.save(offer);
+                        order.setOrderType(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE);
+                        orderService.save(order);
 
-                    order.setOrderType(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE);
-                    orderService.save(order);
+                        log.debug("debug choose offer {} ", offer);
+                    } else throw new CustomExceptionUpdate("check level work error");
 
-                    log.debug("debug choose offer {} ", offer);
-                }
-                else throw new CustomExceptionUpdate("check level work error");
+                } else
+                    throw new CustomExceptionUpdate("order type invalid");
 
             } else
-                throw new CustomExceptionUpdate("order type invalid");
-
-        } else
-            throw new CustomExceptionUpdate("user chosen a offer before it");
+                throw new CustomExceptionUpdate("user chosen a offer before it");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
     @Override
     public Optional<Offer> findById(Long id) {
+        try {
+            return repository.findOfferById(id);
 
-        return repository.findOfferById(id);
-
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     @Override
     public List<Offer> findByOrder(Order order) {
+        try {
+            return repository.findOfferByOrder_Id(order.getId()/*, Sort.by(Sort.Direction.DESC*/);
 
-        return repository.findOfferByOrder_Id(order.getId()/*, Sort.by(Sort.Direction.DESC*/);
-
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     @Override
     public List<Offer> findByOrderIdSortedPrice(Long orderId) {
+        try {
+            return repository.findOfferSortedByPrice(orderId);
 
-        return repository.findOfferSortedByPrice(orderId);
-
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     @Override
     public List<Offer> findByOrderIdSortedByPoint(Long orderId) {
+        try {
+            return repository.findByOrderIdSortedByPoint(orderId);
 
-        return repository.findByOrderIdSortedByPoint(orderId);
-
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
 
     public List<Offer> findByOrderIdSortedPoint(Long orderId) {
+        try {
+            return repository.findOfferSortedByPrice(orderId);
 
-        return repository.findOfferSortedByPrice(orderId);
+        } catch (Exception e) {
+            e.printStackTrace();
 
+            return new ArrayList<>();
+        }
     }
 
     private boolean checkLevelWork(Offer offer) {

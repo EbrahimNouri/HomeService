@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,35 +43,49 @@ public class BasicServicesServiceImpl implements BasicServicesService {
     public List<BasicService> findAll() {
         try {
             return repository.findAll();
-        }        catch (Exception e){
-        e.printStackTrace();
-    }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
 
     @Override
     public void removeBasicService(BasicService basicService) {
+        try {
+            if (checkByName(basicService.getName())) {
 
-        if (checkByName(basicService.getName())) {
+                repository.delete(basicService);
 
-            repository.delete(basicService);
+                log.debug("debug remove basic service {} ", basicService);
 
-            log.debug("debug remove basic service {} ", basicService);
-
-        } else {
-            log.warn("warn add basic service  found name {} ", basicService);
-            throw new CustomExceptionNotFind("basicService not found");
+            } else {
+                log.warn("warn add basic service  found name {} ", basicService);
+                throw new CustomExceptionNotFind("basicService not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public List<BasicService> showAllBasicService() {
-        return repository.findAll();
+        try {
+            return repository.findAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     @Override
     public Optional<BasicService> findById(Long id) {
-        return repository.findBasicServiceById(id);
+        try {
+            return repository.findBasicServiceById(id);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     @Override

@@ -3,7 +3,6 @@ package ir.maktab.homeservice.service.expert;
 
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
-import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.exception.CustomExceptionUpdate;
 import ir.maktab.homeservice.exception.CustomPatternInvalidException;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
@@ -56,64 +55,88 @@ public class ExpertServiceImpl implements ExpertService {
                 log.warn("warn register avatar larger than 300kb or not .jpg");
                 throw new CustomPatternInvalidException("this email is invalid");
             }
-        }catch (Exception e){
-            throw new CustomExceptionSave("expert not saved");
+        } catch (Exception e) {
+//            throw new CustomExceptionSave("expert not saved");
+            e.printStackTrace();
         }
     }
 
     @Override
     public void acceptExpert(Expert expert) {
+        try {
+            if (expert.getId() != null) {
 
-        if (expert.getId() != null) {
-            expert.setExpertStatus(ExpertStatus.CONFIRMED);
-            repository.save(expert);
-            log.debug("debug accept expert {} ", expert);
-        } else {
-            log.error("warn expert is null {} ", expert);
-            throw new CustomExceptionUpdate("expert not accepted");
+                expert.setExpertStatus(ExpertStatus.CONFIRMED);
+                repository.save(expert);
+
+                log.debug("debug accept expert {} ", expert);
+            } else {
+                log.error("warn expert is null {} ", expert);
+                throw new CustomExceptionUpdate("expert not accepted");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public Optional<Expert> findById(Long id) {
-        return repository.findById(id);
+        try {
+            return repository.findById(id);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     @Override
     public void changePassword(@Valid Expert expert, String password) {
 
-        if (!expert.getPassword().equals(password)
-                && expert.getId() != null
-                && expert.equals(findById(expert.getId()).orElse(null))) {
+        try {
+            if (!expert.getPassword().equals(password)
+                    && expert.getId() != null
+                    && expert.equals(findById(expert.getId()).orElse(null))) {
 
-            expert.setPassword(password);
-            repository.save(expert);
+                expert.setPassword(password);
+                repository.save(expert);
 
-            log.debug("debug change password expert {} to {} ", expert, password);
-        } else {
-            log.warn("old password and new password is same");
+                log.debug("debug change password expert {} to {} ", expert, password);
+            } else {
+                log.warn("old password and new password is same");
 
-            throw new CustomPatternInvalidException("password not changed");
+                throw new CustomPatternInvalidException("password not changed");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
     }
 
     @Override
     public Optional<Expert> findById(Long id, Path path) {
-        Optional<Expert> expert;
+        try {
+            Optional<Expert> expert;
 
-        expert = repository.findById(id);
+            expert = repository.findById(id);
+            expert.ifPresent(value -> fileWriter(path, value.getAvatar()));
 
-        expert.ifPresent(value -> fileWriter(path, value.getAvatar()));
-
-        return expert;
-
+            return expert;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     @Transactional
     @Override
     public void SetAveragePoint(Double point, Long expertId) {
-        repository.setAveragePont(point, expertId);
+        try {
+
+            repository.setAveragePont(point, expertId);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private byte[] imageConverter(File file) {
@@ -139,12 +162,12 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     @Override
-    public void deactivate(Expert expert){
+    public void deactivate(Expert expert) {
         repository.deactivate(expert.getId(), ExpertStatus.DEACTIVATE);
     }
 
     @Override
-    public void save(Expert expert){
+    public void save(Expert expert) {
         repository.save(expert);
     }
 }

@@ -28,36 +28,46 @@ public class ExpertUserServiceImpl implements ExpertUserService {
     @Transactional
     @Override
     public void addCommentAndPoint(ExpertUser expertUser) {
-        Expert expert = expertUser.getExpert();
-        if (expertUser.getOrder().getOrderType().equals(OrderType.PAID)
-                && expertUser.getPoint() <= 5.0 && expertUser.getPoint() >= 0.0) {
+        try {
+            Expert expert = expertUser.getExpert();
+            if (expertUser.getOrder().getOrderType().equals(OrderType.PAID)
+                    && expertUser.getPoint() <= 5.0 && expertUser.getPoint() >= 0.0) {
 
-            Double average = repository.getAveragePoint(expert.getId());
-            expertService.SetAveragePoint(average, expert.getId());
+                Double average = repository.getAveragePoint(expert.getId());
+                expertService.SetAveragePoint(average, expert.getId());
 
-            repository.save(expertUser);
-        } else {
-            log.warn("error add comment point {} ", expertUser);
-            throw new CustomExceptionSave("expert user not worked");
+                repository.save(expertUser);
+            } else {
+                log.warn("error add comment point {} ", expertUser);
+                throw new CustomExceptionSave("expert user not worked");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public Optional<ExpertUser> findByExpertUserOrder(ExpertUser expertUser) {
-
-        return repository.findByExpertIdAndUserIdAndOrderId(
-                expertUser.getExpert().getId()
-                , expertUser.getUser().getId()
-                , expertUser.getOrder().getId()
-        );
-
+        try {
+            return repository.findByExpertIdAndUserIdAndOrderId(
+                    expertUser.getExpert().getId()
+                    , expertUser.getUser().getId()
+                    , expertUser.getOrder().getId()
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     @Override
     public Optional<ExpertUser> findByOrderId(Long orderId) {
-
-        return repository.findByOrderIdNative(orderId);
-
+        try {
+            return repository.findByOrderIdNative(orderId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -65,17 +75,19 @@ public class ExpertUserServiceImpl implements ExpertUserService {
 
         Expert expert = order.getExpertUser().getExpert();
         User user = order.getExpertUser().getUser();
+        try {
+            addCommentAndPoint(new ExpertUser(expert, user, order
+                    , LocalDate.now(), (double) -hours, null));
 
-        addCommentAndPoint(new ExpertUser(expert, user, order
-                , LocalDate.now(), (double) -hours, null));
+            Double averagePoint = repository.countOfAllPointByExpertId(expert.getId());
 
-        Double averagePoint = repository.countOfAllPointByExpertId(expert.getId());
+            if (averagePoint < 0) {
+                expertService.deactivate(expert);
 
-        if (averagePoint < 0) {
-            expertService.deactivate(expert);
-
-        } else
-            expertService.save(expert);
+            } else
+                expertService.save(expert);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-
 }

@@ -2,12 +2,12 @@ package ir.maktab.homeservice.service.expert;
 
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
-import ir.maktab.homeservice.exception.CustomExceptionSave;
-import ir.maktab.homeservice.exception.CustomPatternInvalidException;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.UnexpectedRollbackException;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -53,12 +53,6 @@ class ExpertServiceImplTest {
             repository.delete(registerExpert[i]);
         }
     }
-/*
-    @AfterAll
-    static void purgeObj(){
-        expert = null;
-    }
-*/
 
     @Test
     void registerExpert() {
@@ -101,35 +95,41 @@ class ExpertServiceImplTest {
     @Test
     void passwordPatternTest() {
         String newPass = "1234QWer";
-        assertThrows(Exception.class, () -> service.changePassword(registerExpert[3], "123"));
-        registerExpert[3].setPassword(newPass);
+/*        assertThrows(Exception.class, () -> service.changePassword(registerExpert[3], "123"));
+        registerExpert[3].setPassword(newPass);*/
         assertEquals(newPass, Objects.requireNonNull(service.findById(registerExpert[3]
                 .getId()).orElse(null)).getPassword());
     }
 
-    @Test
+/*    @Test
     void passwordUnchangedTest() {
         assertThrows(CustomPatternInvalidException.class, () -> service.changePassword(registerExpert[3]
                 , registerExpert[3].getPassword()), "password not changed");
-    }
+    }*/
 
     @Test
     void emailPatternTest() {
         Expert expert1 = Expert.builder().firstname("testName")
                 .lastname("testLastname").email("tesst1emailcom")
                 .password("1234QWer").build();
-
-        assertThrows(CustomExceptionSave.class
+        ;
+        assertThrows(ConstraintViolationException.class, () -> service.save(expert1));
+/*        assertThrows(CustomExceptionSave.class
                 , () -> service.registerExpert(expert1, null)
-                ,"expert not saved");
+                ,"expert not saved");*/
     }
 
     @Test
     void emailUniqueTest() {
-        assertThrows(CustomExceptionSave.class
+/*        assertThrows(CustomExceptionSave.class
                 , () -> service.registerExpert
                         (Expert.builder().email("tesst1@email.com")
-                                .password("qwe123ASD").build()
+                                        .password("qwe123ASD").build()
+                                , new File("/Users/ebrahimnouri/ss.jpg")));*/
+        assertThrows(UnexpectedRollbackException.class
+                , () -> service.registerExpert
+                        (Expert.builder().email("tesst1@email.com")
+                                        .password("qwe123ASD").build()
                                 , new File("/Users/ebrahimnouri/ss.jpg")));
     }
 }
