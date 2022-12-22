@@ -66,19 +66,19 @@ public class OfferControllerImpl implements OfferController {
     @Override
     @PutMapping("/startOfWork/{offerId}")
     public void startOfWork(@PathVariable Long offerId) {
-        Offer offer = service.findById(offerId)
-                .orElseThrow(() -> new CustomExceptionNotFind("offer not found"));
-
-        service.startOfWork(offer);
+//        Offer offer = service.findById(offerId)
+//                .orElseThrow(() -> new CustomExceptionNotFind("offer not found"));
+//
+//        service.startOfWork(offer);
     }
 
     @Override
     @PutMapping("/endOfTheWork/{offerId}")
     public void endOfTheWork(@PathVariable Long offerId) {
-        Offer offer = service.findById(offerId)
-                .orElseThrow(() -> new CustomExceptionNotFind("offer not found"));
-
-        service.endOfTheWork(offer);
+//        Offer offer = service.findById(offerId)
+//                .orElseThrow(() -> new CustomExceptionNotFind("offer not found"));
+//
+//        service.endOfTheWork(offer);
     }
 
     @Override

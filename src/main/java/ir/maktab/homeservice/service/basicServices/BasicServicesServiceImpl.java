@@ -24,20 +24,27 @@ public class BasicServicesServiceImpl implements BasicServicesService {
     @Transactional
     @Override
     public void addBasicService(BasicService basicService) {
+        try {
+            if (!repository.existsByName(basicService.getName())) {
 
-        if (!repository.existsByName(basicService.getName())) {
+                repository.save(basicService);
 
-            repository.save(basicService);
-
-        } else {
-            log.error("error add basic service name is invalid");
-            throw new CustomExceptionSave("this name is invalid");
+            } else {
+                log.error("error add basic service name is invalid");
+                throw new CustomExceptionSave("this name is invalid");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public List<BasicService> findAll() {
-        return repository.findAll();
+        try {
+            return repository.findAll();
+        }        catch (Exception e){
+        e.printStackTrace();
+    }
     }
 
 
@@ -67,7 +74,7 @@ public class BasicServicesServiceImpl implements BasicServicesService {
     }
 
     @Override
-    public boolean checkByName(String name){
+    public boolean checkByName(String name) {
         return repository.existsByName(name);
     }
 }

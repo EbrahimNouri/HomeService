@@ -13,6 +13,14 @@ public interface OrderService {
 
     void orderRegistration(Order order);
 
+    void startOfWork(Order order);
+
+/*
+    void chooseOffer(Order order);
+*/
+
+    void endOfTheWork(Order order);
+
     void setOrderToDone(Order order);
 
     void setOrderToPaid(Order order);

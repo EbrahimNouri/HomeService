@@ -1,6 +1,7 @@
 package ir.maktab.homeservice.service.offer;
 
 
+import ir.maktab.homeservice.config.ApplicationContextProvider;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.enums.OrderType;
@@ -15,7 +16,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,8 +26,12 @@ import java.util.Optional;
 public class OfferServiceImpl implements OfferService {
     private final ExpertTypeServiceService expertTypeServiceService;
     private OfferRepository repository;
-    private OrderService orderService;
+    private ApplicationContextProvider applicationContextProvider;
 
+    @Override
+    public void save(Offer offer) {
+        repository.save(offer);
+    }
 
     @Override
     public List<Offer> findOfferByOrder_Id(Long orderId) {
@@ -36,6 +40,7 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public void offerRegistrationOrUpdate(Offer offer) {
+        OrderService orderService = applicationContextProvider.getContext().getBean(OrderService.class);
         Order order = offer.getOrder();
         if (offerRegistrationCheck(offer, offer.getOrder())) {
 
@@ -69,20 +74,26 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public void chooseOffer(Offer offer) {
+        OrderService orderService = applicationContextProvider.getContext().getBean(OrderService.class);
+
         Order order = offer.getOrder();
 
         if (orderService.findById(order.getId()).orElseThrow(() -> new CustomExceptionNotFind("order Not found"))
                 .getOffers().stream().anyMatch(offer1 -> !offer1.isChoose())) {
 
-            if (checkLevelWork(offer, OrderType.WAITING_FOR_THE_SUGGESTIONS, OrderType.WAITING_EXPERT_SELECTION)) {
+            if (order.getOrderType().equals(OrderType.WAITING_EXPERT_SELECTION)) {
+                if (checkLevelWork(offer)) {
 
-                offer.setChoose(true);
-                repository.save(offer);
+                    offer.setChoose(true);
+                    repository.save(offer);
 
-                order.setOrderType(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE);
-                orderService.save(order);
+                    order.setOrderType(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE);
+                    orderService.save(order);
 
-                log.debug("debug choose offer {} ", offer);
+                    log.debug("debug choose offer {} ", offer);
+                }
+                else throw new CustomExceptionUpdate("check level work error");
+
             } else
                 throw new CustomExceptionUpdate("order type invalid");
 
@@ -90,50 +101,6 @@ public class OfferServiceImpl implements OfferService {
             throw new CustomExceptionUpdate("user chosen a offer before it");
     }
 
-    @Override
-    public void startOfWork(Offer offer) {
-        Order order = offer.getOrder();
-        if (checkLevelWork(offer, OrderType.WAITING_FOR_COME_TO_YOUR_PLACE)) {
-            if (offer.getStartDate().isAfter(LocalDateTime.now())) {
-
-                order.setOrderType(OrderType.STARTED);
-                orderService.save(order);
-                repository.save(offer);
-            } else
-                throw new CustomExceptionUpdate("start of work is after offer set");
-
-            log.debug("debug start of work {} ", order);
-        } else {
-            log.warn("warn start of work not worked order id or offer id is null or order type is invalid {} "
-                    , offer);
-            throw new CustomExceptionUpdate("this order not valid");
-        }
-    }
-
-    @Override
-    public void endOfTheWork(Offer offer) {
-        Order order = offer.getOrder();
-        try {
-            if (checkLevelWork(offer, OrderType.STARTED)) {
-                if (LocalDateTime.now().isAfter(offer.getEndDate())) {
-
-                    order.setDelayEndWorkHours(ChronoUnit.HOURS.between(LocalDateTime.now(), offer.getEndDate()));
-                    orderService.save(order);
-
-                    log.debug("debug done of work {} ", order);
-                }
-
-                order.setOrderType(OrderType.DONE);
-                orderService.save(order);
-
-            }
-        } catch (Exception e) {
-            log.warn("warn done work not worked order id or offer id is null or order type is invalid {} "
-                    , offer);
-            throw new CustomExceptionUpdate("this order not valid");
-        }
-
-    }
 
     @Override
     public Optional<Offer> findById(Long id) {
@@ -170,14 +137,12 @@ public class OfferServiceImpl implements OfferService {
 
     }
 
-
-    private boolean checkLevelWork(Offer offer, OrderType... orderType) {
+    private boolean checkLevelWork(Offer offer) {
         Order order = offer.getOrder();
-        return order.getOrderType().equals(orderType[0])
-                || order.getOrderType().equals(orderType[1])
-                && order.getId() != null && offer.getId() != null
+        return order.getId() != null && offer.getId() != null
                 && offer.getStartDate().isAfter(LocalDateTime.now());
     }
+
 
     private boolean offerRegistrationCheck(Offer offer, Order order) {
         return offer.getEndDate().isAfter(offer.getStartDate())

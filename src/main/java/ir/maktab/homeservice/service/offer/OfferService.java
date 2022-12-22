@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface OfferService {
 
+    void save(Offer offer);
+
     List<Offer> findOfferByOrder_Id(Long orderId);
 
     void offerRegistrationOrUpdate(Offer offer);
@@ -15,10 +17,6 @@ public interface OfferService {
     List<Offer> showOffersByOrder(Order order);
 
     void chooseOffer(Offer offer);
-
-    void startOfWork(Offer offer);
-
-    void endOfTheWork(Offer offer);
 
     Optional<Offer> findById(Long id);
 

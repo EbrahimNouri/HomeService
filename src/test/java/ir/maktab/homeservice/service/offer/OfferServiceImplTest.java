@@ -109,13 +109,13 @@ class OfferServiceImplTest {
 
             order[i] = new Order(typeService[i], user[i], null, null
                     , 120.0, "description Test" + i
-                    , LocalDate.now(), "addrestest", OrderType.DONE, null);
+                    , LocalDate.now(), "addrestest", OrderType.DONE, null,null);
 
             expertUser[i] = new ExpertUser(expert[i], user[i], order[i], null
                     , 4.0, "hello comment4" + i);
             for (int j = 0; j < 3; j++) {
                 offer[i][j] = new Offer(order[i], expert[i], LocalDateTime.now().plusDays(1), "desss"
-                        , 126.0, LocalDateTime.now().plusDays(5), null, false);
+                        , 126.0, LocalDateTime.now().plusDays(5), false);
             }
         }
     }
@@ -130,6 +130,7 @@ class OfferServiceImplTest {
             basicServicesService.addBasicService(basicService[i]);
             typeServiceService.addSubService(typeService[i]);
             orderService.orderRegistration(order[i]);
+            order[i].setOrderType(OrderType.STARTED);
             orderService.setOrderToDone(order[i]);
             expertTypeServiceService.addExpertToTypeService(expertTypeService[i]);
             order[i].setOrderType(OrderType.WAITING_EXPERT_SELECTION);
@@ -215,38 +216,6 @@ class OfferServiceImplTest {
     }
 
     @Test
-    void startOfWork() {
-        offer[1][2].getOrder().setOrderType(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE);
-        service.startOfWork(offer[1][2]);
-        assertAll(
-                () -> assertEquals(Objects.requireNonNull(service.findById(offer[1][2].getId())
-                                .orElse(null)).getOrder()
-                        .getOrderType(), OrderType.STARTED)
-
-        );
-        offer[2][2].getOrder().setOrderType(OrderType.PAID);
-        assertAll(
-                () -> assertThrows(Exception.class, () -> service.endOfTheWork(offer[2][2]))
-        );
-    }
-
-    @Test
-    void endOfTheWork() {
-        offer[2][2].getOrder().setOrderType(OrderType.STARTED);
-        service.endOfTheWork(offer[2][2]);
-        assertAll(
-                () -> assertEquals(Objects.requireNonNull(service.findById(offer[2][2].getId())
-                                .orElse(null)).getOrder()
-                        .getOrderType(), OrderType.DONE)
-        );
-
-        offer[2][2].getOrder().setOrderType(OrderType.PAID);
-        assertAll(
-                () -> assertThrows(Exception.class, () -> service.endOfTheWork(offer[2][2]))
-        );
-    }
-
-    @Test
     void findByOrder() {
 
         assertNotNull(service.findById(1L));
@@ -269,6 +238,7 @@ class OfferServiceImplTest {
 //        assertNotNull(service.findById(1L));
         assertEquals(service.findByOrder(offer[3][0].getOrder()).stream()
                         .map((Offer::getSuggestedPrice)).sorted(Comparator.reverseOrder()).toList().get(1)
+
                 , service.findByOrderIdSortedPrice(offer[3][0].getOrder().getId()).stream()
                         .map(Offer::getSuggestedPrice).toList().get(1));
 

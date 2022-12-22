@@ -22,33 +22,42 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     @Override
     public void addAdmin(Admin admin) {
+        try {
+            adminRepository.save(admin);
 
-        adminRepository.save(admin);
-
-        log.debug("admin created {} ", admin);
-
+            log.debug("admin created {} ", admin);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Transactional
     @Override
     public void changePassword(@Valid Admin admin, String password) {
-        if (!admin.getPassword().equals(password)
-                && admin.getId() != null) {
+        try {
+            if (!admin.getPassword().equals(password)
+                    && admin.getId() != null) {
 
-            admin.setPassword(password);
-            adminRepository.save(admin);
+                admin.setPassword(password);
+                adminRepository.save(admin);
 
-            log.debug("admin created {} ", admin);
-        } else {
-            log.warn("warn new password same old password");
-            throw new CustomExceptionUpdate("admin password not changed");
+                log.debug("admin created {} ", admin);
+            } else {
+                log.warn("warn new password same old password");
+                throw new CustomExceptionUpdate("admin password not changed");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public Optional<Admin> findById(Long adminId) {
-
-        return adminRepository.findById(adminId);
-
+        try {
+            return adminRepository.findById(adminId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 }
