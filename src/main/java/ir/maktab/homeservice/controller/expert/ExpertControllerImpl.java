@@ -1,19 +1,24 @@
 package ir.maktab.homeservice.controller.expert;
 
 
+import ir.maktab.homeservice.dto.OfferDto;
 import ir.maktab.homeservice.dto.PersonChangePasswordDto;
 import ir.maktab.homeservice.dto.PersonRegisterDto;
 import ir.maktab.homeservice.entity.Expert;
+import ir.maktab.homeservice.entity.Offer;
+import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.service.expert.ExpertService;
+import ir.maktab.homeservice.service.offer.OfferService;
+import ir.maktab.homeservice.service.order.OrderService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.List;
 
 
 @RestController
@@ -21,7 +26,9 @@ import java.util.Optional;
 @AllArgsConstructor
 @RequestMapping("api/v1/expert")
 public class ExpertControllerImpl implements ExpertController {
-    private ExpertService expertService;
+    private final ExpertService expertService;
+    private final OfferService offerService;
+    private final OrderService orderService;
 
     @PostMapping("/regExpert")
     @Override
@@ -44,16 +51,7 @@ public class ExpertControllerImpl implements ExpertController {
 //        expertService.registerExpert(expert, new File("/Users/ebrahimnouri/ss.jpg"));
     }
 
-    @PutMapping("/acceptExpert/{expertId}")
-    @Override
-    public void acceptExpert(@PathVariable Long expertId) {
-        Optional<Expert> acceptExpert = expertService.findById(expertId);
-        expertService.acceptExpert(acceptExpert.orElse(null));
-//        return expertService.acceptExpert
-//                (acceptExpert.map(ResponseEntity::ok).
-//                        orElse();
 
-    }
 
     @GetMapping("/{id}")
     @Override
@@ -69,5 +67,30 @@ public class ExpertControllerImpl implements ExpertController {
         Expert expert = expertService.findById(personChangePasswordDto.getId())
                 .orElseThrow(()-> new CustomExceptionNotFind("expert not found"));
         expertService.changePassword(expert, personChangePasswordDto.getPassword());
+    }
+
+    @Override
+    @PostMapping("/offerRegistrationOrUpdate")
+    public void offerRegistrationOrUpdate(OfferDto offerDto) {
+
+        Offer offer = Offer.builder()
+                .expert(expertService.findById(offerDto.getExpertId())
+                        .orElseThrow(() -> new CustomExceptionNotFind("expert not found")))
+
+                .order(orderService.findById(offerDto.getOrderId())
+                        .orElseThrow(() -> new CustomExceptionNotFind("order not found")))
+
+                .description(offerDto.getDescription())
+                .startDate(offerDto.getStartDate())
+                .EndDate(offerDto.getEndDate())
+                .build();
+
+        offerService.offerRegistrationOrUpdate(offer);
+    }
+
+    @GetMapping("/showOrderSuggestionOrSelection")
+    @Override
+    public List<Order> showOrderSuggestionOrSelection() {
+        return orderService.showOrderSuggestionOrSelection();
     }
 }

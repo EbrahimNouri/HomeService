@@ -69,6 +69,12 @@ class ExpertServiceImplTest {
     }
 
     @Test
+    void findById() {
+        Expert e = service.findById(1L, Path.of("/Users/ebrahimnouri/IdeaProjects/HomeService/farzad.jpg"))
+                .orElse(null);
+    }
+
+    @Test
     void acceptExpert() {
         assertAll(
 

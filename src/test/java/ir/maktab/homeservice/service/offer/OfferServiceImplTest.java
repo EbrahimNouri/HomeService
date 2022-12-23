@@ -198,7 +198,7 @@ class OfferServiceImplTest {
     @Test
     void findByOrderIdSortedPrice() {
         assertNotNull(service.findById(1L));
-        assertEquals(service.findByOrder(offerTest[0][0].getOrder()).stream()
+        assertEquals(service.findByOrder(offerTest[3][2].getOrder()).stream()
                         .map((Offer::getSuggestedPrice)).sorted(Comparator.reverseOrder()).toList().get(1)
                 , service.findByOrderIdSortedPrice(offerTest[3][2].getOrder().getId()).stream()
                         .map(Offer::getSuggestedPrice).toList().get(1));
