@@ -3,8 +3,8 @@ package ir.maktab.homeservice.service.expertTypeSerice;
 
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
+import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -16,19 +16,18 @@ import java.util.Optional;
 @Service
 @Log4j2
 @AllArgsConstructor
-@Transactional
 public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
     ExpertTypeServiceRepository repository;
 
     @Override
-    public void removeExpertFromBasicService(Expert expert) {
-        try {
-            repository.removeByExpert(expert);
-
+    public int removeExpertFromBasicService(Expert expert) {
+/*        try {*/
             log.debug("debug remove expert from basic service {} ", expert);
-        } catch (Exception e) {
+
+            return repository.removeByExpert(expert);
+/*        } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override
@@ -36,7 +35,7 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
         List<ExpertTypeService> expertTypeServices = findExpertTypeServiceByExpertId(expertTypeService.getExpert().getId());
         try {
 
-            if (repository.findByExpertIdAndTypeServiceId
+            if (repository.findById
                     (expertTypeService.getExpert().getId(), expertTypeService.getTypeService().getId()).isEmpty()
                     || repository.findBasicService(expertTypeService.getTypeService().getId()).get()
                     .equals(expertTypeServices.get(0).getTypeService().getBasicService())){
@@ -56,28 +55,34 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
 
     @Override
     public void removeExpertFromTypeService(ExpertTypeService expertTypeService) {
+/*
         try {
+*/
             Optional<ExpertTypeService> temp = repository
-                    .findByExpertIdAndTypeServiceId(expertTypeService.getExpert().getId()
+                    .findById(expertTypeService.getExpert().getId()
                             , expertTypeService.getTypeService().getId());
 
             temp.ifPresent(typeService -> repository.delete(expertTypeService));
 
+
             log.debug("debug remove expert type service {} ", expertTypeService);
-        } catch (Exception e) {
+/*        } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override
-    public Optional<ExpertTypeService> findById(Long expertId, Long expertTypeServiceId) {
+    public ExpertTypeService findById(Long expertId, Long typeServiceId) {
+/*
         try {
-            return repository.findByExpertIdAndTypeServiceId(expertId, expertTypeServiceId);
+*/
+            return repository.findById(expertId, typeServiceId)
+                    .orElseThrow(() -> new CustomExceptionNotFind("expert type service not found"));
 
-        } catch (Exception e) {
+/*        } catch (Exception e) {
             e.printStackTrace();
         }
-        return Optional.empty();
+        return Optional.empty();*/
     }
 
     @Override

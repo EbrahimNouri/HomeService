@@ -5,7 +5,6 @@ import ir.maktab.homeservice.dto.*;
 import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.entity.enums.TransactionType;
-import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
@@ -51,15 +50,15 @@ public class UserControllerImpl implements UserController {
     @Override
     @PutMapping("/chPass")
     public void changePassword(@RequestBody PersonChangePasswordDto personChangePasswordDto) {
-        User temp = userService.findById(personChangePasswordDto.getId())
-                .orElseThrow(() -> new CustomExceptionNotFind("expert not found"));
+        User temp = userService.findById(personChangePasswordDto.getId());
+
         userService.changePassword(temp, personChangePasswordDto.getPassword());
     }
 
     @Override
     @GetMapping("{id}")
     public User findById(@PathVariable Long id) {
-        return userService.findById(id).orElseThrow(() -> new CustomExceptionNotFind("user not found"));
+        return userService.findById(id);
     }
 
     @PostMapping("/addCommentAndPoint")
@@ -67,16 +66,13 @@ public class UserControllerImpl implements UserController {
     public void addCommentAndPoint(@RequestBody ExpertUserDto expertUserDto) {
         ExpertUser expertUser = new ExpertUser();
 
-        Expert expert = expertService.findById(expertUserDto.getExpId())
-                .orElseThrow(() -> new CustomExceptionNotFind("user not found"));
+        Expert expert = expertService.findById(expertUserDto.getExpId());
 
-        User user = userService.findById(expertUserDto.getUserId())
-                .orElseThrow(() -> new CustomExceptionNotFind("user not found"));
+        User user = userService.findById(expertUserDto.getUserId());
 
-        Order order = orderService.findById(expertUserDto.getOrderId())
-                .orElseThrow(() -> new CustomExceptionNotFind("user not found"));
+        Order order = orderService.findById(expertUserDto.getOrderId());
         // TODO: 12/17/2022 AD this is for test ⬇︎
-        order.setOrderType(OrderType.DONE);
+        order.setOrderType(OrderType.PAID);
 
         expertUser = ExpertUser.builder()
                 .user(user)
@@ -93,8 +89,7 @@ public class UserControllerImpl implements UserController {
     @GetMapping("/showOffersByOrder/{orderId}")
     public List<Offer> showOffersByOrder(@PathVariable Long orderId) {
 
-        Order order = orderService.findById(orderId)
-                .orElseThrow(() -> new CustomExceptionNotFind("order not found"));
+        Order order = orderService.findById(orderId);
 
         return offerService.showOffersByOrder(order);
     }
@@ -102,8 +97,7 @@ public class UserControllerImpl implements UserController {
     @Override
     @PutMapping("/chooseOffer/{offerId}")
     public void chooseOffer(@PathVariable Long offerId) {
-        Offer offer = offerService.findById(offerId)
-                .orElseThrow(() -> new CustomExceptionNotFind("offer not found"));
+        Offer offer = offerService.findById(offerId);
 
         offerService.chooseOffer(offer);
     }
@@ -134,8 +128,7 @@ public class UserControllerImpl implements UserController {
                 .orderType(OrderType.WAITING_FOR_THE_SUGGESTIONS)
                 .address(orderDto.getAddress())
                 .description(orderDto.getDescription())
-                .user(userService.findById(orderDto.getUserId()).orElseThrow(
-                        () -> new CustomExceptionNotFind("user not found")))
+                .user(userService.findById(orderDto.getUserId()))
                 .startOfWork(orderDto.getStartOfWork())
                 .suggestedPrice(orderDto.getPrice())
                 .build();
@@ -146,7 +139,7 @@ public class UserControllerImpl implements UserController {
     @PutMapping("/setOrderToDone/{orderId}")
     @Override
     public void setOrderToDone(@PathVariable Long orderId) {
-        Order order = orderService.findById(orderId).orElseThrow(() -> new CustomExceptionNotFind("order not found."));
+        Order order = orderService.findById(orderId);
         orderService.setOrderToDone(order);
     }
 
@@ -165,10 +158,8 @@ public class UserControllerImpl implements UserController {
     public void addTransaction(@RequestBody TransactionDto transactionDto) {
         Transaction transaction = Transaction.builder()
                 .transactionType(TransactionType.TRANSFER)
-                .expert(expertService.findById(transactionDto.getExpertId())
-                        .orElseThrow(() -> new CustomExceptionNotFind("expert Not found")))
-                .user(userService.findById(transactionDto.getUserid())
-                        .orElseThrow(() -> new CustomExceptionNotFind("user Not found")))
+                .expert(expertService.findById(transactionDto.getExpertId()))
+                .user(userService.findById(transactionDto.getUserid()))
                 .build();
 
         transactionService.addTransaction(transaction);

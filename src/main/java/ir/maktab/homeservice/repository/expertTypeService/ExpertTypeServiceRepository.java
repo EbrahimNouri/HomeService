@@ -5,6 +5,7 @@ import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
 import ir.maktab.homeservice.entity.id.ExpertTypeServiceId;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -16,9 +17,12 @@ public interface ExpertTypeServiceRepository extends JpaRepository<ExpertTypeSer
 
     List<ExpertTypeService> findExpertTypeServiceByExpertId(Long expertId);
 
-    void removeByExpert(Expert expert);
+    @Modifying
+    @Query("delete from ExpertTypeService et where et.expert = :expert")
+    int removeByExpert(Expert expert);
 
-    Optional<ExpertTypeService> findByExpertIdAndTypeServiceId(Long expert, Long typeService);
+    @Query(value = "select * from expert_type_service et where expert_id = :expert and type_service_id = :typeService", nativeQuery = true)
+    Optional<ExpertTypeService> findById(Long expert, Long typeService);
 
     @Query("select et.typeService.basicService from ExpertTypeService et where et.typeService = :typeService ")
     Optional<BasicService> findBasicService(Long typeService);

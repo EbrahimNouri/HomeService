@@ -6,7 +6,6 @@ import ir.maktab.homeservice.dto.PersonRegisterDto;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Order;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +17,7 @@ public interface ExpertController {
     void registerExpert(@RequestBody @Valid PersonRegisterDto personRegisterDto);
 
     @GetMapping("/{id}")
-    ResponseEntity<Expert> findById(@PathVariable Long id);
+    Expert findById(@PathVariable Long id);
 
     @PutMapping("/chPass")
     void changePassword(@RequestBody PersonChangePasswordDto personChangePasswordDto);

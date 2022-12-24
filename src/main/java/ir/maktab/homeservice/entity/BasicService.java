@@ -18,12 +18,14 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @Builder
+@ToString
 public class BasicService extends BaseEntity {
 
     @Column(unique = true)
     private String name;
 
     @OneToMany(mappedBy = "basicService"/*, fetch = FetchType.EAGER*/)
+    @ToString.Exclude
     private List<TypeService> typeServices;
 
     @Override

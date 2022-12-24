@@ -4,7 +4,6 @@ import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface OfferService {
 
@@ -18,7 +17,7 @@ public interface OfferService {
 
     void chooseOffer(Offer offer);
 
-    Optional<Offer> findById(Long id);
+    Offer findById(Long id);
 
     List<Offer> findByOrder(Order order);
 

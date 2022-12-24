@@ -8,11 +8,9 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @Log4j2
@@ -55,7 +53,7 @@ public class UserServiceImpl implements UserService {
         try {
             if (!user.getPassword().equals(password)
                     && user.getPassword().equals(Objects.requireNonNull(findById(user.getId())
-                    .orElse(null)).getPassword())) {
+                    .getPassword()))) {
                 user.setPassword(password);
                 repository.save(user);
 
@@ -69,13 +67,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findById(Long id) {
-        try {
-            return repository.findUserById(id);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return Optional.empty();
+    public User findById(Long id) {
+
+        return repository.findUserById(id).orElseThrow(() -> new RuntimeException("user not found"));
+
     }
 
 }

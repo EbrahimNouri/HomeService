@@ -8,14 +8,12 @@ import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
-import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.order.OrderService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,17 +53,15 @@ public class ExpertControllerImpl implements ExpertController {
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<Expert> findById(@PathVariable Long id) {
-        return expertService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public Expert findById(@PathVariable Long id) {
+        return expertService.findById(id);
+
     }
 
     @PutMapping("/chPass")
     @Override
     public void changePassword(@RequestBody @Valid PersonChangePasswordDto personChangePasswordDto) {
-        Expert expert = expertService.findById(personChangePasswordDto.getId())
-                .orElseThrow(()-> new CustomExceptionNotFind("expert not found"));
+        Expert expert = expertService.findById(personChangePasswordDto.getId());
         expertService.changePassword(expert, personChangePasswordDto.getPassword());
     }
 
@@ -74,12 +70,8 @@ public class ExpertControllerImpl implements ExpertController {
     public void offerRegistrationOrUpdate(OfferDto offerDto) {
 
         Offer offer = Offer.builder()
-                .expert(expertService.findById(offerDto.getExpertId())
-                        .orElseThrow(() -> new CustomExceptionNotFind("expert not found")))
-
-                .order(orderService.findById(offerDto.getOrderId())
-                        .orElseThrow(() -> new CustomExceptionNotFind("order not found")))
-
+                .expert(expertService.findById(offerDto.getExpertId()))
+                .order(orderService.findById(offerDto.getOrderId()))
                 .description(offerDto.getDescription())
                 .startDate(offerDto.getStartDate())
                 .EndDate(offerDto.getEndDate())

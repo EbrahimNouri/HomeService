@@ -2,9 +2,12 @@ package ir.maktab.homeservice.controller.admin;
 
 
 import ir.maktab.homeservice.dto.*;
-import ir.maktab.homeservice.entity.*;
+import ir.maktab.homeservice.entity.Admin;
+import ir.maktab.homeservice.entity.BasicService;
+import ir.maktab.homeservice.entity.Offer;
+import ir.maktab.homeservice.entity.TypeService;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,7 +18,7 @@ public interface AdminController {
     void changePassword(@RequestBody @Valid adminPassDto admin);
 
     @GetMapping("findOfferById/{id}")
-    ResponseEntity<Offer> findOfferById(@PathVariable Long id);
+    Offer findOfferById(@PathVariable Long id);
 
     @GetMapping("/{id}")
     Admin findById(@PathVariable Long id);
@@ -32,7 +35,7 @@ public interface AdminController {
     void acceptExpert(@PathVariable Long expertId);
 
     @DeleteMapping("/removeExpertFromBasicService/{expertId}")
-    void removeExpertFromBasicService(@PathVariable Long expertId);
+    HttpStatus removeExpertFromBasicService(@PathVariable Long expertId);
 
     @PostMapping("/addExpertToTypeService")
     void addExpertToTypeService(@RequestBody ExpertTypeServiceDto expertTypeServiceDto);
@@ -40,8 +43,8 @@ public interface AdminController {
     @DeleteMapping("/removeExpertFromTypeService/")
     void removeExpertFromTypeService(@RequestBody ExpertTypeServiceDto expertTypeServiceDto);
 
-    @GetMapping("/findExpertTypeServiceById/")
-    ResponseEntity<ExpertTypeService> findExpertTypeServiceById(@RequestBody ExpertTypeServiceDto expertTypeServiceDto);
+    @GetMapping("findExpertTypeServiceById/{expertId}/{typeServiceId}")
+    ExpertTypeServiceMapped findExpertTypeServiceById(@PathVariable Long expertId, @PathVariable Long typeServiceId);
 
     @GetMapping("/showAllTypeService/{id}")
     List<TypeService> findByBasicServiceId(@PathVariable Long id);

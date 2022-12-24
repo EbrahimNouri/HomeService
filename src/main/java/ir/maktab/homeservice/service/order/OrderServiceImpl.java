@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -40,8 +39,8 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public Optional<Order> findById(Long id) {
-        return repository.findById(id);
+    public Order findById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new CustomExceptionNotFind("order not found"));
     }
 
     @Override

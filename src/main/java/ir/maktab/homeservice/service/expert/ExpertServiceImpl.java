@@ -3,10 +3,12 @@ package ir.maktab.homeservice.service.expert;
 
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
+import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.exception.CustomExceptionUpdate;
 import ir.maktab.homeservice.exception.CustomPatternInvalidException;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
+import ir.maktab.homeservice.util.FileUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -14,9 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -43,7 +42,7 @@ public class ExpertServiceImpl implements ExpertService {
             if (expert.getId() == null) {
                 if (file != null) {
 
-                    byte[] avatar = imageConverter(file);
+                    byte[] avatar = FileUtil.imageConverter(file);
                     expert.setAvatar(avatar);
 
                 }
@@ -80,14 +79,8 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     @Override
-    public Optional<Expert> findById(Long id) {
-        try {
-            return repository.findById(id);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return Optional.empty();
+    public Expert findById(Long id) {
+            return repository.findById(id).orElseThrow(() -> new CustomExceptionNotFind("expert not found"));
     }
 
     @Override
@@ -96,7 +89,7 @@ public class ExpertServiceImpl implements ExpertService {
         try {
             if (!expert.getPassword().equals(password)
                     && expert.getId() != null
-                    && expert.equals(findById(expert.getId()).orElse(null))) {
+                    && expert.equals(findById(expert.getId()))) {
 
                 expert.setPassword(password);
                 repository.save(expert);
@@ -118,7 +111,7 @@ public class ExpertServiceImpl implements ExpertService {
             Optional<Expert> expert;
 
             expert = repository.findById(id);
-            expert.ifPresent(value -> fileWriter(path, value.getAvatar()));
+            expert.ifPresent(value -> FileUtil.fileWriter(path, value.getAvatar()));
 
             return expert;
         } catch (Exception e) {
@@ -139,7 +132,7 @@ public class ExpertServiceImpl implements ExpertService {
         }
     }
 
-    private byte[] imageConverter(File file) {
+/*    public static byte[] imageConverter(File file) {
         if (file.exists()) {
             try {
                 FileInputStream fileInputStream = new FileInputStream(file);
@@ -159,7 +152,7 @@ public class ExpertServiceImpl implements ExpertService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
+    }*/
 
     @Override
     public void deactivate(Expert expert) {

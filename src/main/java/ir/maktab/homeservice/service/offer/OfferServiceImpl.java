@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -99,7 +98,7 @@ public class OfferServiceImpl implements OfferService {
 
         Order order = offer.getOrder();
         try {
-            if (orderService.findById(order.getId()).orElseThrow(() -> new CustomExceptionNotFind("order Not found"))
+            if (orderService.findById(order.getId())
                     .getOffers().stream().anyMatch(offer1 -> !offer1.isChoose())) {
 
                 if (order.getOrderType().equals(OrderType.WAITING_EXPERT_SELECTION)) {
@@ -126,14 +125,9 @@ public class OfferServiceImpl implements OfferService {
 
 
     @Override
-    public Optional<Offer> findById(Long id) {
-        try {
-            return repository.findOfferById(id);
+    public Offer findById(Long id) {
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return Optional.empty();
+        return repository.findOfferById(id).orElseThrow(() -> new CustomExceptionNotFind("offer not found"));
     }
 
     @Override

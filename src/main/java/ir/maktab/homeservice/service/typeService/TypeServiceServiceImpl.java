@@ -2,6 +2,7 @@ package ir.maktab.homeservice.service.typeService;
 
 
 import ir.maktab.homeservice.entity.TypeService;
+import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -21,8 +22,8 @@ public class TypeServiceServiceImpl implements TypeServiceService {
     private TypeServiceRepository typeServiceRepository;
 
     @Override
-    public Optional<TypeService> findById(Long id) {
-        return typeServiceRepository.findById(id);
+    public TypeService findById(Long id) {
+        return typeServiceRepository.findById(id).orElseThrow(() -> new CustomExceptionNotFind("type service not found"));
     }
 
     @Override

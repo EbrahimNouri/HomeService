@@ -14,7 +14,7 @@ public interface ExpertService {
 
     void acceptExpert(Expert expert);
 
-    Optional<Expert> findById(Long id);
+    Expert findById(Long id);
 
     void changePassword(Expert expert, String password);
 

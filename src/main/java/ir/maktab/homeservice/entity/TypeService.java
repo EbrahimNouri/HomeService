@@ -16,6 +16,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @Builder
+@ToString
 public class TypeService extends BaseEntity {
 
     @Column(unique = true)
@@ -25,12 +26,14 @@ public class TypeService extends BaseEntity {
     private double basePrice;
 
     @OneToMany(mappedBy = "typeService")
+    @ToString.Exclude
     private List<ExpertTypeService> expertTypeServices;
 
     @OneToMany(mappedBy = "typeService")
+    @ToString.Exclude
     private List<Order> orders;
 
-    @ManyToOne(/*fetch = FetchType.EAGER*/)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false)
     private BasicService basicService;
 

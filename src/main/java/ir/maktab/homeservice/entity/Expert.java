@@ -20,19 +20,23 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class Expert extends Person {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ExpertStatus expertStatus;
 
-    @OneToMany(mappedBy = "expert", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "expert"/*, fetch = FetchType.EAGER*/)
+    @ToString.Exclude
     private List<ExpertTypeService> expertTypeServices;
 
-    @OneToMany(mappedBy = "expert", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "expert"/*, fetch = FetchType.EAGER*/)
+    @ToString.Exclude
     private List<ExpertUser> expertUsers;
 
     @OneToMany(mappedBy = "expert")
+    @ToString.Exclude
     private List<Transaction> transactions;
 
 /*

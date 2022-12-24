@@ -12,11 +12,10 @@ import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -74,17 +73,17 @@ public class AdminControllerImpl implements AdminController {
     @PutMapping("/acceptExpert/{expertId}")
     @Override
     public void acceptExpert(@PathVariable Long expertId) {
-        Optional<Expert> acceptExpert = expertService.findById(expertId);
-        expertService.acceptExpert(acceptExpert.orElse(null));
+        Expert acceptExpert = expertService.findById(expertId);
+        expertService.acceptExpert(acceptExpert);
     }
 
     @Override
     @DeleteMapping("/removeExpertFromBasicService/{expertId}")
-    public void removeExpertFromBasicService(@PathVariable Long expertId) {
-        Expert expert = expertService.findById(expertId)
-                .orElseThrow(() -> new CustomExceptionNotFind("expert not found"));
+    public HttpStatus removeExpertFromBasicService(@PathVariable Long expertId) {
+        Expert expert = expertService.findById(expertId);
 
-        expertTypeServiceService.removeExpertFromBasicService(expert);
+        return expertTypeServiceService.removeExpertFromBasicService(expert) == 1
+                ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
     }
 
     @PostMapping("/addExpertToTypeService")
@@ -102,32 +101,47 @@ public class AdminControllerImpl implements AdminController {
 
 
     @Override
-    @GetMapping("findExpertTypeServiceById/findById/")
-    public ResponseEntity<ExpertTypeService> findExpertTypeServiceById(@RequestBody ExpertTypeServiceDto expertTypeServiceDto) {
+    @GetMapping("findExpertTypeServiceById/{expertId}/{typeServiceId}")
+    public ExpertTypeServiceMapped findExpertTypeServiceById(@PathVariable Long expertId
+            , @PathVariable Long typeServiceId) {
 
-        ExpertTypeService expertTypeService = findExpertTypeServiceByDto(expertTypeServiceDto);
-        return expertTypeServiceService.findById(expertTypeService.getExpert().getId()
-                        , expertTypeService.getTypeService().getId()).map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+
+        ExpertTypeService expertTypeService = expertTypeServiceService.findById
+                (expertId, typeServiceId);
+        Expert expert = expertTypeService.getExpert();
+        TypeService typeService = expertTypeService.getTypeService();
+        ExpertTypeServiceMapped expertTypeServiceMapped = new ExpertTypeServiceMapped
+                (expert.getFirstname()
+                        , expert.getLastname()
+                        , expert.getEmail()
+                        ,expert.getAverageScore()
+/*
+                        , FileUtil.fileWriter(Path.of("/Users/ebrahimnouri/Desktop/text.jpg"), expert.getAvatar())
+*/
+                        , expert.getCredit()
+                        , expert.getAverageScore()
+                        , typeService.getSubService()
+                        , typeService.getBasePrice()
+                        ,typeService.getBasicService().getName()
+                        ,typeService.getDescription()
+                        );
+
+        return expertTypeServiceMapped;
     }
 
     private ExpertTypeService findExpertTypeServiceByDto(ExpertTypeServiceDto expertTypeServiceDto) {
-        Expert expert = expertService.findById(expertTypeServiceDto.getExpertId())
-                .orElseThrow(() -> new CustomExceptionNotFind("expert not found"));
+        Expert expert = expertService.findById(expertTypeServiceDto.getExpertId());
 
-        TypeService typeService = typeServiceService.findById(expertTypeServiceDto.getTypeServiceId())
-                .orElseThrow(() -> new CustomExceptionNotFind("type service not found"));
+        TypeService typeService = typeServiceService.findById(expertTypeServiceDto.getTypeServiceId());
 
         return new ExpertTypeService(expert, typeService);
     }
 
     @Override
     @GetMapping("findOfferById/{id}")
-    public ResponseEntity<Offer> findOfferById(@PathVariable Long id) {
-        return offerService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound()
-                        .build());
+    public Offer findOfferById(@PathVariable Long id) {
+        return offerService.findById(id);
+
     }
 
     @Override
@@ -168,8 +182,7 @@ public class AdminControllerImpl implements AdminController {
     @Override
     @PutMapping("/paymentPriceChange")
     public void paymentPriceChange(@RequestBody PaymentPriceChangeDto paymentPriceChangeDto) {
-        TypeService typeService = typeServiceService.findById(paymentPriceChangeDto.getTypeServiceId())
-                .orElseThrow(() -> new CustomExceptionNotFind("type service not found."));
+        TypeService typeService = typeServiceService.findById(paymentPriceChangeDto.getTypeServiceId());
 
         typeServiceService.paymentPriceChange(typeService, paymentPriceChangeDto.getPrice());
     }
