@@ -9,6 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 @Component
 public interface ExpertRepository extends JpaRepository<Expert, Long> {
@@ -19,4 +22,11 @@ public interface ExpertRepository extends JpaRepository<Expert, Long> {
     @Modifying
     @Query("update Expert e set e.averageScore = :point where e.id = :expertId")
     void setAveragePont(Double point, Long expertId);
+
+    List<Expert> findByFirstname(String firstname);
+
+    List<Expert> findByLastname(String lastname);
+
+    Optional<Expert> findByEmail(String email);
+
 }

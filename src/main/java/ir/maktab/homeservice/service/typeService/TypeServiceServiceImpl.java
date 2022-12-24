@@ -9,9 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -52,21 +50,17 @@ public class TypeServiceServiceImpl implements TypeServiceService {
 
     @Override
     public List<TypeService> showTypeServices(Long basicServiceId) {
-        try {
             log.debug("debug show type services for basic id {} ", basicServiceId);
 
             return typeServiceRepository.findByBasicServiceId(basicServiceId);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
     }
 
     @Override
-    public void descriptionChange(TypeService typeService, String description) {
+    public void descriptionChange(Long typeServiceId, String description) {
         try {
 
+            TypeService typeService = findById(typeServiceId);
             typeService.setDescription(description);
             typeServiceRepository.save(typeService);
 

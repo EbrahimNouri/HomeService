@@ -27,4 +27,10 @@ public interface ExpertController {
 
     @GetMapping("/showOrderSuggestionOrSelection")
     List<Order> showOrderSuggestionOrSelection();
+
+    @GetMapping("/getAverageScore/{id}")
+    public Double getAverageScore(@PathVariable Long id);
+
+    @GetMapping("/getAllScores/{id}")
+    List<Double> getAllScores(@PathVariable Long id);
 }

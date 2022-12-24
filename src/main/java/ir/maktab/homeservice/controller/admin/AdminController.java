@@ -29,7 +29,7 @@ public interface AdminController {
     @GetMapping("/showAllBasicServices")
     List<BasicServiceDto> showAllBasicServices();
 
-    void descriptionChange(TypeService typeService, String description);
+    void descriptionChange(Long typeServiceId, String description);
 
     @PutMapping("/acceptExpert/{expertId}")
     void acceptExpert(@PathVariable Long expertId);
@@ -60,4 +60,19 @@ public interface AdminController {
 
     @GetMapping("/showTypeServices/{basicServiceId}")
     List<TypeService> showTypeServices(@PathVariable Long basicServiceId);
+
+    @GetMapping("/findByFirstName/{firstname}")
+    List<PersonFindDto> findByFirstName(@PathVariable String firstname);
+
+    @GetMapping("/findByFirstName/allExperts")
+    List<PersonFindDto> allExperts();
+
+    @GetMapping("/findByFirstName/allUsers")
+    List<PersonFindDto> allUsers();
+
+    @GetMapping("/findByLastname/{lastname}")
+    List<PersonFindDto> findByLastName(@PathVariable String lastname);
+
+    @GetMapping("/findByEmail/{email}")
+    List<PersonFindDto> findByEmail(@PathVariable String email);
 }

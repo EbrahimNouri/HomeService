@@ -5,6 +5,7 @@ import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
+import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.Optional;
 @Log4j2
 @AllArgsConstructor
 public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
+    private final TypeServiceRepository typeServiceRepository;
     ExpertTypeServiceRepository repository;
 
     @Override
@@ -95,4 +97,6 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
         }
         return new ArrayList<>();
     }
+
+
 }

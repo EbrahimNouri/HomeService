@@ -66,9 +66,9 @@ class TypeServiceServiceImplTest {
     @Test
     void changeDescription(){
         String newDescription = "newDescription";
-        service.descriptionChange(typeService, newDescription);
+        service.descriptionChange(typeService.getId(), newDescription);
         assertEquals(newDescription
-                , Objects.requireNonNull(service.findById(typeService.getId()).orElse(null)).getDescription());
+                , Objects.requireNonNull(service.findById(typeService.getId())).getDescription());
 
     }
 }

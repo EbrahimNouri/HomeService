@@ -18,5 +18,4 @@ public interface ExpertTypeServiceService {
     List<ExpertTypeService> findExpertTypeServiceByExpertId(Long expertId);
 
     ExpertTypeService findById(Long expertId , Long typeServiceId) ;
-
-    }
+}

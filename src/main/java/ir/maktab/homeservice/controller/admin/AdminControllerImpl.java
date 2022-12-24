@@ -10,6 +10,7 @@ import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
+import ir.maktab.homeservice.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,10 +23,11 @@ import java.util.List;
 @AllArgsConstructor
 public class AdminControllerImpl implements AdminController {
 
-    private AdminService service;
+    private final AdminService service;
     private final BasicServicesService basicServicesService;
     private final ExpertService expertService;
 
+    private final UserService userService;
     private final ExpertTypeServiceService expertTypeServiceService;
     private final TypeServiceService typeServiceService;
     private final OfferService offerService;
@@ -39,9 +41,7 @@ public class AdminControllerImpl implements AdminController {
     @PutMapping("/chPass")
     @Override
     public void changePassword(@RequestBody @Valid adminPassDto admin) {
-        Admin id_not_found = service.findById(admin.getId())
-                .orElseThrow(() -> new CustomExceptionNotFind("id not found"));
-
+        Admin id_not_found = service.findById(admin.getId());
         service.changePassword(id_not_found, admin.getPassword());
     }
 
@@ -49,7 +49,7 @@ public class AdminControllerImpl implements AdminController {
     @Override
     public Admin findById(@PathVariable Long id) {
 //        return new ResponseEntity.ok(service.findById(adminId)
-        return service.findById(id).orElseThrow(() -> new CustomExceptionNotFind("id not found"));
+        return service.findById(id);
     }
 
     @Override
@@ -66,8 +66,9 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public void descriptionChange(TypeService typeService, String description) {
-
+    @PutMapping("/descriptionChange/{typeServiceId}/{description}")
+    public void descriptionChange(@PathVariable Long typeServiceId,@PathVariable String description) {
+        typeServiceService.descriptionChange(typeServiceId ,description);
     }
 
     @PutMapping("/acceptExpert/{expertId}")
@@ -145,6 +146,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
+    // TODO: 12/24/2022 AD  
     @GetMapping("/showAllTypeService/{id}")
     public List<TypeService> findByBasicServiceId(@PathVariable Long id) {
         return typeServiceService.showTypeServices(id);
@@ -191,5 +193,50 @@ public class AdminControllerImpl implements AdminController {
     @GetMapping("/showTypeServices/{basicServiceId}")
     public List<TypeService> showTypeServices(@PathVariable Long basicServiceId) {
         return typeServiceService.showTypeServices(basicServiceId);
+    }
+
+    // TODO: 12/24/2022 AD postman
+    @Override
+    @GetMapping("/findByFirstName/allExperts")
+    public List<PersonFindDto> allExperts(){
+        PersonFindDto personFindDto = new PersonFindDto();
+        List<Expert> experts = expertService.findAll();
+        List<User> users =  userService.findAll();
+        return null;
+    }
+    @Override
+    @GetMapping("/findByFirstName/allUsers")
+    public List<PersonFindDto> allUsers(){
+        PersonFindDto personFindDto = new PersonFindDto();
+        List<Expert> experts = expertService.findAll();
+        List<User> users =  userService.findAll();
+        return null;
+    }
+
+    @Override
+    @GetMapping("/findByFirstName/{firstname}")
+    public List<PersonFindDto> findByFirstName(@PathVariable String firstname){
+        PersonFindDto personFindDto = new PersonFindDto();
+        List<Expert> experts = expertService.findByFirstName(firstname);
+        List<User> users =  userService.findByFirstname(firstname);
+        return null;
+    }
+
+    @Override
+    @GetMapping("/findByLastname/{lastname}")
+    public List<PersonFindDto> findByLastName(@PathVariable String lastname){
+        PersonFindDto personFindDto = new PersonFindDto();
+        List<Expert> experts = expertService.findByLastName(lastname);
+        List<User> users =  userService.findByLastname(lastname);
+        return null;
+    }
+
+    @Override
+    @GetMapping("/findByEmail/{email}")
+    public List<PersonFindDto> findByEmail(@PathVariable String email){
+        PersonFindDto personFindDto = new PersonFindDto();
+        Expert expert = expertService.findByEmail(email);
+        User user =  userService.findByEmail(email);
+        return null;
     }
 }

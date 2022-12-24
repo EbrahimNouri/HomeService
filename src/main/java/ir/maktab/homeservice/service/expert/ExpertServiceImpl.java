@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -162,5 +163,27 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public void save(Expert expert) {
         repository.save(expert);
+    }
+
+    @Override
+    public List<Expert> findAll(){
+        return repository.findAll();
+    }
+
+    @Override
+    public List<Expert> findByFirstName(String firstname){
+        return repository.findByFirstname(firstname);
+    }
+
+    @Override
+    public List<Expert> findByLastName(String firstname){
+        return repository.findByLastname(firstname);
+    }
+
+    @Override
+    public Expert findByEmail(String email){
+        return repository.findByEmail(email).orElseThrow(() ->
+                new CustomExceptionNotFind("expert not found")
+        );
     }
 }

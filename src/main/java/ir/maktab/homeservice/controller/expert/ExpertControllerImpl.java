@@ -9,6 +9,7 @@ import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.service.expert.ExpertService;
+import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.order.OrderService;
 import jakarta.validation.Valid;
@@ -27,6 +28,7 @@ public class ExpertControllerImpl implements ExpertController {
     private final ExpertService expertService;
     private final OfferService offerService;
     private final OrderService orderService;
+    private final ExpertUserService expertUserService;
 
     @PostMapping("/regExpert")
     @Override
@@ -84,5 +86,17 @@ public class ExpertControllerImpl implements ExpertController {
     @Override
     public List<Order> showOrderSuggestionOrSelection() {
         return orderService.showOrderSuggestionOrSelection();
+    }
+
+    @Override
+    @GetMapping("/getAverageScore/{id}")
+    public Double getAverageScore(@PathVariable Long id){
+        return expertService.findById(id).getAverageScore();
+    }
+
+    @Override
+    @GetMapping("/getAllScores/{id}")
+    public List<Double> getAllScores(@PathVariable Long id) {
+        return expertUserService.listOfScore(id);
     }
 }

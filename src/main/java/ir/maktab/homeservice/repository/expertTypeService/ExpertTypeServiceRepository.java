@@ -26,4 +26,5 @@ public interface ExpertTypeServiceRepository extends JpaRepository<ExpertTypeSer
 
     @Query("select et.typeService.basicService from ExpertTypeService et where et.typeService = :typeService ")
     Optional<BasicService> findBasicService(Long typeService);
+
 }

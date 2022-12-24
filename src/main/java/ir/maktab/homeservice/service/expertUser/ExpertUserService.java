@@ -3,6 +3,7 @@ package ir.maktab.homeservice.service.expertUser;
 import ir.maktab.homeservice.entity.ExpertUser;
 import ir.maktab.homeservice.entity.Order;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ExpertUserService {
@@ -14,4 +15,6 @@ public interface ExpertUserService {
     Optional<ExpertUser> findByOrderId(Long orderId);
 
     void deductPoints(int hours, Order order);
+
+    List<Double> listOfScore(Long id);
 }

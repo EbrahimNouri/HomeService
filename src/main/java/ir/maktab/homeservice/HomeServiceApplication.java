@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 public class HomeServiceApplication {
 
+
     public static void main(String[] args) {
         SpringApplication.run(HomeServiceApplication.class, args);
 

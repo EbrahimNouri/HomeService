@@ -2,6 +2,7 @@ package ir.maktab.homeservice.service.user;
 
 
 import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
@@ -10,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -71,6 +73,27 @@ public class UserServiceImpl implements UserService {
 
         return repository.findUserById(id).orElseThrow(() -> new RuntimeException("user not found"));
 
+    }
+
+    @Override
+    public List<User> findAll(){
+        return repository.findAll();
+    }
+
+    @Override
+    public List<User> findByFirstname(String firstname) {
+        return repository.findByFirstname(firstname);
+    }
+
+    @Override
+    public List<User> findByLastname(String lastname) {
+        return repository.findByLastname(lastname);
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return repository.findByEmail(email).orElseThrow( ()->
+        new CustomExceptionNotFind("user not found"));
     }
 
 }

@@ -125,7 +125,6 @@ public class UserControllerImpl implements UserController {
     public void orderRegistration(@RequestBody OrderDto orderDto) {
 
         Order order = Order.builder()
-                .orderType(OrderType.WAITING_FOR_THE_SUGGESTIONS)
                 .address(orderDto.getAddress())
                 .description(orderDto.getDescription())
                 .user(userService.findById(orderDto.getUserId()))
