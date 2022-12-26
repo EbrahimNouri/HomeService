@@ -5,7 +5,7 @@ import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.exception.CustomExceptionUpdate;
-import ir.maktab.homeservice.exception.CustomPatternInvalidException;
+import ir.maktab.homeservice.exception.CustomExceptionInvalid;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
 import ir.maktab.homeservice.util.FileUtil;
@@ -56,7 +56,7 @@ public class ExpertServiceImpl implements ExpertService {
                 log.debug("debug register expert {} ", expert);
             } else {
                 log.warn("warn register avatar larger than 300kb or not .jpg");
-                throw new CustomPatternInvalidException("this email is invalid");
+                throw new CustomExceptionInvalid("this email is invalid");
             }
         } catch (Exception e) {
 //            throw new CustomExceptionSave("expert not saved");
@@ -102,7 +102,7 @@ public class ExpertServiceImpl implements ExpertService {
             } else {
                 log.warn("old password and new password is same");
 
-                throw new CustomPatternInvalidException("password not changed");
+                throw new CustomExceptionInvalid("password not changed");
             }
         } catch (Exception e) {
             e.printStackTrace();

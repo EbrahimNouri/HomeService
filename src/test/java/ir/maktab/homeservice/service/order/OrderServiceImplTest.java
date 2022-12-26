@@ -3,6 +3,7 @@ package ir.maktab.homeservice.service.order;
 import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.entity.enums.OrderType;
+import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
@@ -47,6 +48,8 @@ class OrderServiceImplTest {
     private TypeServiceService typeServiceService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private ExpertTypeServiceRepository expertTypeServiceRepository;
     @Autowired
     private OfferService offerService;
     @Autowired
@@ -114,7 +117,7 @@ class OrderServiceImplTest {
                 () -> assertEquals(order1.getDescription(),
                         Objects.requireNonNull
                                 (orderService.findById
-                                        (order1.getId())).getDescription()),
+                                        (order1.getId()).orElse(null)).getDescription()),
 
                 () -> assertEquals(order1.getOrderType(), OrderType.WAITING_FOR_THE_SUGGESTIONS)
         );
@@ -153,7 +156,7 @@ class OrderServiceImplTest {
 
         orderService.startOfWork(order[3]);
         assertAll(
-                () -> assertEquals(orderService.findById(order[3].getId()).getOrderType()
+                () -> assertEquals(orderService.findById(order[3].getId()).get().getOrderType()
                         , OrderType.STARTED)
 
         );
@@ -168,7 +171,7 @@ class OrderServiceImplTest {
         order[1].setOrderType(OrderType.STARTED);
         orderService.endOfTheWork(order[1]);
         assertAll(
-                () -> assertEquals(orderService.findById(order[1].getId()).getOrderType()
+                () -> assertEquals(orderService.findById(order[1].getId()).get().getOrderType()
                         , OrderType.DONE)
         );
 

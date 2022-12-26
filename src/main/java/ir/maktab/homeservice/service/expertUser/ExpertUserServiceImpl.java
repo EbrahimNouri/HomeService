@@ -6,6 +6,8 @@ import ir.maktab.homeservice.entity.ExpertUser;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.User;
 import ir.maktab.homeservice.entity.enums.OrderType;
+import ir.maktab.homeservice.exception.CustomExceptionNotFind;
+import ir.maktab.homeservice.exception.CustomExceptionOrderType;
 import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.repository.expertUser.ExpertUserRepository;
 import ir.maktab.homeservice.service.expert.ExpertService;
@@ -16,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -29,46 +30,38 @@ public class ExpertUserServiceImpl implements ExpertUserService {
     @Transactional
     @Override
     public void addCommentAndPoint(ExpertUser expertUser) {
-        try {
-            Expert expert = expertUser.getExpert();
-            if (expertUser.getOrder().getOrderType().equals(OrderType.PAID)
-                    && expertUser.getPoint() <= 5.0 && expertUser.getPoint() >= 0.0) {
+        Expert expert = expertUser.getExpert();
 
-                Double average = repository.getAveragePoint(expert.getId());
-                expertService.SetAveragePoint(average, expert.getId());
+        if (!expertUser.getOrder().getOrderType().equals(OrderType.PAID))
+            throw new CustomExceptionOrderType("order type is invalid");
 
-                repository.save(expertUser);
-            } else {
-                log.warn("error add comment point {} ", expertUser);
-                throw new CustomExceptionSave("expert user not worked");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        if (expertUser.getPoint() <= 5.0 && expertUser.getPoint() >= 0.0)
+            throw new CustomExceptionSave("point is invalid");
+
+        Double average = repository.getAveragePoint(expert.getId());
+        expertService.SetAveragePoint(average, expert.getId());
+
+        repository.save(expertUser);
+
+
     }
 
     @Override
-    public Optional<ExpertUser> findByExpertUserOrder(ExpertUser expertUser) {
-        try {
-            return repository.findByExpertIdAndUserIdAndOrderId(
-                    expertUser.getExpert().getId()
-                    , expertUser.getUser().getId()
-                    , expertUser.getOrder().getId()
-            );
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return Optional.empty();
+    public ExpertUser findByExpertUserOrder(ExpertUser expertUser) {
+        return repository.findByExpertIdAndUserIdAndOrderId(
+                expertUser.getExpert().getId()
+                , expertUser.getUser().getId()
+                , expertUser.getOrder().getId()
+        ).orElseThrow(() -> new CustomExceptionNotFind("comment not found"));
     }
 
     @Override
-    public Optional<ExpertUser> findByOrderId(Long orderId) {
-        try {
-            return repository.findByOrderIdNative(orderId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return Optional.empty();
+    public ExpertUser findByOrderId(Long orderId) {
+
+        return repository.findByOrderIdNative(orderId)
+                .orElseThrow(() -> new CustomExceptionNotFind("comment not found"));
+
     }
 
     @Override
@@ -76,20 +69,18 @@ public class ExpertUserServiceImpl implements ExpertUserService {
 
         Expert expert = order.getExpertUser().getExpert();
         User user = order.getExpertUser().getUser();
-        try {
-            addCommentAndPoint(new ExpertUser(expert, user, order
-                    , LocalDate.now(), (double) -hours, null));
 
-            Double averagePoint = repository.countOfAllPointByExpertId(expert.getId());
+        addCommentAndPoint(new ExpertUser(expert, user, order
+                , LocalDate.now(), (double) -hours, null));
 
-            if (averagePoint < 0) {
-                expertService.deactivate(expert);
+        Double averagePoint = repository.countOfAllPointByExpertId(expert.getId());
 
-            } else
-                expertService.save(expert);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        if (averagePoint < 0)
+            expertService.deactivate(expert);
+
+        else
+            expertService.save(expert);
+
     }
 
     @Override

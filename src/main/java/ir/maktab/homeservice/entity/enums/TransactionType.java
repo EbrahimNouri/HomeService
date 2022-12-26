@@ -3,5 +3,6 @@ package ir.maktab.homeservice.entity.enums;
 public enum TransactionType {
     DEPOSIT,
     WITHDRAW,
-    TRANSFER
+    TRANSFER,
+    ONLINE_PAYMENT
 }

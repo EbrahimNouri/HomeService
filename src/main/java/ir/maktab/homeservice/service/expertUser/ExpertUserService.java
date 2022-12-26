@@ -4,15 +4,14 @@ import ir.maktab.homeservice.entity.ExpertUser;
 import ir.maktab.homeservice.entity.Order;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ExpertUserService {
 
     void addCommentAndPoint(ExpertUser expertUser);
 
-    Optional<ExpertUser> findByExpertUserOrder(ExpertUser expertUser);
+    ExpertUser findByExpertUserOrder(ExpertUser expertUser);
 
-    Optional<ExpertUser> findByOrderId(Long orderId);
+    ExpertUser findByOrderId(Long orderId);
 
     void deductPoints(int hours, Order order);
 

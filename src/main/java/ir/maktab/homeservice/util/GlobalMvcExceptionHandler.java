@@ -44,7 +44,7 @@ public class GlobalMvcExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
-    @ExceptionHandler(value = CustomPatternInvalidException.class)
+    @ExceptionHandler(value = CustomExceptionInvalid.class)
     public ResponseEntity CustomPatternInvalidException(Exception ex, WebRequest request) {
         // 1. status --> BAD REQUEST
         // 2. return exception message to user
