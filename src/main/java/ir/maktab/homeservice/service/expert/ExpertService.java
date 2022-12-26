@@ -5,6 +5,7 @@ import ir.maktab.homeservice.entity.Expert;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ExpertService {
@@ -34,4 +35,6 @@ public interface ExpertService {
     List<Expert> findByLastName(String firstname);
 
     Expert findByEmail(String email);
+
+    List<Expert> findBy(Map<String, String> find);
 }

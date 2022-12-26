@@ -19,10 +19,6 @@ class TypeServiceServiceImplTest {
 
     @Autowired
     TypeServiceService service;
-    @Autowired
-    private BasicServiceRepository basicServiceRepository;
-    @Autowired
-    private TypeServiceRepository typeServiceRepository;
 
     @BeforeAll
     static void initialize() {
@@ -32,8 +28,10 @@ class TypeServiceServiceImplTest {
 
     @BeforeEach
     void setToDatabase() {
+
         basicServiceRepository.save(basicService);
         typeServiceRepository.save(typeService);
+
     }
 
     @AfterAll

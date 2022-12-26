@@ -7,6 +7,7 @@ import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,8 +19,8 @@ import java.util.Optional;
 @Log4j2
 @AllArgsConstructor
 public class BasicServicesServiceImpl implements BasicServicesService {
-
-    private BasicServiceRepository repository;
+@Autowired
+private final BasicServiceRepository repository;
 
 
     @Transactional

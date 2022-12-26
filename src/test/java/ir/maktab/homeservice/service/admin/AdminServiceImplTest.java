@@ -1,7 +1,6 @@
 package ir.maktab.homeservice.service.admin;
 
 import ir.maktab.homeservice.entity.Admin;
-import ir.maktab.homeservice.repository.admin.AdminRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ class AdminServiceImplTest {
     private AdminService service;
     static Admin admin;
     @Autowired
-    private AdminRepository adminRepository;
 
     @BeforeAll
     static void initialsAdmin() {
@@ -50,7 +48,7 @@ class AdminServiceImplTest {
                 () -> System.out.println(admin.getId()),
                 () -> service.changePassword(admin, "!@#qwe12H"),
 
-                () -> assertNotEquals(oldPass, service.findById(admin.getId()).orElseThrow().getPassword())
+                () -> assertNotEquals(oldPass, service.findById(admin.getId()).getPassword())
         );
 
     }

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 public interface AdminController {
 
@@ -47,7 +48,7 @@ public interface AdminController {
     ExpertTypeServiceMapped findExpertTypeServiceById(@PathVariable Long expertId, @PathVariable Long typeServiceId);
 
     @GetMapping("/showAllTypeService/{id}")
-    List<TypeService> findByBasicServiceId(@PathVariable Long id);
+    List<TypeServiceDto> findByBasicServiceId(@PathVariable Long id);
 
     @PostMapping("/addTypeService")
     void addTypeService(@RequestBody TypeServiceDto typeServiceDto);
@@ -61,18 +62,37 @@ public interface AdminController {
     @GetMapping("/showTypeServices/{basicServiceId}")
     List<TypeService> showTypeServices(@PathVariable Long basicServiceId);
 
+    @GetMapping("/findByFirstName/allExperts/{firstname}")
+    List<PersonFindDto> findByFirstnameExpert(@PathVariable String firstname);
+
+    @GetMapping("/findByFirstName/allExperts/{lastname}")
+    List<PersonFindDto> findByLastnameExpert(@PathVariable String lastname);
+
+    @GetMapping("/findByFirstName/allUsers/{firstname}")
+    List<PersonFindDto> findByFirstnameUser(@PathVariable String firstname);
+
+    // TODO: 12/24/2022 AD postman
+    @GetMapping("/all")
+    List<PersonFindDto> showAll();
+
     @GetMapping("/findByFirstName/{firstname}")
-    List<PersonFindDto> findByFirstName(@PathVariable String firstname);
-
-    @GetMapping("/findByFirstName/allExperts")
-    List<PersonFindDto> allExperts();
-
-    @GetMapping("/findByFirstName/allUsers")
-    List<PersonFindDto> allUsers();
+    List<PersonFindDto> findByFirstNameAll(@PathVariable String firstname);
 
     @GetMapping("/findByLastname/{lastname}")
     List<PersonFindDto> findByLastName(@PathVariable String lastname);
 
-    @GetMapping("/findByEmail/{email}")
-    List<PersonFindDto> findByEmail(@PathVariable String email);
+    @GetMapping("/findByFirstName/allUsers/{lastname}")
+    List<PersonFindDto> findByLastnameUser(@PathVariable String lastname);
+
+    @GetMapping("/findByEmailAll/{email}")
+    PersonFindDto[] findByEmailExpert(@PathVariable String email);
+
+    @GetMapping("/findByEmailExpert/{email}")
+    abstract PersonFindDto findByEmailAll(@PathVariable String email);
+
+    @GetMapping("/findByEmailUser/{email}")
+    PersonFindDto findByEmailUser(@PathVariable String email);
+
+    @GetMapping("/finAllNew")
+    List<PersonFindDto> findAllNew(@RequestParam Map<String, String> dsad);
 }

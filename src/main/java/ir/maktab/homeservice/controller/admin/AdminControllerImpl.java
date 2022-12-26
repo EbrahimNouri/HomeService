@@ -16,7 +16,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -67,8 +70,8 @@ public class AdminControllerImpl implements AdminController {
 
     @Override
     @PutMapping("/descriptionChange/{typeServiceId}/{description}")
-    public void descriptionChange(@PathVariable Long typeServiceId,@PathVariable String description) {
-        typeServiceService.descriptionChange(typeServiceId ,description);
+    public void descriptionChange(@PathVariable Long typeServiceId, @PathVariable String description) {
+        typeServiceService.descriptionChange(typeServiceId, description);
     }
 
     @PutMapping("/acceptExpert/{expertId}")
@@ -111,11 +114,12 @@ public class AdminControllerImpl implements AdminController {
                 (expertId, typeServiceId);
         Expert expert = expertTypeService.getExpert();
         TypeService typeService = expertTypeService.getTypeService();
-        ExpertTypeServiceMapped expertTypeServiceMapped = new ExpertTypeServiceMapped
+
+        return new ExpertTypeServiceMapped
                 (expert.getFirstname()
                         , expert.getLastname()
                         , expert.getEmail()
-                        ,expert.getAverageScore()
+                        , expert.getAverageScore()
 /*
                         , FileUtil.fileWriter(Path.of("/Users/ebrahimnouri/Desktop/text.jpg"), expert.getAvatar())
 */
@@ -123,11 +127,9 @@ public class AdminControllerImpl implements AdminController {
                         , expert.getAverageScore()
                         , typeService.getSubService()
                         , typeService.getBasePrice()
-                        ,typeService.getBasicService().getName()
-                        ,typeService.getDescription()
-                        );
-
-        return expertTypeServiceMapped;
+                        , typeService.getBasicService().getName()
+                        , typeService.getDescription()
+                );
     }
 
     private ExpertTypeService findExpertTypeServiceByDto(ExpertTypeServiceDto expertTypeServiceDto) {
@@ -145,11 +147,12 @@ public class AdminControllerImpl implements AdminController {
 
     }
 
+    // TODO: 12/24/2022 AD
+
     @Override
-    // TODO: 12/24/2022 AD  
     @GetMapping("/showAllTypeService/{id}")
-    public List<TypeService> findByBasicServiceId(@PathVariable Long id) {
-        return typeServiceService.showTypeServices(id);
+    public List<TypeServiceDto> findByBasicServiceId(@PathVariable Long id) {
+        return typeServiceService.showTypeServices(id).stream().map(this::typeServiceMapped).toList();
     }
 
     @Override
@@ -197,46 +200,120 @@ public class AdminControllerImpl implements AdminController {
 
     // TODO: 12/24/2022 AD postman
     @Override
-    @GetMapping("/findByFirstName/allExperts")
-    public List<PersonFindDto> allExperts(){
-        PersonFindDto personFindDto = new PersonFindDto();
-        List<Expert> experts = expertService.findAll();
-        List<User> users =  userService.findAll();
-        return null;
-    }
-    @Override
-    @GetMapping("/findByFirstName/allUsers")
-    public List<PersonFindDto> allUsers(){
-        PersonFindDto personFindDto = new PersonFindDto();
-        List<Expert> experts = expertService.findAll();
-        List<User> users =  userService.findAll();
-        return null;
+    @GetMapping("/all")
+    public List<PersonFindDto> showAll() {
+        List<PersonFindDto> all = new ArrayList<>();
+        all.addAll(expertService.findAll().stream().map(this::expertMapping).toList());
+        all.addAll(userService.findAll().stream().map(this::userMapping).toList());
+        return all;
     }
 
     @Override
-    @GetMapping("/findByFirstName/{firstname}")
-    public List<PersonFindDto> findByFirstName(@PathVariable String firstname){
-        PersonFindDto personFindDto = new PersonFindDto();
-        List<Expert> experts = expertService.findByFirstName(firstname);
-        List<User> users =  userService.findByFirstname(firstname);
-        return null;
+    @GetMapping("/findByFirstName/")
+    public List<PersonFindDto> findByFirstNameAll(@RequestParam String firstname) {
+        List<PersonFindDto> all = new ArrayList<>();
+        all.addAll(expertService.findByFirstName(firstname).stream().map(this::expertMapping).toList());
+        all.addAll(userService.findByFirstname(firstname).stream().map(this::userMapping).toList());
+        return all;
+    }
+
+
+    @Override
+    @GetMapping("/findByFirstName/allExperts/{firstname}")
+    public List<PersonFindDto> findByFirstnameExpert(@PathVariable String firstname) {
+
+        return expertService.findByFirstName(firstname).stream().map(this::expertMapping).toList();
+
     }
 
     @Override
-    @GetMapping("/findByLastname/{lastname}")
-    public List<PersonFindDto> findByLastName(@PathVariable String lastname){
-        PersonFindDto personFindDto = new PersonFindDto();
-        List<Expert> experts = expertService.findByLastName(lastname);
-        List<User> users =  userService.findByLastname(lastname);
-        return null;
+    @GetMapping("/findByFirstName/allUsers/{firstname}")
+    public List<PersonFindDto> findByFirstnameUser(@PathVariable String firstname) {
+        return userService.findByFirstname(firstname).stream().map(this::userMapping).toList();
+
     }
 
     @Override
-    @GetMapping("/findByEmail/{email}")
-    public List<PersonFindDto> findByEmail(@PathVariable String email){
-        PersonFindDto personFindDto = new PersonFindDto();
-        Expert expert = expertService.findByEmail(email);
-        User user =  userService.findByEmail(email);
-        return null;
+    @GetMapping("/findByLastnameAll/{lastname}")
+    public List<PersonFindDto> findByLastName(@PathVariable String lastname) {
+        List<PersonFindDto> all = new ArrayList<>();
+        all.addAll(expertService.findByLastName(lastname).stream().map(this::expertMapping).toList());
+        all.addAll(userService.findByLastname(lastname).stream().map(this::userMapping).toList());
+        return all;
+    }
+
+    @Override
+    @GetMapping("/findByLastname/allExperts/{lastname}")
+    public List<PersonFindDto> findByLastnameExpert(@PathVariable String lastname) {
+
+        return expertService.findByLastName(lastname).stream().map(this::expertMapping).toList();
+
+    }
+
+    @Override
+    @GetMapping("/findByLastname/allUsers/{lastname}")
+    public List<PersonFindDto> findByLastnameUser(@PathVariable String lastname) {
+        return userService.findByLastname(lastname).stream().map(this::userMapping).toList();
+
+    }
+
+    @Override
+    @GetMapping("/findByEmailAll/{email}")
+    public PersonFindDto[] findByEmailExpert(@PathVariable String email) {
+        PersonFindDto[] persons = new PersonFindDto[2];
+        persons[0] = Optional.of(expertService.findByEmail(email)).map(this::expertMapping).orElse(null);
+        persons[1] = Optional.of(userService.findByEmail(email)).map(this::userMapping).orElse(null);
+        return persons;
+    }
+
+    @Override
+    @GetMapping("/findByEmailExpert/{email}")
+    public PersonFindDto findByEmailAll(@PathVariable String email) {
+        return Optional.of(expertService.findByEmail(email)).map(this::expertMapping).orElse(null);
+    }
+
+    @Override
+    @GetMapping("/findByEmailUser/{email}")
+    public PersonFindDto findByEmailUser(@PathVariable String email) {
+        return Optional.of(userService.findByEmail(email)).map(this::userMapping).orElse(null);
+    }
+
+    @Override
+    @GetMapping("/finAllNew")
+    public List<PersonFindDto> findAllNew(@RequestParam Map<String, String> dsad){
+        return expertService.findBy(dsad).stream().map(this::expertMapping).toList();
+    }
+
+    private PersonFindDto expertMapping(Expert expert) {
+        return PersonFindDto.builder()
+                .id(expert.getId())
+                .firstname(expert.getFirstname())
+                .lastname(expert.getLastname())
+                .personType(PersonType.EXPERT)
+                .email(expert.getEmail())
+                .credit(expert.getCredit())
+                .signupDate(expert.getSignupDateTime())
+                .build();
+    }
+
+    private PersonFindDto userMapping(User user) {
+        return PersonFindDto.builder()
+                .id(user.getId())
+                .firstname(user.getFirstname())
+                .lastname(user.getLastname())
+                .personType(PersonType.USER)
+                .email(user.getEmail())
+                .credit(user.getCredit())
+                .signupDate(user.getSignupDateTime())
+                .build();
+    }
+
+    private TypeServiceDto typeServiceMapped(TypeService typeService){
+        return TypeServiceDto.builder()
+                .typeServiceId(typeService.getId())
+                .baseServiceId(typeService.getBasicService().getId())
+                .name(typeService.getSubService())
+                .price(typeService.getBasePrice())
+                .build();
     }
 }

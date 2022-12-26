@@ -3,13 +3,7 @@ package ir.maktab.homeservice.service.offer;
 import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.entity.enums.OrderType;
-import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
-import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
-import ir.maktab.homeservice.repository.offer.OfferRepository;
-import ir.maktab.homeservice.repository.order.OrderRepository;
-import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
-import ir.maktab.homeservice.repository.user.UserRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
@@ -75,18 +69,7 @@ class OfferServiceImplTest {
 
     @Autowired
     private ExpertTypeServiceService expertTypeServiceService;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private BasicServiceRepository basicServiceRepository;
-    @Autowired
-    private TypeServiceRepository typeServiceRepository;
-    @Autowired
-    private OrderRepository orderRepository;
-    @Autowired
-    private ExpertTypeServiceRepository expertTypeServiceRepository;
-    @Autowired
-    private OfferRepository offerRepository;
+
 
 
     @BeforeAll
@@ -156,7 +139,7 @@ class OfferServiceImplTest {
     @Test
     void offerRegistrationOrUpdate() {
 
-        assertEquals(offerTest[0][0], Objects.requireNonNull(service.findById(offerTest[0][0].getId()).orElse(null)));
+        assertEquals(offerTest[0][0], Objects.requireNonNull(service.findById(offerTest[0][0].getId())));
     }
 
     @Test
@@ -177,8 +160,7 @@ class OfferServiceImplTest {
         offerTest[0][1].getOrder().setOrderType(OrderType.WAITING_EXPERT_SELECTION);
         service.chooseOffer(offerTest[0][1]);
         assertAll(
-                () -> assertEquals(Objects.requireNonNull(service.findById(offerTest[0][1].getId())
-                                        .orElse(null)).getOrder()
+                () -> assertEquals(Objects.requireNonNull(service.findById(offerTest[0][1].getId())).getOrder()
                                 .getOrderType(), OrderType.WAITING_FOR_COME_TO_YOUR_PLACE
                         /*|| OrderType.WAITING_FOR_THE_SUGGESTIONS*/),
 

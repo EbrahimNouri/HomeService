@@ -83,7 +83,7 @@ class ExpertServiceImplTest {
                 () -> service.acceptExpert(registerExpert[1]),
 
                 () -> assertEquals(ExpertStatus.CONFIRMED, service
-                        .findById(registerExpert[1].getId()).orElseThrow().getExpertStatus())
+                        .findById(registerExpert[1].getId()).getExpertStatus())
         );
     }
 
@@ -94,8 +94,7 @@ class ExpertServiceImplTest {
                 () -> service.changePassword(registerExpert[2], newPass),
 
                 () -> assertEquals(newPass, Objects.requireNonNull
-                        (service.findById(registerExpert[2].getId()).orElse(null)).getPassword())
-        );
+                        (service.findById(registerExpert[2].getId()).getPassword())));
     }
 
     @Test
@@ -104,7 +103,7 @@ class ExpertServiceImplTest {
 /*        assertThrows(Exception.class, () -> service.changePassword(registerExpert[3], "123"));
         registerExpert[3].setPassword(newPass);*/
         assertEquals(newPass, Objects.requireNonNull(service.findById(registerExpert[3]
-                .getId()).orElse(null)).getPassword());
+                .getId())).getPassword());
     }
 
 /*    @Test

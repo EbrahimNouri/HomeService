@@ -53,7 +53,7 @@ class UserServiceImplTest {
         String newPass = "newPassw0rd";
         service.changePassword(user, newPass );
         assertEquals(newPass, Objects
-                .requireNonNull(service.findById(user.getId()).orElse(null)).getPassword());
+                .requireNonNull(service.findById(user.getId())).getPassword());
     }
 
 

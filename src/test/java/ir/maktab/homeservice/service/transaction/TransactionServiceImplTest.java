@@ -4,9 +4,6 @@ import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Transaction;
 import ir.maktab.homeservice.entity.User;
 import ir.maktab.homeservice.entity.enums.TransactionType;
-import ir.maktab.homeservice.repository.expert.ExpertRepository;
-import ir.maktab.homeservice.repository.transaction.TransactionRepository;
-import ir.maktab.homeservice.repository.user.UserRepository;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.user.UserService;
 import org.junit.jupiter.api.AfterAll;
@@ -37,12 +34,6 @@ class TransactionServiceImplTest {
     private ExpertService expertService;
     @Autowired
     private UserService userService;
-    @Autowired
-    private ExpertRepository expertRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private TransactionRepository transactionRepository;
 
     @BeforeAll
     static void initials() {
@@ -75,13 +66,12 @@ class TransactionServiceImplTest {
 
         assertAll(
                 () -> assertEquals(400.0, Objects.requireNonNull
-                        (userService.findById(user.getId()).orElse(null)).getCredit()),
+                        (userService.findById(user.getId())).getCredit()),
 
                 () -> assertEquals(100.0, Objects.requireNonNull
-                        (expertService.findById(expert.getId()).orElse(null)).getCredit()),
+                        (expertService.findById(expert.getId())).getCredit()),
 
                 () -> assertNotNull(service.findById(transaction))
         );
-        transactionRepository.delete(transaction);
     }
 }

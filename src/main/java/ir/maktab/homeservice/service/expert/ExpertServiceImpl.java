@@ -12,12 +12,15 @@ import ir.maktab.homeservice.util.FileUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -81,7 +84,7 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Override
     public Expert findById(Long id) {
-            return repository.findById(id).orElseThrow(() -> new CustomExceptionNotFind("expert not found"));
+        return repository.findById(id).orElseThrow(() -> new CustomExceptionNotFind("expert not found"));
     }
 
     @Override
@@ -166,24 +169,42 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     @Override
-    public List<Expert> findAll(){
+    public List<Expert> findAll() {
         return repository.findAll();
     }
 
     @Override
-    public List<Expert> findByFirstName(String firstname){
+    public List<Expert> findByFirstName(String firstname) {
         return repository.findByFirstname(firstname);
     }
 
     @Override
-    public List<Expert> findByLastName(String firstname){
-        return repository.findByLastname(firstname);
+    public List<Expert> findByLastName(String lastname) {
+        return repository.findByLastname(lastname);
     }
 
+
     @Override
-    public Expert findByEmail(String email){
+    public Expert findByEmail(String email) {
         return repository.findByEmail(email).orElseThrow(() ->
                 new CustomExceptionNotFind("expert not found")
         );
+    }
+
+    @Override
+    public List<Expert> findBy(Map<String, String> find) {
+        return repository.findAll(mapToSpecification(find));
+    }
+
+    private Specification<Expert> mapToSpecification(Map<String, String> find) {
+
+        List<Specification<Expert>> specifications = new ArrayList<>();
+        for (Map.Entry<String, String> ee
+                : find.entrySet()) {
+            Specification<Expert>specification =
+                    ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(ee.getKey()), ee.getValue()));
+            specifications.add(specification);
+        }
+        return Specification.allOf(specifications);
     }
 }

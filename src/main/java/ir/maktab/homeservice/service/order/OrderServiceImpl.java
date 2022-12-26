@@ -100,30 +100,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-/*
-    @Override
-    public void chooseOffer(Order order) {
-        List<Offer> offers = offerService.showOffersByOrder(order).stream().filter((Offer::isChoose)).toList();
 
-        if (!offers.isEmpty()){
-            Offer offer = offers.get(0);
-
-            if (checkLevelWork(offer, OrderType.WAITING_FOR_THE_SUGGESTIONS, OrderType.WAITING_EXPERT_SELECTION)) {
-
-                offer.setChoose(true);
-                offerService.save(offer);
-
-                order.setOrderType(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE);
-                repository.save(order);
-
-                log.debug("debug choose offer {} ", offer);
-            } else
-                throw new CustomExceptionUpdate("order type invalid");
-
-        } else
-            throw new CustomExceptionUpdate("user chosen a offer before it");
-    }
-*/
 
     @Override
     public void endOfTheWork(Order order) {

@@ -4,6 +4,7 @@ package ir.maktab.homeservice.repository.expert;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 @Repository
 @Component
-public interface ExpertRepository extends JpaRepository<Expert, Long> {
+public interface ExpertRepository extends JpaRepository<Expert, Long> , JpaSpecificationExecutor<Expert> {
     @Modifying
     @Query("update Expert e set e.expertStatus = :expertStatus where e.id = :id")
     void deactivate(Long id, ExpertStatus expertStatus);

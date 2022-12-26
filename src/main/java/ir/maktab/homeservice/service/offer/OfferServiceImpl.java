@@ -53,7 +53,6 @@ public class OfferServiceImpl implements OfferService {
     public void offerRegistrationOrUpdate(Offer offer) {
         OrderService orderService = applicationContextProvider.getContext().getBean(OrderService.class);
         Order order = offer.getOrder();
-        try {
 
             if (offerRegistrationCheck(offer, offer.getOrder())) {
 
@@ -75,21 +74,15 @@ public class OfferServiceImpl implements OfferService {
 
                 log.debug("debug offer updated {} ", order);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
     }
 
     @Override
     public List<Offer> showOffersByOrder(Order order) {
-        try {
+
             log.debug("debug found offer by order {}", order);
             return repository.findOfferByOrder_Id(order.getId());
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
     }
 
     @Override
@@ -97,7 +90,7 @@ public class OfferServiceImpl implements OfferService {
         OrderService orderService = applicationContextProvider.getContext().getBean(OrderService.class);
 
         Order order = offer.getOrder();
-        try {
+
             if (orderService.findById(order.getId())
                     .getOffers().stream().anyMatch(offer1 -> !offer1.isChoose())) {
 
@@ -118,9 +111,7 @@ public class OfferServiceImpl implements OfferService {
 
             } else
                 throw new CustomExceptionUpdate("user chosen a offer before it");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
     }
 
 
@@ -132,47 +123,30 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public List<Offer> findByOrder(Order order) {
-        try {
+
             return repository.findOfferByOrder_Id(order.getId()/*, Sort.by(Sort.Direction.DESC*/);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
     }
 
     @Override
     public List<Offer> findByOrderIdSortedPrice(Long orderId) {
-        try {
+
             return repository.findOfferSortedByPrice(orderId);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
     }
 
     @Override
     public List<Offer> findByOrderIdSortedByPoint(Long orderId) {
-        try {
+
             return repository.findByOrderIdSortedByPoint(orderId);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
     }
 
 
     public List<Offer> findByOrderIdSortedPoint(Long orderId) {
-        try {
+
             return repository.findOfferSortedByPrice(orderId);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            return new ArrayList<>();
-        }
     }
 
     private boolean checkLevelWork(Offer offer) {

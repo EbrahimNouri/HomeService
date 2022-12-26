@@ -81,7 +81,7 @@ class ExpertTypeServiceServiceImplTest {
                 () -> assertNotNull(typeService.getId()),
                 () -> assertNotNull(service.findById(expert.getId(), typeService.getId())),
                 () -> service.removeExpertFromBasicService(expert),
-                () -> assertNull(service.findById(expert.getId(), typeService.getId()).orElse(null))
+                () -> assertNull(service.findById(expert.getId(), typeService.getId()))
         );
     }
 
@@ -89,7 +89,7 @@ class ExpertTypeServiceServiceImplTest {
     @Test
     void addExpertToTypeService() {
         service.addExpertToTypeService(expertTypeService);
-//        assertNotNull(service.findById(expert.getId(), typeService.getId()).orElse(null));
+        assertNotNull(service.findById(expert.getId(), typeService.getId()));
     }
 
     @Test
@@ -98,7 +98,7 @@ class ExpertTypeServiceServiceImplTest {
                 () -> service.addExpertToTypeService(expertTypeService),
                 () -> assertNotNull(service.findById(expert.getId(), typeService.getId())),
                 () -> service.removeExpertFromTypeService(expertTypeService),
-                () -> assertNull(service.findById(expert.getId(), typeService.getId()).orElse(null))
+                () -> assertNull(service.findById(expert.getId(), typeService.getId()))
         );
     }
 }
