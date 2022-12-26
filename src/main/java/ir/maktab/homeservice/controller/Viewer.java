@@ -10,10 +10,21 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @RequestMapping("/text")
 public class Viewer {
 
-    @RequestMapping( value = "/" , produces = "text/plain;charset=UTF-8")
-    public ModelAndView index () {
+    @RequestMapping()
+    public ModelAndView index (/*@RequestParam ("g-recaptcha-response") String captcha*/ ){
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("index.html");
+        modelAndView.setViewName("index");
+
+
+
+
+/*
+        https://www.google.com/recaptcha/api/siteverify?secret=6LdIt6gjAAAAAFqVRLrryJ4CzFMoPWKw3GAUzDhn
+*/
         return modelAndView;
     }
+
+/*    @PostMapping("")
+    @RequestParam("g-recaptcha-response")*/
+
 }

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    ...
+
+    <script th:src='|https://www.google.com/recaptcha/api.js?render=${@captchaService.getReCaptchaSite()}'></script>
+</head>
+<body>
+
+...
+
+<form method="POST" enctype="utf8">
+    ...
+
+    <input type="hidden" id="response" name="response" value=""/>
+    ...
+</form>
+
+...
+
+<script th:inline="javascript">
+    ...
+    var siteKey = /*[[${@captchaService.getReCaptchaSite()}]]*/;
+    grecaptcha.execute(siteKey, {action: /*[[${T(com.baeldung.captcha.CaptchaService).REGISTER_ACTION}]]*/}).then(function (response) {
+        $('#response').val(response);
+        var formData = $('form').serialize();})
+</script>
+</body>
+</html>
