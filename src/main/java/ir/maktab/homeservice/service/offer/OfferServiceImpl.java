@@ -16,7 +16,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,23 +29,16 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public void save(Offer offer) {
-        try {
+
             repository.save(offer);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     public List<Offer> findOfferByOrder_Id(Long orderId) {
-        try {
+
             return repository.findOfferByOrder_Id(orderId);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
     }
 
     @Override

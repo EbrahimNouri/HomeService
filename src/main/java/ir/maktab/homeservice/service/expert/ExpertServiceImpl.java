@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Log4j2
@@ -63,20 +62,18 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Override
     public void acceptExpert(Expert expert) {
-        try {
-            if (expert.getId() != null) {
 
-                expert.setExpertStatus(ExpertStatus.CONFIRMED);
-                repository.save(expert);
+        if (expert.getId() != null) {
 
-                log.debug("debug accept expert {} ", expert);
-            } else {
-                log.error("warn expert is null {} ", expert);
-                throw new CustomExceptionUpdate("expert not accepted");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            expert.setExpertStatus(ExpertStatus.CONFIRMED);
+            repository.save(expert);
+
+            log.debug("debug accept expert {} ", expert);
+        } else {
+            log.error("warn expert is null {} ", expert);
+            throw new CustomExceptionUpdate("expert not accepted");
         }
+
     }
 
     @Override
@@ -87,33 +84,31 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public void changePassword(@Valid Expert expert, String password) {
 
-        try {
-            if (!expert.getPassword().equals(password)
-                    && expert.getId() != null
-                    && expert.equals(findById(expert.getId()))) {
 
-                expert.setPassword(password);
-                repository.save(expert);
+        if (!expert.getPassword().equals(password)
+                && expert.getId() != null
+                && expert.equals(findById(expert.getId()))) {
 
-                log.debug("debug change password expert {} to {} ", expert, password);
-            } else {
-                log.warn("old password and new password is same");
+            expert.setPassword(password);
+            repository.save(expert);
 
-                throw new CustomExceptionInvalid("password not changed");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            log.debug("debug change password expert {} to {} ", expert, password);
+        } else {
+            log.warn("old password and new password is same");
+
+            throw new CustomExceptionInvalid("password not changed");
         }
+
     }
 
 
     @Override
     public Expert findById(Long id, Path path) throws IOException {
 
-            Expert expert;
+        Expert expert;
 
-            expert = repository.findById(id).orElseThrow(() -> new CustomExceptionNotFind("expert not found"));
-             FileUtil.fileWriter(path, expert.getAvatar());
+        expert = repository.findById(id).orElseThrow(() -> new CustomExceptionNotFind("expert not found"));
+        FileUtil.fileWriter(path, expert.getAvatar());
 
         return expert;
 
@@ -122,13 +117,11 @@ public class ExpertServiceImpl implements ExpertService {
     @Transactional
     @Override
     public void SetAveragePoint(Double point, Long expertId) {
-        try {
 
-            repository.setAveragePont(point, expertId);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        repository.setAveragePont(point, expertId);
+
+
     }
 
     @Override

@@ -46,104 +46,94 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void orderRegistration(Order order) {
-        try {
-            if (order.getSuggestedPrice() != null
-                    && order.getDescription() != null
-                    && order.getStartOfWork() != null
-                    && order.getUser() != null) {
 
-                order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
-                repository.save(order);
+        if (order.getSuggestedPrice() != null
+                && order.getDescription() != null
+                && order.getStartOfWork() != null
+                && order.getUser() != null) {
 
-                log.debug("debug order registration {} ", order);
-            } else {
+            order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
+            repository.save(order);
 
-                log.error("debug order registration the fields are not filled {} ", order);
+            log.debug("debug order registration {} ", order);
+        } else {
 
-                throw new CustomExceptionSave("order not valid");
-            }
+            log.error("debug order registration the fields are not filled {} ", order);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            throw new CustomExceptionSave("order not valid");
         }
+
     }
 
     @Override
     public void startOfWork(Order order) {
-        try {
-            Offer offer = getOffer(order);
-            if (checkLevelWork(offer)) {
-                if (order.getOrderType().equals(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE)) {
-                    if (offer.getStartDate().isAfter(LocalDateTime.now())) {
 
-                        order.setOrderType(OrderType.STARTED);
-                        repository.save(order);
+        Offer offer = getOffer(order);
+        if (checkLevelWork(offer)) {
+            if (order.getOrderType().equals(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE)) {
+                if (offer.getStartDate().isAfter(LocalDateTime.now())) {
 
-                    } else
-                        throw new CustomExceptionUpdate("start of work is after offer set");
+                    order.setOrderType(OrderType.STARTED);
+                    repository.save(order);
 
-                    log.debug("debug start of work {} ", order);
-                } else {
-                    throw new CustomExceptionUpdate("order type not invalid");
-                }
+                } else
+                    throw new CustomExceptionUpdate("start of work is after offer set");
+
+                log.debug("debug start of work {} ", order);
             } else {
-                log.warn("warn start of work not worked order id or offer id is null or order type is invalid {} "
-                        , offer);
-                throw new CustomExceptionUpdate("this order not valid");
+                throw new CustomExceptionUpdate("order type not invalid");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            log.warn("warn start of work not worked order id or offer id is null or order type is invalid {} "
+                    , offer);
+            throw new CustomExceptionUpdate("this order not valid");
         }
+
     }
 
 
     @Override
     public void endOfTheWork(Order order) {
         Offer offer = getOffer(order);
-        try {
-            if (checkLevelWork(offer)) {
-                if (order.getOrderType().equals(OrderType.STARTED)) {
-                    if (LocalDateTime.now().isAfter(offer.getEndDate())) {
 
-                        order.setDelayEndWorkHours(ChronoUnit.HOURS.between(LocalDateTime.now(), offer.getEndDate()));
-                        repository.save(order);
+        if (checkLevelWork(offer)) {
+            if (order.getOrderType().equals(OrderType.STARTED)) {
+                if (LocalDateTime.now().isAfter(offer.getEndDate())) {
 
-                        log.debug("debug done of work {} ", order);
-                    }
-
-                    order.setOrderType(OrderType.DONE);
+                    order.setDelayEndWorkHours(ChronoUnit.HOURS.between(LocalDateTime.now(), offer.getEndDate()));
                     repository.save(order);
 
-                } else {
-                    throw new CustomExceptionUpdate("this order not valid");
-
+                    log.debug("debug done of work {} ", order);
                 }
+
+                order.setOrderType(OrderType.DONE);
+                repository.save(order);
+
             } else {
-                throw new CustomExceptionUpdate("order check level work error");
+                throw new CustomExceptionUpdate("this order not valid");
 
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            throw new CustomExceptionUpdate("order check level work error");
+
         }
+
     }
 
     @Transactional
     @Override
     public void setOrderToDone(Order order) {
-        try {
-            if (orderChecker(order)) {
-                if (order.getOrderType().equals(OrderType.STARTED)) {
-                    order.setOrderType(OrderType.DONE);
-                    repository.save(order);
 
-                } else {
-                    throw new CustomExceptionUpdate("order not valid");
-                }
+        if (orderChecker(order)) {
+            if (order.getOrderType().equals(OrderType.STARTED)) {
+                order.setOrderType(OrderType.DONE);
+                repository.save(order);
+
             } else {
-                throw new CustomExceptionUpdate("order have empty variable");
+                throw new CustomExceptionUpdate("order not valid");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            throw new CustomExceptionUpdate("order have empty variable");
         }
     }
 
@@ -203,7 +193,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> showOrderSuggestionOrSelection() {
 
-            return repository.findByOrderTypeBeforeStart();
+        return repository.findByOrderTypeBeforeStart();
 
     }
 

@@ -37,35 +37,29 @@ public class TypeServiceServiceImpl implements TypeServiceService {
 
     @Override
     public void paymentPriceChange(TypeService typeService, double price) {
-        try {
-            typeService.setBasePrice(price);
-            typeServiceRepository.save(typeService);
 
-            log.debug("debug payment price change {} to {} ", typeService, price);
+        typeService.setBasePrice(price);
+        typeServiceRepository.save(typeService);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        log.debug("debug payment price change {} to {} ", typeService, price);
+
     }
 
     @Override
     public List<TypeService> showTypeServices(Long basicServiceId) {
-            log.debug("debug show type services for basic id {} ", basicServiceId);
+        log.debug("debug show type services for basic id {} ", basicServiceId);
 
-            return typeServiceRepository.findByBasicServiceId(basicServiceId);
+        return typeServiceRepository.findByBasicServiceId(basicServiceId);
 
     }
 
     @Override
     public void descriptionChange(Long typeServiceId, String description) {
-        try {
 
-            TypeService typeService = findById(typeServiceId);
-            typeService.setDescription(description);
-            typeServiceRepository.save(typeService);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        TypeService typeService = findById(typeServiceId);
+        typeService.setDescription(description);
+        typeServiceRepository.save(typeService);
+
     }
 }

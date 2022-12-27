@@ -34,37 +34,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void registerUser(@Valid User user) {
-        try {
-            if (user.getEmail() != null && user.getPassword() != null) {
 
-                repository.save(user);
+        if (user.getEmail() != null && user.getPassword() != null) {
 
-                log.debug("debug user service iml {} ", user);
-            } else {
-                log.warn("warn register user  username or password is is null {} ", user);
+            repository.save(user);
 
-                throw new CustomExceptionSave("user not saved");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            log.debug("debug user service iml {} ", user);
+        } else {
+            log.warn("warn register user  username or password is is null {} ", user);
+
+            throw new CustomExceptionSave("user not saved");
         }
     }
 
     @Override
     public void changePassword(@Valid User user, String password) {
-        try {
-            if (!user.getPassword().equals(password)
-                    && user.getPassword().equals(Objects.requireNonNull(findById(user.getId())
-                    .getPassword()))) {
-                user.setPassword(password);
-                repository.save(user);
 
-                log.debug("debug change password user {} to {} ", user, password);
-            } else {
-                throw new CustomExceptionSave("password not changed");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (!user.getPassword().equals(password)
+                && user.getPassword().equals(Objects.requireNonNull(findById(user.getId())
+                .getPassword()))) {
+            user.setPassword(password);
+            repository.save(user);
+
+            log.debug("debug change password user {} to {} ", user, password);
+        } else {
+            throw new CustomExceptionSave("password not changed");
         }
     }
 
@@ -76,7 +70,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAll(){
+    public List<User> findAll() {
         return repository.findAll();
     }
 
@@ -92,8 +86,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmail(String email) {
-        return repository.findByEmail(email).orElseThrow( ()->
-        new CustomExceptionNotFind("user not found"));
+        return repository.findByEmail(email).orElseThrow(() ->
+                new CustomExceptionNotFind("user not found"));
     }
 
 }

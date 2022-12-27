@@ -10,7 +10,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,74 +18,55 @@ import java.util.Optional;
 @Log4j2
 @AllArgsConstructor
 public class BasicServicesServiceImpl implements BasicServicesService {
-@Autowired
-private final BasicServiceRepository repository;
+    @Autowired
+    private final BasicServiceRepository repository;
 
 
     @Transactional
     @Override
     public void addBasicService(BasicService basicService) {
-        try {
-            if (!repository.existsByName(basicService.getName())) {
 
-                repository.save(basicService);
+        if (!repository.existsByName(basicService.getName())) {
 
-            } else {
-                log.error("error add basic service name is invalid");
-                throw new CustomExceptionSave("this name is invalid");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            repository.save(basicService);
+
+        } else {
+            log.error("error add basic service name is invalid");
+            throw new CustomExceptionSave("this name is invalid");
         }
     }
 
     @Override
     public List<BasicService> findAll() {
-        try {
-            return repository.findAll();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
+
+        return repository.findAll();
     }
 
 
     @Override
     public void removeBasicService(BasicService basicService) {
-        try {
-            if (checkByName(basicService.getName())) {
 
-                repository.delete(basicService);
+        if (checkByName(basicService.getName())) {
 
-                log.debug("debug remove basic service {} ", basicService);
+            repository.delete(basicService);
 
-            } else {
-                log.warn("warn add basic service  found name {} ", basicService);
-                throw new CustomExceptionNotFind("basicService not found");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            log.debug("debug remove basic service {} ", basicService);
+
+        } else {
+            log.warn("warn add basic service  found name {} ", basicService);
+            throw new CustomExceptionNotFind("basicService not found");
         }
     }
 
     @Override
     public List<BasicService> showAllBasicService() {
-        try {
-            return repository.findAll();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
+        return repository.findAll();
     }
 
     @Override
     public Optional<BasicService> findById(Long id) {
-        try {
-            return repository.findBasicServiceById(id);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return Optional.empty();
+        return repository.findBasicServiceById(id);
+
     }
 
     @Override

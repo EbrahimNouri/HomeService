@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Log4j2
 @AllArgsConstructor
-public class AdminServiceImpl implements AdminService{
+public class AdminServiceImpl implements AdminService {
 
     private final AdminRepository adminRepository;
     private final ExpertService expertService;
@@ -25,40 +25,34 @@ public class AdminServiceImpl implements AdminService{
     @Transactional
     @Override
     public void addAdmin(Admin admin) {
-        try {
-            adminRepository.save(admin);
 
-            log.debug("admin created {} ", admin);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        adminRepository.save(admin);
+
+        log.debug("admin created {} ", admin);
     }
 
     @Transactional
     @Override
     public void changePassword(@Valid Admin admin, String password) {
-        try {
-            if (!admin.getPassword().equals(password)
-                    && admin.getId() != null) {
 
-                admin.setPassword(password);
-                adminRepository.save(admin);
+        if (!admin.getPassword().equals(password)
+                && admin.getId() != null) {
 
-                log.debug("admin created {} ", admin);
-            } else {
-                log.warn("warn new password same old password");
-                throw new CustomExceptionUpdate("admin password not changed");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            admin.setPassword(password);
+            adminRepository.save(admin);
+
+            log.debug("admin created {} ", admin);
+        } else {
+            log.warn("warn new password same old password");
+            throw new CustomExceptionUpdate("admin password not changed");
         }
     }
 
     @Override
     public Admin findById(Long adminId) {
 
-            return adminRepository.findById(adminId).orElseThrow
-                    (() -> new CustomExceptionNotFind("admin not found"));
+        return adminRepository.findById(adminId).orElseThrow
+                (() -> new CustomExceptionNotFind("admin not found"));
 
     }
 
