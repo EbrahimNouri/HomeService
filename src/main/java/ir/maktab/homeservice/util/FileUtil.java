@@ -2,10 +2,7 @@ package ir.maktab.homeservice.util;
 
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 
 @Component
@@ -25,12 +22,10 @@ public class FileUtil {
             return null;
     }
 
-    public static File fileWriter(Path path, byte[] bytes) {
-        try (FileOutputStream fos = new FileOutputStream(path.toFile())) {
+    public static File fileWriter(Path path, byte[] bytes) throws IOException {
+        FileOutputStream fos = new FileOutputStream(path.toFile());
             fos.write(bytes);
             return new File(path.toUri());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
     }
 }

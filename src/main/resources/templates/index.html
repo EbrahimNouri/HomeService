@@ -141,24 +141,17 @@
                     <span class="ps-3">Pay $243</span>
                     <span class="fas fa-arrow-right"></span>
                 </div>
-                <form method="POST" enctype="utf8">
+<!--                <form method="POST" enctype="utf8">
                     ...
 
                     <div class="g-recaptcha col-sm-5"
                          th:attr="data-sitekey=${@captchaSettings.getSite()}"></div>
                     <span id="captchaError" class="alert alert-danger col-sm-4"
-                          style="display:none"></span>
+                          style="display:none"></span>-->
             </div>
 
         </div>
     </div>
 </div>
-<script th:inline="javascript">
-    var siteKey = [[${@captchaService.getReCaptchaSite()}]];
-    grecaptcha.execute(siteKey, {action: [[${T(com.baeldung.captcha.CaptchaService).REGISTER_ACTION}]]}).then(function (response) {
-        $('#response').val(response);
-        var formData = $('form').serialize();
-    })
-</script>
 </body>
 </html>

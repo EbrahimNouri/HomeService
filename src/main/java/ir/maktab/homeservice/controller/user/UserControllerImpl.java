@@ -14,7 +14,6 @@ import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -172,10 +171,9 @@ public class UserControllerImpl implements UserController {
 
     @GetMapping("/{orderId}")
     @Override
-    public ResponseEntity<ExpertUser> findByOrderId(@PathVariable Long orderId) {
-        return expertUserService.findByOrderId(orderId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ExpertUser findByOrderId(@PathVariable Long orderId) {
+        return expertUserService.findByOrderId(orderId);
+
     }
 
 }

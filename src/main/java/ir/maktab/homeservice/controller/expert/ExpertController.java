@@ -1,5 +1,6 @@
 package ir.maktab.homeservice.controller.expert;
 
+import ir.maktab.homeservice.dto.ExpertAvatarDto;
 import ir.maktab.homeservice.dto.OfferDto;
 import ir.maktab.homeservice.dto.PersonChangePasswordDto;
 import ir.maktab.homeservice.dto.PersonRegisterDto;
@@ -33,4 +34,7 @@ public interface ExpertController {
 
     @GetMapping("/getAllScores/{id}")
     List<Double> getAllScores(@PathVariable Long id);
+
+    @PostMapping("/addAvatar/{expert}")
+    void addAvatar(@RequestBody ExpertAvatarDto expertAvatarDto);
 }

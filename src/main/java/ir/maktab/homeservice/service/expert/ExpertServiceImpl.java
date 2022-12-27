@@ -3,9 +3,9 @@ package ir.maktab.homeservice.service.expert;
 
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
+import ir.maktab.homeservice.exception.CustomExceptionInvalid;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.exception.CustomExceptionUpdate;
-import ir.maktab.homeservice.exception.CustomExceptionInvalid;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
 import ir.maktab.homeservice.util.FileUtil;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,25 +43,21 @@ public class ExpertServiceImpl implements ExpertService {
     @Transactional
     @Override
     public void registerExpert(@Valid Expert expert, File file) {
-        try {
-            if (expert.getId() == null) {
-                if (file != null) {
+        if (expert.getId() == null
+                && file.length() / 1024 > 300
+                && file.getName().endsWith(".jpg")) {
 
-                    byte[] avatar = FileUtil.imageConverter(file);
-                    expert.setAvatar(avatar);
+            byte[] avatar = FileUtil.imageConverter(file);
+            expert.setAvatar(avatar);
 
-                }
-                expert.setExpertTypeServices(null);
-                expert.setExpertStatus(ExpertStatus.NEW);
-                repository.save(expert);
-                log.debug("debug register expert {} ", expert);
-            } else {
-                log.warn("warn register avatar larger than 300kb or not .jpg");
-                throw new CustomExceptionInvalid("this email is invalid");
-            }
-        } catch (Exception e) {
-//            throw new CustomExceptionSave("expert not saved");
-            e.printStackTrace();
+            expert.setExpertTypeServices(null);
+            expert.setExpertStatus(ExpertStatus.NEW);
+            repository.save(expert);
+
+            log.debug("debug register expert {} ", expert);
+        } else {
+            log.warn("warn register avatar larger than 300kb or not .jpg");
+            throw new CustomExceptionInvalid("this email is invalid");
         }
     }
 
@@ -109,19 +106,17 @@ public class ExpertServiceImpl implements ExpertService {
         }
     }
 
+
     @Override
-    public Optional<Expert> findById(Long id, Path path) {
-        try {
-            Optional<Expert> expert;
+    public Expert findById(Long id, Path path) throws IOException {
 
-            expert = repository.findById(id);
-            expert.ifPresent(value -> FileUtil.fileWriter(path, value.getAvatar()));
+            Expert expert;
 
-            return expert;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return Optional.empty();
+            expert = repository.findById(id).orElseThrow(() -> new CustomExceptionNotFind("expert not found"));
+             FileUtil.fileWriter(path, expert.getAvatar());
+
+        return expert;
+
     }
 
     @Transactional
@@ -135,28 +130,6 @@ public class ExpertServiceImpl implements ExpertService {
             e.printStackTrace();
         }
     }
-
-/*    public static byte[] imageConverter(File file) {
-        if (file.exists()) {
-            try {
-                FileInputStream fileInputStream = new FileInputStream(file);
-                byte[] imageByte = fileInputStream.readAllBytes();
-                fileInputStream.close();
-                return imageByte;
-            } catch (IOException e) {
-                return null;
-            }
-        } else
-            return null;
-    }
-
-    private void fileWriter(Path path, byte[] bytes) {
-        try (FileOutputStream fos = new FileOutputStream(path.toFile())) {
-            fos.write(bytes);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }*/
 
     @Override
     public void deactivate(Expert expert) {
@@ -201,10 +174,24 @@ public class ExpertServiceImpl implements ExpertService {
         List<Specification<Expert>> specifications = new ArrayList<>();
         for (Map.Entry<String, String> ee
                 : find.entrySet()) {
-            Specification<Expert>specification =
+            Specification<Expert> specification =
                     ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(ee.getKey()), ee.getValue()));
             specifications.add(specification);
         }
         return Specification.allOf(specifications);
+    }
+
+    @Override
+    public void addAvatar(Long expertId, File file) {
+        Expert expert = repository.findById(expertId).orElseThrow
+                ((() -> new CustomExceptionNotFind("expert not found")));
+
+        if (file.length() / 1024 < 300
+                && !file.getName().endsWith(".jpg")) {
+            throw new CustomExceptionInvalid("image file is invalid");
+        }
+        byte[] avatar = FileUtil.imageConverter(file);
+        expert.setAvatar(avatar);
+        repository.save(expert);
     }
 }

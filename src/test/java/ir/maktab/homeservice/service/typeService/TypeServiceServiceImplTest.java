@@ -19,6 +19,10 @@ class TypeServiceServiceImplTest {
 
     @Autowired
     TypeServiceService service;
+    @Autowired
+    TypeServiceRepository typeServiceRepository;
+    @Autowired
+    BasicServiceRepository basicServiceRepository;
 
     @BeforeAll
     static void initialize() {

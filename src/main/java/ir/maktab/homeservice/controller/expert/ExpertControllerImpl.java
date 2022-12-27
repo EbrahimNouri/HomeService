@@ -1,6 +1,7 @@
 package ir.maktab.homeservice.controller.expert;
 
 
+import ir.maktab.homeservice.dto.ExpertAvatarDto;
 import ir.maktab.homeservice.dto.OfferDto;
 import ir.maktab.homeservice.dto.PersonChangePasswordDto;
 import ir.maktab.homeservice.dto.PersonRegisterDto;
@@ -17,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.List;
 
 
@@ -50,7 +52,6 @@ public class ExpertControllerImpl implements ExpertController {
 //                .password("1234QWer").build();
 //        expertService.registerExpert(expert, new File("/Users/ebrahimnouri/ss.jpg"));
     }
-
 
 
     @GetMapping("/{id}")
@@ -90,7 +91,7 @@ public class ExpertControllerImpl implements ExpertController {
 
     @Override
     @GetMapping("/getAverageScore/{id}")
-    public Double getAverageScore(@PathVariable Long id){
+    public Double getAverageScore(@PathVariable Long id) {
         return expertService.findById(id).getAverageScore();
     }
 
@@ -98,5 +99,11 @@ public class ExpertControllerImpl implements ExpertController {
     @GetMapping("/getAllScores/{id}")
     public List<Double> getAllScores(@PathVariable Long id) {
         return expertUserService.listOfScore(id);
+    }
+
+    @Override
+    @PostMapping("/addAvatar")
+    public void addAvatar(@RequestBody ExpertAvatarDto expertAvatarDto) {
+        expertService.addAvatar(expertAvatarDto.getExpertId(), new File(expertAvatarDto.getPath()));
     }
 }

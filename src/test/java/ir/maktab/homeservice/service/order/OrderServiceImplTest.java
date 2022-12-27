@@ -117,7 +117,7 @@ class OrderServiceImplTest {
                 () -> assertEquals(order1.getDescription(),
                         Objects.requireNonNull
                                 (orderService.findById
-                                        (order1.getId()).orElse(null)).getDescription()),
+                                        (order1.getId())).getDescription()),
 
                 () -> assertEquals(order1.getOrderType(), OrderType.WAITING_FOR_THE_SUGGESTIONS)
         );
@@ -156,7 +156,7 @@ class OrderServiceImplTest {
 
         orderService.startOfWork(order[3]);
         assertAll(
-                () -> assertEquals(orderService.findById(order[3].getId()).get().getOrderType()
+                () -> assertEquals(orderService.findById(order[3].getId()).getOrderType()
                         , OrderType.STARTED)
 
         );
@@ -171,7 +171,7 @@ class OrderServiceImplTest {
         order[1].setOrderType(OrderType.STARTED);
         orderService.endOfTheWork(order[1]);
         assertAll(
-                () -> assertEquals(orderService.findById(order[1].getId()).get().getOrderType()
+                () -> assertEquals(orderService.findById(order[1].getId()).getOrderType()
                         , OrderType.DONE)
         );
 

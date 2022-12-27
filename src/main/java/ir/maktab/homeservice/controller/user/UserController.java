@@ -6,7 +6,6 @@ import ir.maktab.homeservice.entity.ExpertUser;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.entity.User;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,5 +48,5 @@ public interface UserController {
     List<TypeService> findByBasicServiceId(@PathVariable Long id);
 
     @GetMapping("/{orderId}")
-    ResponseEntity<ExpertUser> findByOrderId(@PathVariable Long orderId);
+    ExpertUser findByOrderId(@PathVariable Long orderId);
 }

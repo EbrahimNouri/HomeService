@@ -44,7 +44,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         user.setCredit(user.getCredit() - amount);
-        expert.setCredit(expert.getCredit() + amount);
+        expert.setCredit(expert.getCredit() + (amount * 70) / 100);
         userService.save(user);
         expertService.save(expert);
         transaction1.setUser(user);

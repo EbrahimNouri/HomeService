@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -148,7 +147,6 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    // TODO: 12/21/2022 AD PHASE3
     @Transactional
     @Override
     public void setOrderToPaid(Order order) {
@@ -173,7 +171,7 @@ public class OrderServiceImpl implements OrderService {
 
         } else if (order.getPaymentType().equals(PaymentType.ONLINE_PAYMENT)) {
 
-            onlinePayment(order);
+            onlinePayment(offer);
             // TODO: 12/17/2022 AD Online payment
 
         } else
@@ -198,20 +196,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    // TODO: 12/21/2022 AD PHASE3
-    public void onlinePayment(Order order) {
-
+    public void onlinePayment(Offer offer) {
+        transactionService.onlinePayment(offer.getExpert(), offer.getSuggestedPrice());
     }
 
     @Override
     public List<Order> showOrderSuggestionOrSelection() {
-        try {
+
             return repository.findByOrderTypeBeforeStart();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
     }
 
     private boolean orderChecker(Order order) {
