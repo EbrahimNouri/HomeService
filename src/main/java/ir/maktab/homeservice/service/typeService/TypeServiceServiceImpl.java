@@ -21,18 +21,16 @@ public class TypeServiceServiceImpl implements TypeServiceService {
 
     @Override
     public TypeService findById(Long id) {
-        return typeServiceRepository.findById(id).orElseThrow(() -> new CustomExceptionNotFind("type service not found"));
+        return typeServiceRepository.findById(id)
+                .orElseThrow(() -> new CustomExceptionNotFind("type service not found"));
     }
 
     @Override
     public void addSubService(TypeService typeService) {
-        try {
+
             typeServiceRepository.save(typeService);
 
             log.debug("debug add sub service {} ", typeService);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -55,7 +53,6 @@ public class TypeServiceServiceImpl implements TypeServiceService {
 
     @Override
     public void descriptionChange(Long typeServiceId, String description) {
-
 
         TypeService typeService = findById(typeServiceId);
         typeService.setDescription(description);

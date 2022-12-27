@@ -47,21 +47,17 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void orderRegistration(Order order) {
 
-        if (order.getSuggestedPrice() != null
-                && order.getDescription() != null
-                && order.getStartOfWork() != null
-                && order.getUser() != null) {
-
-            order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
-            repository.save(order);
-
-            log.debug("debug order registration {} ", order);
-        } else {
-
-            log.error("debug order registration the fields are not filled {} ", order);
-
+        if (order.getSuggestedPrice() == null
+                || order.getDescription() == null
+                || order.getStartOfWork() == null
+                || order.getUser() == null)
             throw new CustomExceptionSave("order not valid");
-        }
+
+
+        order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
+        repository.save(order);
+
+        log.debug("debug order registration {} ", order);
 
     }
 
@@ -69,25 +65,22 @@ public class OrderServiceImpl implements OrderService {
     public void startOfWork(Order order) {
 
         Offer offer = getOffer(order);
-        if (checkLevelWork(offer)) {
-            if (order.getOrderType().equals(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE)) {
-                if (offer.getStartDate().isAfter(LocalDateTime.now())) {
-
-                    order.setOrderType(OrderType.STARTED);
-                    repository.save(order);
-
-                } else
-                    throw new CustomExceptionUpdate("start of work is after offer set");
-
-                log.debug("debug start of work {} ", order);
-            } else {
-                throw new CustomExceptionUpdate("order type not invalid");
-            }
-        } else {
-            log.warn("warn start of work not worked order id or offer id is null or order type is invalid {} "
-                    , offer);
+        if (checkLevelWork(offer))
             throw new CustomExceptionUpdate("this order not valid");
-        }
+
+        if (!order.getOrderType().equals(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE))
+            throw new CustomExceptionUpdate("order type not invalid");
+
+        if (offer.getStartDate().isBefore(LocalDateTime.now()))
+            throw new CustomExceptionUpdate("start of work is after offer set");
+
+
+        order.setOrderType(OrderType.STARTED);
+        repository.save(order);
+
+
+        log.debug("debug start of work {} ", order);
+
 
     }
 
@@ -96,27 +89,23 @@ public class OrderServiceImpl implements OrderService {
     public void endOfTheWork(Order order) {
         Offer offer = getOffer(order);
 
-        if (checkLevelWork(offer)) {
-            if (order.getOrderType().equals(OrderType.STARTED)) {
-                if (LocalDateTime.now().isAfter(offer.getEndDate())) {
-
-                    order.setDelayEndWorkHours(ChronoUnit.HOURS.between(LocalDateTime.now(), offer.getEndDate()));
-                    repository.save(order);
-
-                    log.debug("debug done of work {} ", order);
-                }
-
-                order.setOrderType(OrderType.DONE);
-                repository.save(order);
-
-            } else {
-                throw new CustomExceptionUpdate("this order not valid");
-
-            }
-        } else {
+        if (checkLevelWork(offer))
             throw new CustomExceptionUpdate("order check level work error");
 
+        if (!order.getOrderType().equals(OrderType.STARTED))
+            throw new CustomExceptionUpdate("this order not valid");
+
+        if (LocalDateTime.now().isAfter(offer.getEndDate())) {
+
+            order.setDelayEndWorkHours(ChronoUnit.HOURS.between(LocalDateTime.now(), offer.getEndDate()));
+            repository.save(order);
+
+            log.debug("debug done of work {} ", order);
         }
+
+        order.setOrderType(OrderType.DONE);
+        repository.save(order);
+
 
     }
 
@@ -124,17 +113,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void setOrderToDone(Order order) {
 
-        if (orderChecker(order)) {
-            if (order.getOrderType().equals(OrderType.STARTED)) {
-                order.setOrderType(OrderType.DONE);
-                repository.save(order);
-
-            } else {
-                throw new CustomExceptionUpdate("order not valid");
-            }
-        } else {
+        if (orderChecker(order))
             throw new CustomExceptionUpdate("order have empty variable");
-        }
+
+        if (!order.getOrderType().equals(OrderType.STARTED))
+            throw new CustomExceptionOrderType("order not valid");
+
+        order.setOrderType(OrderType.DONE);
+        repository.save(order);
+
+
     }
 
     @Transactional
@@ -146,7 +134,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new CustomExceptionNotFind("offer not found"));
 
 
-        if (!orderChecker(order)
+        if (orderChecker(order)
                 && !order.getOrderType().equals(OrderType.DONE))
             throw new CustomExceptionOrderType("order type is invalid");
 
@@ -198,14 +186,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private boolean orderChecker(Order order) {
-        if (
-                order.getSuggestedPrice() != null
-                        && order.getDescription() != null
-                        && order.getStartOfWork() != null
-                        && order.getUser() != null
-                        && order.getId() != null) {
-            return true;
-        } else throw new CustomExceptionInvalid("order checker error");
+        return
+                order.getSuggestedPrice() == null
+                        || order.getDescription() == null
+                        || order.getStartOfWork() == null
+                        || order.getUser() == null
+                        || order.getId() == null;
+
     }
 
     private boolean checkLevelWork(Offer offer) {

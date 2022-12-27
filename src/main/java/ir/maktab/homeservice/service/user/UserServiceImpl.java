@@ -35,16 +35,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void registerUser(@Valid User user) {
 
-        if (user.getEmail() != null && user.getPassword() != null) {
-
-            repository.save(user);
-
-            log.debug("debug user service iml {} ", user);
-        } else {
-            log.warn("warn register user  username or password is is null {} ", user);
-
+        if (user.getEmail() == null && user.getPassword() == null)
             throw new CustomExceptionSave("user not saved");
-        }
+
+        repository.save(user);
+
+        log.debug("debug user service iml {} ", user);
+
     }
 
     @Override
@@ -53,6 +50,7 @@ public class UserServiceImpl implements UserService {
         if (!user.getPassword().equals(password)
                 && user.getPassword().equals(Objects.requireNonNull(findById(user.getId())
                 .getPassword()))) {
+
             user.setPassword(password);
             repository.save(user);
 
@@ -65,7 +63,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findById(Long id) {
 
-        return repository.findUserById(id).orElseThrow(() -> new RuntimeException("user not found"));
+        return repository.findUserById(id).orElseThrow
+                (() -> new RuntimeException("user not found"));
 
     }
 
