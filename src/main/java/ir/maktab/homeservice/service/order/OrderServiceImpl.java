@@ -4,6 +4,7 @@ package ir.maktab.homeservice.service.order;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.Transaction;
+import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.entity.enums.PaymentType;
 import ir.maktab.homeservice.entity.enums.TransactionType;
@@ -53,6 +54,8 @@ public class OrderServiceImpl implements OrderService {
                 || order.getUser() == null)
             throw new CustomExceptionSave("order not valid");
 
+        if (order.getTypeService().getBasePrice() > order.getSuggestedPrice())
+            throw new CustomExceptionSave("order price fewer base price");
 
         order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
         repository.save(order);
@@ -73,7 +76,7 @@ public class OrderServiceImpl implements OrderService {
 
         if (offer.getStartDate().isBefore(LocalDateTime.now()))
             throw new CustomExceptionUpdate("start of work is after offer set");
-
+// TODO: 12/28/2022 AD for test commented 
 
         order.setOrderType(OrderType.STARTED);
         repository.save(order);
@@ -121,8 +124,6 @@ public class OrderServiceImpl implements OrderService {
 
         order.setOrderType(OrderType.DONE);
         repository.save(order);
-
-
     }
 
     @Transactional
@@ -183,6 +184,11 @@ public class OrderServiceImpl implements OrderService {
 
         return repository.findByOrderTypeBeforeStart();
 
+    }
+
+    @Override
+    public List<Order> findByTypeService(TypeService typeService) {
+        return repository.findByTypeService(typeService);
     }
 
     private boolean orderChecker(Order order) {

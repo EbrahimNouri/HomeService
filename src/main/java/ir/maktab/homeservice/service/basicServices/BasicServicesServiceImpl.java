@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -64,8 +63,9 @@ public class BasicServicesServiceImpl implements BasicServicesService {
     }
 
     @Override
-    public Optional<BasicService> findById(Long id) {
-        return repository.findBasicServiceById(id);
+    public BasicService findById(Long id) {
+        return repository.findBasicServiceById(id)
+                .orElseThrow(() -> new CustomExceptionNotFind("basic service not found"));
 
     }
 

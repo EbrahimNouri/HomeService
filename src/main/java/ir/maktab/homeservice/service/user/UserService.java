@@ -4,6 +4,7 @@ package ir.maktab.homeservice.service.user;
 import ir.maktab.homeservice.entity.User;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserService {
 
@@ -25,4 +26,5 @@ public interface UserService {
 
     User findByEmail(String email);
 
+    List<User> findBy(Map<String, String> find);
 }

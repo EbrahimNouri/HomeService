@@ -2,7 +2,6 @@ package ir.maktab.homeservice.service.expert;
 
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
-import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.UnexpectedRollbackException;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -18,12 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ExpertServiceImplTest {
+    private static short counter;
 
     private static Expert[] registerExpert = new Expert[5];
     @Autowired
     private ExpertService service;
-    @Autowired
-    private ExpertRepository repository;
 
 
     @BeforeAll
@@ -32,8 +31,9 @@ class ExpertServiceImplTest {
             registerExpert[i] = Expert.builder()
                     .firstname("testName")
                     .lastname("testLastname")
-                    .email("tesst" + i + "@email.com")
+                    .email("tesst" + i + "a" + counter + "@email.com")
                     .password("1234QWer").build();
+            counter += 1;
         }
     }
 
@@ -46,11 +46,10 @@ class ExpertServiceImplTest {
         }
     }
 
-
     @AfterEach
     void removeFromDatabase() {
         for (int i = 0; i < 5; i++) {
-            repository.delete(registerExpert[i]);
+            service.delete(registerExpert[i].getId());
         }
     }
 
@@ -60,18 +59,16 @@ class ExpertServiceImplTest {
         assertAll(
                 () -> Assertions.assertEquals(registerExpert[0].getEmail(), Objects.requireNonNull
                         (service.findById(registerExpert[0].getId(),
-                                        Path.of("/Users/ebrahimnouri/IdeaProjects/homeService/temp.jpg"))
-                                .orElse(null)).getEmail()),
+                                Path.of("/Users/ebrahimnouri/IdeaProjects/HomeService/farzad.jpg")))),
 
                 // TODO: 12/19/2022 AD find it 
-                () -> assertTrue(new File("/Users/ebrahimnouri/IdeaProjects/homeService/temp.jpg").isFile())
+                () -> assertTrue(new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg").isFile())
         );
     }
 
     @Test
-    void findById() {
-        Expert e = service.findById(1L, Path.of("/Users/ebrahimnouri/IdeaProjects/HomeService/farzad.jpg"))
-                .orElse(null);
+    void findById() throws IOException {
+        Expert e = service.findById(1L, Path.of("/Users/ebrahimnouri/IdeaProjects/HomeService/farzad.jpg"));
     }
 
     @Test

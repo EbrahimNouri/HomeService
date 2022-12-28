@@ -1,6 +1,7 @@
 package ir.maktab.homeservice.controller.user;
 
 
+import cn.apiclub.captcha.Captcha;
 import ir.maktab.homeservice.dto.*;
 import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.OrderType;
@@ -12,8 +13,11 @@ import ir.maktab.homeservice.service.order.OrderService;
 import ir.maktab.homeservice.service.transaction.TransactionService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
+import ir.maktab.homeservice.util.CaptchaGenerator;
+import ir.maktab.homeservice.util.CaptchaSettings;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +26,7 @@ import java.util.List;
 @Log4j2
 @AllArgsConstructor
 @RequestMapping("api/v1/user")
-public class UserControllerImpl implements UserController {
+public class UserControllerImpl {
 
     private final UserService userService;
     private final ExpertService expertService;
@@ -32,7 +36,6 @@ public class UserControllerImpl implements UserController {
     private final TransactionService transactionService;
     private final TypeServiceService typeServiceService;
 
-    @Override
     @PostMapping("/add")
     public void registerUser(@RequestBody PersonRegisterDto personRegisterDto) {
         User temp = User.builder()
@@ -46,7 +49,6 @@ public class UserControllerImpl implements UserController {
         userService.mainRegisterUser(temp);
     }
 
-    @Override
     @PutMapping("/chPass")
     public void changePassword(@RequestBody PersonChangePasswordDto personChangePasswordDto) {
         User temp = userService.findById(personChangePasswordDto.getId());
@@ -54,14 +56,7 @@ public class UserControllerImpl implements UserController {
         userService.changePassword(temp, personChangePasswordDto.getPassword());
     }
 
-    @Override
-    @GetMapping("{id}")
-    public User findById(@PathVariable Long id) {
-        return userService.findById(id);
-    }
-
     @PostMapping("/addCommentAndPoint")
-    @Override
     public void addCommentAndPoint(@RequestBody ExpertUserDto expertUserDto) {
         ExpertUser expertUser = new ExpertUser();
 
@@ -84,16 +79,15 @@ public class UserControllerImpl implements UserController {
         expertUserService.addCommentAndPoint(expertUser);
     }
 
-    @Override
     @GetMapping("/showOffersByOrder/{orderId}")
-    public List<Offer> showOffersByOrder(@PathVariable Long orderId) {
+    public List<OfferDto> showOffersByOrder(@PathVariable Long orderId) {
 
         Order order = orderService.findById(orderId);
 
-        return offerService.showOffersByOrder(order);
+        return offerService.showOffersByOrder(order).stream()
+                .map(this::offerMapping).toList();
     }
 
-    @Override
     @PutMapping("/chooseOffer/{offerId}")
     public void chooseOffer(@PathVariable Long offerId) {
         Offer offer = offerService.findById(offerId);
@@ -101,32 +95,30 @@ public class UserControllerImpl implements UserController {
         offerService.chooseOffer(offer);
     }
 
-    @Override
-    @PutMapping("/startOfWork/{offerId}")
-    public void startOfWork(@PathVariable Long offerId) {
-//        Offer offer = service.findById(offerId)
-//                .orElseThrow(() -> new CustomExceptionNotFind("offer not found"));
-//
-//        service.startOfWork(offer);
+    @PutMapping("/startOfWork/{orderId}")
+    public void startOfWork(@PathVariable Long orderId) {
+        Order order = orderService.findById(orderId);
+
+        orderService.startOfWork(order);
     }
 
-    @Override
-    @PutMapping("/endOfTheWork/{offerId}")
-    public void endOfTheWork(@PathVariable Long offerId) {
-//        Offer offer = service.findById(offerId)
-//                .orElseThrow(() -> new CustomExceptionNotFind("offer not found"));
-//
-//        service.endOfTheWork(offer);
+    @PutMapping("/endOfTheWork/{orderId}")
+    public void endOfTheWork(@PathVariable Long orderId) {
+        Order order = orderService.findById(orderId);
+
+        orderService.endOfTheWork(order);
     }
 
-    @Override
     @PostMapping("/orderRegistration")
     public void orderRegistration(@RequestBody OrderDto orderDto) {
 
+        User user = userService.findById(orderDto.getUserId());
+        TypeService typeService = typeServiceService.findById(orderDto.getTypeId());
         Order order = Order.builder()
                 .address(orderDto.getAddress())
                 .description(orderDto.getDescription())
-                .user(userService.findById(orderDto.getUserId()))
+                .user(user)
+                .typeService(typeService)
                 .startOfWork(orderDto.getStartOfWork())
                 .suggestedPrice(orderDto.getPrice())
                 .build();
@@ -135,24 +127,25 @@ public class UserControllerImpl implements UserController {
     }
 
     @PutMapping("/setOrderToDone/{orderId}")
-    @Override
     public void setOrderToDone(@PathVariable Long orderId) {
         Order order = orderService.findById(orderId);
         orderService.setOrderToDone(order);
     }
 
 
-    @Override
     @GetMapping("/findByOrderIdSortedPrice/{orderId}")
     public List<Offer> findByOrderIdSortedPrice(@PathVariable Long orderId) {
         return offerService.findByOrderIdSortedPrice(orderId);
     }
 
+    @GetMapping("/findByOrderIdSortedByPoint/{orderId}")
+    public List<Offer> findByOrderIdSortedByPoint(@PathVariable Long orderId) {
+        return offerService.findByOrderIdSortedByPoint(orderId);
+    }
     // TODO: 12/19/2022 AD find by findByOrderIdSortedPoint
 
 
     @PostMapping("/addTransaction")
-    @Override
     public void addTransaction(@RequestBody TransactionDto transactionDto) {
         Transaction transaction = Transaction.builder()
                 .transactionType(TransactionType.TRANSFER)
@@ -163,17 +156,67 @@ public class UserControllerImpl implements UserController {
         transactionService.addTransaction(transaction);
     }
 
-    @Override
     @GetMapping("/showAllTypeService/{id}")
     public List<TypeService> findByBasicServiceId(@PathVariable Long id) {
         return typeServiceService.showTypeServices(id);
     }
 
     @GetMapping("/{orderId}")
-    @Override
     public ExpertUser findByOrderId(@PathVariable Long orderId) {
         return expertUserService.findByOrderId(orderId);
 
     }
 
+
+    @GetMapping("/verify")
+    public String register(Model model) {
+        model.addAttribute("captcha", genCaptcha());
+        return "verifyCaptcha";
+    }
+
+    @PostMapping("/verify")
+    public String verify(@ModelAttribute CaptchaSettings captchaSettings, Model model) {
+        if (captchaSettings.getCaptcha().equals(captchaSettings.getHiddenCaptcha())) {
+            model.addAttribute("message", "Captcha verified successfully");
+            return "success";
+        } else {
+            model.addAttribute("message", "Invalid Captcha");
+            model.addAttribute("captcha", genCaptcha());
+        }
+        return "verifyCaptcha";
+    }
+
+    private CaptchaSettings genCaptcha() {
+        CaptchaSettings captchaSettings = new CaptchaSettings();
+        Captcha captcha = CaptchaGenerator.generateCaptcha(260, 80);
+        captchaSettings.setHiddenCaptcha(captcha.getAnswer());
+        captchaSettings.setCaptcha("");
+        captchaSettings.setRealCaptcha(CaptchaGenerator.encodeCaptchaToBinary(captcha));
+        return captchaSettings;
+    }
+
+    private OfferDto offerMapping(Offer offer) {
+        return OfferDto.builder()
+                .orderId(offer.getOrder().getId())
+                .expertId(offer.getExpert().getId())
+                .startDate(offer.getStartDate())
+                .suggestedPrice(offer.getSuggestedPrice())
+                .endDate(offer.getEndDate())
+                .description(offer.getDescription())
+                .suggestedPrice(offer.getSuggestedPrice())
+                .build();
+    }
+
+    private PersonFindDto userMapping(User user) {
+        return PersonFindDto.builder()
+                .id(user.getId())
+                .signupDate(user.getSignupDateTime())
+                .personType(PersonType.USER)
+                .email(user.getEmail())
+                .credit(user.getCredit())
+                .firstname(user.getFirstname())
+                .lastname(user.getLastname())
+                .build();
+    }
 }
+

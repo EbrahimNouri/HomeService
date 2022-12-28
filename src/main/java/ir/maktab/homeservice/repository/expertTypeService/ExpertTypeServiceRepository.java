@@ -18,10 +18,11 @@ public interface ExpertTypeServiceRepository extends JpaRepository<ExpertTypeSer
     List<ExpertTypeService> findExpertTypeServiceByExpertId(Long expertId);
 
     @Modifying
-    @Query("delete from ExpertTypeService et where et.expert = :expert")
+    @Query(value = "delete from expert_type_service et where et.expert_id = :expert", nativeQuery = true)
     int removeByExpert(Expert expert);
 
-    @Query(value = "select * from expert_type_service et where expert_id = :expert and type_service_id = :typeService", nativeQuery = true)
+    @Query(value = "select * from expert_type_service et where expert_id = :expert and type_service_id = :typeService"
+            , nativeQuery = true)
     Optional<ExpertTypeService> findById(Long expert, Long typeService);
 
     @Query("select et.typeService.basicService from ExpertTypeService et where et.typeService = :typeService ")

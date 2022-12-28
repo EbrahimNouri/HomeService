@@ -3,7 +3,6 @@ package ir.maktab.homeservice.controller.admin;
 
 import ir.maktab.homeservice.dto.*;
 import ir.maktab.homeservice.entity.*;
-import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.service.admin.AdminService;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
@@ -24,7 +23,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/admin")
 @AllArgsConstructor
-public class AdminControllerImpl implements AdminController {
+public class AdminControllerImpl {
 
     private final AdminService service;
     private final BasicServicesService basicServicesService;
@@ -36,52 +35,44 @@ public class AdminControllerImpl implements AdminController {
     private final OfferService offerService;
 
     @PostMapping("/add")
-    @Override
     public void addAdmin(@RequestBody @Valid Admin admin) {
         service.addAdmin(admin);
     }
 
     @PutMapping("/chPass")
-    @Override
     public void changePassword(@RequestBody @Valid adminPassDto admin) {
         Admin id_not_found = service.findById(admin.getId());
         service.changePassword(id_not_found, admin.getPassword());
     }
 
     @GetMapping("/{id}")
-    @Override
     public Admin findById(@PathVariable Long id) {
 //        return new ResponseEntity.ok(service.findById(adminId)
         return service.findById(id);
     }
 
-    @Override
     @PostMapping("/addBasicService")
     public void addBasicService(@RequestBody @Valid BasicService basicService) {
         basicServicesService.addBasicService(basicService);
     }
 
-    @Override
     @GetMapping("/showAllBasicServices")
     public List<BasicServiceDto> showAllBasicServices() {
         return basicServicesService.findAll().stream()
                 .map(bs -> new BasicServiceDto(bs.getId(), bs.getName())).toList();
     }
 
-    @Override
     @PutMapping("/descriptionChange/{typeServiceId}/{description}")
     public void descriptionChange(@PathVariable Long typeServiceId, @PathVariable String description) {
         typeServiceService.descriptionChange(typeServiceId, description);
     }
 
     @PutMapping("/acceptExpert/{expertId}")
-    @Override
     public void acceptExpert(@PathVariable Long expertId) {
         Expert acceptExpert = expertService.findById(expertId);
         expertService.acceptExpert(acceptExpert);
     }
 
-    @Override
     @DeleteMapping("/removeExpertFromBasicService/{expertId}")
     public HttpStatus removeExpertFromBasicService(@PathVariable Long expertId) {
         Expert expert = expertService.findById(expertId);
@@ -91,20 +82,19 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @PostMapping("/addExpertToTypeService")
-    @Override
-    public void addExpertToTypeService(@RequestBody ExpertTypeServiceDto expertTypeServiceDto) {
-        expertTypeServiceService.addExpertToTypeService(findExpertTypeServiceByDto(expertTypeServiceDto));
+    public void addExpertToTypeService(@RequestParam Long ex, @RequestParam Long ty) {
+        expertTypeServiceService.addExpertToTypeService
+                (findExpertTypeServiceByDto(new ExpertTypeServiceDto(ex, ty)));
     }
 
-    @Override
     @DeleteMapping("/removeExpertFromTypeService/")
-    public void removeExpertFromTypeService(@RequestBody ExpertTypeServiceDto expertTypeServiceDto) {
+    public void removeExpertFromTypeService(@RequestParam Long ex, @RequestParam Long ty) {
 
-        expertTypeServiceService.removeExpertFromTypeService(findExpertTypeServiceByDto(expertTypeServiceDto));
+        expertTypeServiceService.removeExpertFromTypeService
+                (findExpertTypeServiceByDto(new ExpertTypeServiceDto(ex, ty)));
     }
 
 
-    @Override
     @GetMapping("findExpertTypeServiceById/{expertId}/{typeServiceId}")
     public ExpertTypeServiceMapped findExpertTypeServiceById(@PathVariable Long expertId
             , @PathVariable Long typeServiceId) {
@@ -120,6 +110,7 @@ public class AdminControllerImpl implements AdminController {
                         , expert.getLastname()
                         , expert.getEmail()
                         , expert.getAverageScore()
+                        // TODO: 12/28/2022 AD i need that for test avatar
 /*
                         , FileUtil.fileWriter(Path.of("/Users/ebrahimnouri/Desktop/text.jpg"), expert.getAvatar())
 */
@@ -140,30 +131,35 @@ public class AdminControllerImpl implements AdminController {
         return new ExpertTypeService(expert, typeService);
     }
 
-    @Override
     @GetMapping("findOfferById/{id}")
-    public Offer findOfferById(@PathVariable Long id) {
-        return offerService.findById(id);
+    public OfferDto findOfferById(@PathVariable Long id) {
+
+        Offer offer = offerService.findById(id);
+         return OfferDto.builder()
+                .description(offer.getDescription())
+                .endDate(offer.getEndDate())
+                .startDate(offer.getStartDate())
+                .suggestedPrice(offer.getSuggestedPrice())
+                .expertId(offer.getExpert().getId())
+                .orderId(offer.getOrder().getId())
+                .build();
 
     }
 
     // TODO: 12/24/2022 AD
 
-    @Override
     @GetMapping("/showAllTypeService/{id}")
     public List<TypeServiceDto> findByBasicServiceId(@PathVariable Long id) {
         return typeServiceService.showTypeServices(id).stream().map(this::typeServiceMapped).toList();
     }
 
-    @Override
     @PostMapping("/addTypeService")
-    public void addTypeService(@RequestBody TypeServiceDto typeServiceDto) {
+    public void addTypeService(@RequestParam String name, Long baseId, Double price) {
 
         TypeService typeService = TypeService.builder()
-                .subService(typeServiceDto.getName())
-                .basicService(basicServicesService.findById(typeServiceDto.getBaseServiceId()).orElseThrow(
-                        () -> new CustomExceptionNotFind("basic service not found")))
-                .basePrice(typeServiceDto.getPrice())
+                .subService(name)
+                .basicService(basicServicesService.findById(baseId))
+                .basePrice(price)
                 .build();
 
         typeServiceService.addSubService(typeService);
@@ -171,11 +167,9 @@ public class AdminControllerImpl implements AdminController {
 
 
     @PostMapping("/addSubService")
-    @Override
     public void addSubService(@RequestBody TypeServiceDto typeServiceDto) {
 
-        BasicService basicService = basicServicesService.findById(typeServiceDto.getBaseServiceId())
-                .orElseThrow(() -> new CustomExceptionNotFind("basic service not found."));
+        BasicService basicService = basicServicesService.findById(typeServiceDto.getBaseServiceId());
 
         typeServiceService.addSubService(TypeService.builder()
                 .basicService(basicService)
@@ -184,7 +178,6 @@ public class AdminControllerImpl implements AdminController {
                 .build());
     }
 
-    @Override
     @PutMapping("/paymentPriceChange")
     public void paymentPriceChange(@RequestBody PaymentPriceChangeDto paymentPriceChangeDto) {
         TypeService typeService = typeServiceService.findById(paymentPriceChangeDto.getTypeServiceId());
@@ -192,14 +185,12 @@ public class AdminControllerImpl implements AdminController {
         typeServiceService.paymentPriceChange(typeService, paymentPriceChangeDto.getPrice());
     }
 
-    @Override
     @GetMapping("/showTypeServices/{basicServiceId}")
     public List<TypeService> showTypeServices(@PathVariable Long basicServiceId) {
         return typeServiceService.showTypeServices(basicServiceId);
     }
 
     // TODO: 12/24/2022 AD postman
-    @Override
     @GetMapping("/all")
     public List<PersonFindDto> showAll() {
         List<PersonFindDto> all = new ArrayList<>();
@@ -208,7 +199,6 @@ public class AdminControllerImpl implements AdminController {
         return all;
     }
 
-    @Override
     @GetMapping("/findByFirstName/")
     public List<PersonFindDto> findByFirstNameAll(@RequestParam String firstname) {
         List<PersonFindDto> all = new ArrayList<>();
@@ -218,7 +208,6 @@ public class AdminControllerImpl implements AdminController {
     }
 
 
-    @Override
     @GetMapping("/findByFirstName/allExperts/{firstname}")
     public List<PersonFindDto> findByFirstnameExpert(@PathVariable String firstname) {
 
@@ -226,14 +215,12 @@ public class AdminControllerImpl implements AdminController {
 
     }
 
-    @Override
     @GetMapping("/findByFirstName/allUsers/{firstname}")
     public List<PersonFindDto> findByFirstnameUser(@PathVariable String firstname) {
         return userService.findByFirstname(firstname).stream().map(this::userMapping).toList();
 
     }
 
-    @Override
     @GetMapping("/findByLastnameAll/{lastname}")
     public List<PersonFindDto> findByLastName(@PathVariable String lastname) {
         List<PersonFindDto> all = new ArrayList<>();
@@ -242,7 +229,6 @@ public class AdminControllerImpl implements AdminController {
         return all;
     }
 
-    @Override
     @GetMapping("/findByLastname/allExperts/{lastname}")
     public List<PersonFindDto> findByLastnameExpert(@PathVariable String lastname) {
 
@@ -250,14 +236,12 @@ public class AdminControllerImpl implements AdminController {
 
     }
 
-    @Override
     @GetMapping("/findByLastname/allUsers/{lastname}")
     public List<PersonFindDto> findByLastnameUser(@PathVariable String lastname) {
         return userService.findByLastname(lastname).stream().map(this::userMapping).toList();
 
     }
 
-    @Override
     @GetMapping("/findByEmailAll/{email}")
     public PersonFindDto[] findByEmailExpert(@PathVariable String email) {
         PersonFindDto[] persons = new PersonFindDto[2];
@@ -266,22 +250,30 @@ public class AdminControllerImpl implements AdminController {
         return persons;
     }
 
-    @Override
     @GetMapping("/findByEmailExpert/{email}")
     public PersonFindDto findByEmailAll(@PathVariable String email) {
         return Optional.of(expertService.findByEmail(email)).map(this::expertMapping).orElse(null);
     }
 
-    @Override
     @GetMapping("/findByEmailUser/{email}")
     public PersonFindDto findByEmailUser(@PathVariable String email) {
         return Optional.of(userService.findByEmail(email)).map(this::userMapping).orElse(null);
     }
 
-    @Override
-    @GetMapping("/finAllNew")
-    public List<PersonFindDto> findAllNew(@RequestParam Map<String, String> dsad){
-        return expertService.findBy(dsad).stream().map(this::expertMapping).toList();
+    @GetMapping("/finAllReqParam")
+    public List<PersonFindDto> findAllReq(@RequestParam Map<String, String> stringMap) {
+        List<PersonFindDto> findDtos = new ArrayList<>();
+        findDtos.addAll(expertService.findBy(stringMap).stream().map(this::expertMapping).toList());
+        findDtos.addAll(userService.findBy(stringMap).stream().map(this::userMapping).toList());
+        return findDtos;
+    }
+    @GetMapping("/findAllExpertReq")
+    public List<PersonFindDto> findAllExpertReq(@RequestParam Map<String, String> stringMap) {
+        return expertService.findBy(stringMap).stream().map(this::expertMapping).toList();
+    }
+    @GetMapping("/findAllUserReq")
+    public List<PersonFindDto> findAllUserReq(@RequestParam Map<String, String> stringMap) {
+        return userService.findBy(stringMap).stream().map(this::userMapping).toList();
     }
 
     private PersonFindDto expertMapping(Expert expert) {
@@ -308,7 +300,7 @@ public class AdminControllerImpl implements AdminController {
                 .build();
     }
 
-    private TypeServiceDto typeServiceMapped(TypeService typeService){
+    private TypeServiceDto typeServiceMapped(TypeService typeService) {
         return TypeServiceDto.builder()
                 .typeServiceId(typeService.getId())
                 .baseServiceId(typeService.getBasicService().getId())

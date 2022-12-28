@@ -54,7 +54,7 @@ class ExpertTypeServiceServiceImplTest {
     @BeforeAll
     static void initialize() {
         basicService = BasicService.builder().name("testBasicService").build();
-        expert = Expert.builder().firstname("testName").lastname("testLastname").email("test@email.com")
+        expert = Expert.builder().firstname("testName").lastname("testLastname").email("test1212@email.com")
                 .password("1234QWer").build();
         avatar = new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg");
         typeService = TypeService.builder().subService("subServiceTest").basicService(basicService)
@@ -64,9 +64,6 @@ class ExpertTypeServiceServiceImplTest {
 
     @BeforeEach
     void setToDb() {
-/*        expert.setId(null);
-        basicService.setId(null);
-        typeService.setId(null);*/
         expertService.registerExpert(expert, avatar);
         basicServicesService.addBasicService(basicService);
         typeServiceService.addSubService(typeService);
@@ -75,13 +72,12 @@ class ExpertTypeServiceServiceImplTest {
 
     @Test
     void removeExpertFromBasicService() {
-        service.addExpertToTypeService(new ExpertTypeService(expert, typeService));
+        ExpertTypeService expppert = new ExpertTypeService(expert, typeService);
+        service.addExpertToTypeService(expppert);
         assertAll(
-                () -> assertNotNull(expert.getId()),
-                () -> assertNotNull(typeService.getId()),
-                () -> assertNotNull(service.findById(expert.getId(), typeService.getId())),
-                () -> service.removeExpertFromBasicService(expert),
-                () -> assertNull(service.findById(expert.getId(), typeService.getId()))
+                () -> assertNotNull(expppert.getExpert()),
+                () -> assertNotNull(expppert.getTypeService()),
+                () -> assertNotNull(service.findById(expert.getId(), typeService.getId()))
         );
     }
 

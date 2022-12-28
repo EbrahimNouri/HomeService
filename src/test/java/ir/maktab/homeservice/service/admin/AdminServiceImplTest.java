@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +17,6 @@ class AdminServiceImplTest {
     @Autowired
     private AdminService service;
     static Admin admin;
-    @Autowired
 
     @BeforeAll
     static void initialsAdmin() {
@@ -32,7 +30,7 @@ class AdminServiceImplTest {
         assertAll(
                 () -> assertNotNull(admin.getId()),
 
-                () -> assertEquals(Optional.ofNullable(admin), service.findById(Objects.requireNonNull(admin).getId())));
+                () -> assertEquals(admin.getId(), service.findById(Objects.requireNonNull(admin).getId()).getId()));
     }
 
 

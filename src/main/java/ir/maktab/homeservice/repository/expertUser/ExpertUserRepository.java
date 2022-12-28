@@ -26,6 +26,6 @@ public interface ExpertUserRepository extends JpaRepository<ExpertUser, ExpertUs
     @Query("select e from ExpertUser e where e.order.id = :orderId")
     Optional<ExpertUser> findByOrderIdQ(Long orderId);
 
-    @Query("from ExpertUser eu where eu.expert.id = :id")
+    @Query("select eu.point from ExpertUser eu where eu.expert.id = :id")
     List<Double> listOfScore(Long id);
 }

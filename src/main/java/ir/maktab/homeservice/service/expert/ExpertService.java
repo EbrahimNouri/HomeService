@@ -39,4 +39,6 @@ public interface ExpertService {
     List<Expert> findBy(Map<String, String> find);
 
     void addAvatar(Long expertId, File file);
+
+    void delete(Long e);
 }

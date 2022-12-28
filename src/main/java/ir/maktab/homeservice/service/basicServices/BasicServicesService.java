@@ -3,7 +3,6 @@ package ir.maktab.homeservice.service.basicServices;
 import ir.maktab.homeservice.entity.BasicService;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BasicServicesService {
 
@@ -17,7 +16,7 @@ public interface BasicServicesService {
     List<BasicService> showAllBasicService();
 
 
-    Optional<BasicService> findById(Long id);
+    BasicService findById(Long id);
 
     boolean checkByName(String name);
 }

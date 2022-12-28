@@ -34,7 +34,7 @@ public class CaptchaController {
 	  Captcha captcha = CaptchaGenerator.generateCaptcha(260, 80);
 	  captchaSettings.setHiddenCaptcha(captcha.getAnswer());
 	  captchaSettings.setCaptcha("");
-	  captchaSettings.setRealCaptcha(CaptchaGenerator.encodeCaptchatoBinary(captcha));
+	  captchaSettings.setRealCaptcha(CaptchaGenerator.encodeCaptchaToBinary(captcha));
 	  return captchaSettings;
   }
 }

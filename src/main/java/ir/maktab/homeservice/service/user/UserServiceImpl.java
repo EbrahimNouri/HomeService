@@ -9,9 +9,12 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -63,7 +66,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findById(Long id) {
 
-        return repository.findUserById(id).orElseThrow
+        return repository.findUserByIdCustom(id).orElseThrow
                 (() -> new RuntimeException("user not found"));
 
     }
@@ -89,4 +92,20 @@ public class UserServiceImpl implements UserService {
                 new CustomExceptionNotFind("user not found"));
     }
 
+    @Override
+    public List<User> findBy(Map<String, String> find) {
+        return repository.findAll(mapToSpecification(find));
+    }
+
+    private Specification<User> mapToSpecification(Map<String, String> find) {
+
+        List<Specification<User>> specifications = new ArrayList<>();
+        for (Map.Entry<String, String> ee
+                : find.entrySet()) {
+            Specification<User> specification =
+                    ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(ee.getKey()), ee.getValue()));
+            specifications.add(specification);
+        }
+        return Specification.allOf(specifications);
+    }
 }

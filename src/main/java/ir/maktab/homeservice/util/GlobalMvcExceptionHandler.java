@@ -1,3 +1,4 @@
+/*
 package ir.maktab.homeservice.util;
 
 import ir.maktab.homeservice.exception.*;
@@ -52,3 +53,4 @@ public class GlobalMvcExceptionHandler {
     }
 
 }
+*/

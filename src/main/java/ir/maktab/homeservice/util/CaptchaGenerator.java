@@ -18,7 +18,7 @@ public class CaptchaGenerator {
                 .build();
     }
 
-    public static String encodeCaptchatoBinary(Captcha captcha) {
+    public static String encodeCaptchaToBinary(Captcha captcha) {
         String image = null;
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();

@@ -43,7 +43,7 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public void registerExpert(@Valid Expert expert, File file) {
         if (expert.getId() == null
-                && file.length() / 1024 > 300
+                && file.length() / 1024 < 300
                 && file.getName().endsWith(".jpg")) {
 
             byte[] avatar = FileUtil.imageConverter(file);
@@ -78,36 +78,36 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Override
     public Expert findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new CustomExceptionNotFind("expert not found"));
+        return repository.findByIdCustom(id).orElseThrow(()
+                -> new CustomExceptionNotFind("expert not found"));
     }
 
     @Override
     public void changePassword(@Valid Expert expert, String password) {
 
 
-        if (!expert.getPassword().equals(password)
-                && expert.getId() != null
-                && expert.equals(findById(expert.getId()))) {
-
-            expert.setPassword(password);
-            repository.save(expert);
-
-            log.debug("debug change password expert {} to {} ", expert, password);
-        } else {
-            log.warn("old password and new password is same");
-
+        if (expert.getPassword().equals(password))
             throw new CustomExceptionInvalid("password not changed");
-        }
+
+
+        if (expert.getId() == null)
+            throw new CustomExceptionInvalid("expert id is null");
+
+
+        expert.setPassword(password);
+        repository.save(expert);
+
+        log.debug("debug change password expert {} to {} ", expert, password);
+
 
     }
-
 
     @Override
     public Expert findById(Long id, Path path) throws IOException {
 
         Expert expert;
 
-        expert = repository.findById(id).orElseThrow(() -> new CustomExceptionNotFind("expert not found"));
+        expert = repository.findByIdCustom(id).orElseThrow(() -> new CustomExceptionNotFind("expert not found"));
         FileUtil.fileWriter(path, expert.getAvatar());
 
         return expert;
@@ -176,7 +176,7 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Override
     public void addAvatar(Long expertId, File file) {
-        Expert expert = repository.findById(expertId).orElseThrow
+        Expert expert = repository.findByIdCustom(expertId).orElseThrow
                 ((() -> new CustomExceptionNotFind("expert not found")));
 
         if (file.length() / 1024 < 300
@@ -186,5 +186,10 @@ public class ExpertServiceImpl implements ExpertService {
         byte[] avatar = FileUtil.imageConverter(file);
         expert.setAvatar(avatar);
         repository.save(expert);
+    }
+
+    @Override
+    public void delete(Long e) {
+        repository.deleteById(e);
     }
 }

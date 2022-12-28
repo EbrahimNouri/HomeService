@@ -1,18 +1,17 @@
 package ir.maktab.homeservice.controller.expert;
 
 
-import ir.maktab.homeservice.dto.ExpertAvatarDto;
-import ir.maktab.homeservice.dto.OfferDto;
-import ir.maktab.homeservice.dto.PersonChangePasswordDto;
-import ir.maktab.homeservice.dto.PersonRegisterDto;
+import ir.maktab.homeservice.dto.*;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
+import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.order.OrderService;
+import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -26,14 +25,14 @@ import java.util.List;
 @Log4j2
 @AllArgsConstructor
 @RequestMapping("api/v1/expert")
-public class ExpertControllerImpl implements ExpertController {
+public class ExpertControllerImpl {
     private final ExpertService expertService;
     private final OfferService offerService;
     private final OrderService orderService;
+    private final TypeServiceService typeServiceService;
     private final ExpertUserService expertUserService;
 
     @PostMapping("/regExpert")
-    @Override
     public void registerExpert(@RequestBody @Valid PersonRegisterDto personRegisterDto) {
         Expert temp = Expert.builder()
                 .expertStatus(ExpertStatus.NEW)
@@ -55,22 +54,26 @@ public class ExpertControllerImpl implements ExpertController {
 
 
     @GetMapping("/{id}")
-    @Override
     public Expert findById(@PathVariable Long id) {
         return expertService.findById(id);
 
     }
 
     @PutMapping("/chPass")
-    @Override
     public void changePassword(@RequestBody @Valid PersonChangePasswordDto personChangePasswordDto) {
         Expert expert = expertService.findById(personChangePasswordDto.getId());
         expertService.changePassword(expert, personChangePasswordDto.getPassword());
     }
 
-    @Override
+    @GetMapping("findExpertById/{id}")
+    public String findExpertById(@PathVariable Long id) {
+        Expert expert = expertService.findById(id);
+        System.out.println(expert.getEmail());
+        return "ok";
+    }
+
     @PostMapping("/offerRegistrationOrUpdate")
-    public void offerRegistrationOrUpdate(OfferDto offerDto) {
+    public void offerRegistrationOrUpdate(@RequestBody @Valid OfferDto offerDto) {
 
         Offer offer = Offer.builder()
                 .expert(expertService.findById(offerDto.getExpertId()))
@@ -78,32 +81,46 @@ public class ExpertControllerImpl implements ExpertController {
                 .description(offerDto.getDescription())
                 .startDate(offerDto.getStartDate())
                 .EndDate(offerDto.getEndDate())
+                .suggestedPrice(offerDto.getSuggestedPrice())
                 .build();
 
         offerService.offerRegistrationOrUpdate(offer);
     }
 
     @GetMapping("/showOrderSuggestionOrSelection")
-    @Override
     public List<Order> showOrderSuggestionOrSelection() {
         return orderService.showOrderSuggestionOrSelection();
     }
 
-    @Override
     @GetMapping("/getAverageScore/{id}")
     public Double getAverageScore(@PathVariable Long id) {
         return expertService.findById(id).getAverageScore();
     }
 
-    @Override
     @GetMapping("/getAllScores/{id}")
     public List<Double> getAllScores(@PathVariable Long id) {
         return expertUserService.listOfScore(id);
     }
 
-    @Override
     @PostMapping("/addAvatar")
     public void addAvatar(@RequestBody ExpertAvatarDto expertAvatarDto) {
         expertService.addAvatar(expertAvatarDto.getExpertId(), new File(expertAvatarDto.getPath()));
     }
+
+    @GetMapping("/showAllOrderList/{typeService}")
+    public List<OrderDto> showAllOrderList(@PathVariable Long typeService) {
+        TypeService typeServices = typeServiceService.findById(typeService);
+        return orderService.findByTypeService(typeServices).stream().map(this::orderMapping).toList();
+    }
+
+    private OrderDto orderMapping(Order order) {
+        return OrderDto.builder()
+                .userId(order.getUser().getId())
+                .address(order.getAddress())
+                .price(order.getSuggestedPrice())
+                .startOfWork(order.getStartOfWork())
+                .description(order.getDescription())
+                .build();
+    }
+
 }

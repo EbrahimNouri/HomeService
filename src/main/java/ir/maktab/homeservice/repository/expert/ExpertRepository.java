@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Repository
 @Component
-public interface ExpertRepository extends JpaRepository<Expert, Long> , JpaSpecificationExecutor<Expert> {
+public interface ExpertRepository extends JpaRepository<Expert, Long>, JpaSpecificationExecutor<Expert> {
     @Modifying
     @Query("update Expert e set e.expertStatus = :expertStatus where e.id = :id")
     void deactivate(Long id, ExpertStatus expertStatus);
@@ -29,5 +29,8 @@ public interface ExpertRepository extends JpaRepository<Expert, Long> , JpaSpeci
     List<Expert> findByLastname(String lastname);
 
     Optional<Expert> findByEmail(String email);
+
+    @Query("from Expert e where e.id =:id")
+    Optional<Expert> findByIdCustom( Long id);
 
 }

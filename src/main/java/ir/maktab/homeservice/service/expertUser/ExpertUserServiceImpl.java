@@ -36,7 +36,7 @@ public class ExpertUserServiceImpl implements ExpertUserService {
             throw new CustomExceptionOrderType("order type is invalid");
 
 
-        if (expertUser.getPoint() <= 5.0 && expertUser.getPoint() >= 0.0)
+        if (expertUser.getPoint() >= 5.0 && expertUser.getPoint() <= 0.0)
             throw new CustomExceptionSave("point is invalid");
 
         Double average = repository.getAveragePoint(expert.getId());

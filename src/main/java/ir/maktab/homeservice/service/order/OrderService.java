@@ -2,6 +2,7 @@ package ir.maktab.homeservice.service.order;
 
 
 import ir.maktab.homeservice.entity.Order;
+import ir.maktab.homeservice.entity.TypeService;
 
 import java.util.List;
 
@@ -25,4 +26,6 @@ public interface OrderService {
     void setOrderToPaid(Order order);
 
     List<Order> showOrderSuggestionOrSelection();
+
+    List<Order> findByTypeService(TypeService typeService);
 }
