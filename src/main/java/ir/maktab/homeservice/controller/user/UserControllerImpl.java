@@ -5,7 +5,6 @@ import cn.apiclub.captcha.Captcha;
 import ir.maktab.homeservice.dto.*;
 import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.OrderType;
-import ir.maktab.homeservice.entity.enums.TransactionType;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
@@ -145,16 +144,6 @@ public class UserControllerImpl {
     // TODO: 12/19/2022 AD find by findByOrderIdSortedPoint
 
 
-    @PostMapping("/addTransaction")
-    public void addTransaction(@RequestBody TransactionDto transactionDto) {
-        Transaction transaction = Transaction.builder()
-                .transactionType(TransactionType.TRANSFER)
-                .expert(expertService.findById(transactionDto.getExpertId()))
-                .user(userService.findById(transactionDto.getUserid()))
-                .build();
-
-        transactionService.addTransaction(transaction);
-    }
 
     @GetMapping("/showAllTypeService/{id}")
     public List<TypeService> findByBasicServiceId(@PathVariable Long id) {
@@ -163,10 +152,14 @@ public class UserControllerImpl {
 
     @GetMapping("/{orderId}")
     public ExpertUser findByOrderId(@PathVariable Long orderId) {
-        return expertUserService.findByOrderId(orderId);
 
+        return expertUserService.findByOrderId(orderId);
     }
 
+    @PostMapping("/setOrderToPaidAppPayment/{orderId}")
+    public void setOrderToPaidAppPayment(@PathVariable Long orderId){
+        orderService.setOrderToPaidAppPayment(orderService.findById(orderId));
+    }
 
     @GetMapping("/verify")
     public String register(Model model) {
@@ -174,16 +167,20 @@ public class UserControllerImpl {
         return "verifyCaptcha";
     }
 
-    @PostMapping("/verify")
-    public String verify(@ModelAttribute CaptchaSettings captchaSettings, Model model) {
+    @PostMapping("/verify/{orderId}")
+    public String setOrderToPaidOnlinePayment(@ModelAttribute CaptchaSettings captchaSettings
+            , Model model, @PathVariable Long orderId) {
+
         if (captchaSettings.getCaptcha().equals(captchaSettings.getHiddenCaptcha())) {
             model.addAttribute("message", "Captcha verified successfully");
+            orderService.setOrderToPaidOnlinePayment(orderService.findById(orderId));
             return "success";
         } else {
             model.addAttribute("message", "Invalid Captcha");
             model.addAttribute("captcha", genCaptcha());
         }
         return "verifyCaptcha";
+
     }
 
     private CaptchaSettings genCaptcha() {

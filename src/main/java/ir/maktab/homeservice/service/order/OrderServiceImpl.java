@@ -128,7 +128,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public void setOrderToPaid(Order order) {
+    public void setOrderToPaidAppPayment(Order order) {
 
         Offer offer = offerService.findOfferByOrder_Id(order.getId())
                 .stream().filter(Offer::isChoose).findFirst()
@@ -148,10 +148,31 @@ public class OrderServiceImpl implements OrderService {
                     .transfer(offer.getSuggestedPrice())
                     .build());
 
-        } else if (order.getPaymentType().equals(PaymentType.ONLINE_PAYMENT)) {
+        }else
+            throw new CustomNotChoosingException("didn't choose any of the payment methods");
 
+        order.setOrderType(OrderType.PAID);
+
+        timeChecker(order, offer);
+    }
+
+    @Transactional
+    @Override
+    public void setOrderToPaidOnlinePayment(Order order) {
+
+        Offer offer = offerService.findOfferByOrder_Id(order.getId())
+                .stream().filter(Offer::isChoose).findFirst()
+                .orElseThrow(() -> new CustomExceptionNotFind("offer not found"));
+
+
+        if (orderChecker(order)
+                && !order.getOrderType().equals(OrderType.DONE))
+            throw new CustomExceptionOrderType("order type is invalid");
+
+        if (order.getPaymentType().equals(PaymentType.ONLINE_PAYMENT)) {
+
+            // TODO: 12/28/2022 AD get boolean
             onlinePayment(offer);
-            // TODO: 12/17/2022 AD Online payment
 
         } else
             throw new CustomNotChoosingException("didn't choose any of the payment methods");
@@ -170,7 +191,6 @@ public class OrderServiceImpl implements OrderService {
 
             int hour = offer.getEndDate().getHour() - LocalDateTime.now().getHour();
             expertUserService.deductPoints(hour, order);
-
         }
     }
 
@@ -181,7 +201,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> showOrderSuggestionOrSelection() {
-
+        
         return repository.findByOrderTypeBeforeStart();
 
     }

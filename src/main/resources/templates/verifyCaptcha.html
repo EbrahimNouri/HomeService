@@ -142,21 +142,26 @@
                     <label for "image"> CAPTCHA</label>
                     <input type="image" id="image" th:src="*{'data:realCaptcha/jpg;base64,'+realCaptcha}">
                     <input type="hidden" th:field="*{hiddenCaptcha}"/><br>
-                    <lable for "captchatext"> Enter Captch text </lable>
-                    <input type="text" id="captchatext" th:field="*{captcha}" />
+                    <lable for
+                    "captchatext"> Enter Captch text </lable>
+                    <input type="text" id="captchatext" th:field="*{captcha}"/>
                 </form>
                 <div class="btn btn-primary mb-3">
                     <span class="ps-3">Pay $243</span>
                     <span class="fas fa-arrow-right"></span>
-                    <input type="submit" value="Verify" />
+                    <input type="submit" value="Verify"/>
                 </div>
                 <div th:if="${message!=null}">
                     <span style="color:red;" th:text="${message}"></span>
                 </div>
 
+            </div>
         </div>
     </div>
-</div>
+    <script>
+
+
+    </script>
 </body>
 </html>
 

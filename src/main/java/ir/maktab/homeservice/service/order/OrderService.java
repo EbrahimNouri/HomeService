@@ -3,6 +3,7 @@ package ir.maktab.homeservice.service.order;
 
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.TypeService;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -15,15 +16,15 @@ public interface OrderService {
 
     void startOfWork(Order order);
 
-/*
-    void chooseOffer(Order order);
-*/
-
     void endOfTheWork(Order order);
 
     void setOrderToDone(Order order);
 
-    void setOrderToPaid(Order order);
+    @Transactional
+    void setOrderToPaidAppPayment(Order order);
+
+    @Transactional
+    void setOrderToPaidOnlinePayment(Order order);
 
     List<Order> showOrderSuggestionOrSelection();
 
