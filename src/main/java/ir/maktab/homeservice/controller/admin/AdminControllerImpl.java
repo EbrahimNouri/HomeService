@@ -146,8 +146,6 @@ public class AdminControllerImpl {
 
     }
 
-    // TODO: 12/24/2022 AD
-
     @GetMapping("/showAllTypeService/{id}")
     public List<TypeServiceDto> findByBasicServiceId(@PathVariable Long id) {
         return typeServiceService.showTypeServices(id).stream().map(this::typeServiceMapped).toList();
@@ -190,7 +188,6 @@ public class AdminControllerImpl {
         return typeServiceService.showTypeServices(basicServiceId);
     }
 
-    // TODO: 12/24/2022 AD postman
     @GetMapping("/all")
     public List<personFindDto> showAll() {
         List<personFindDto> all = new ArrayList<>();

@@ -168,7 +168,6 @@ public class OrderServiceImpl implements OrderService {
 
         if (order.getPaymentType().equals(PaymentType.ONLINE_PAYMENT)) {
 
-            // TODO: 12/28/2022 AD get boolean
             onlinePayment(offer);
 
         } else
