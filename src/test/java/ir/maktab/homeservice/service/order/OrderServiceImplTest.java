@@ -3,7 +3,6 @@ package ir.maktab.homeservice.service.order;
 import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.entity.enums.OrderType;
-import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
@@ -48,8 +47,6 @@ class OrderServiceImplTest {
     private TypeServiceService typeServiceService;
     @Autowired
     private OrderService orderService;
-    @Autowired
-    private ExpertTypeServiceRepository expertTypeServiceRepository;
     @Autowired
     private OfferService offerService;
     @Autowired
@@ -160,10 +157,6 @@ class OrderServiceImplTest {
                         , OrderType.STARTED)
 
         );
-//        order[3].setOrderType(OrderType.PAID);
-//        assertAll(
-//                () -> assertThrows(Exception.class, () -> orderService.endOfTheWork(order[3]))
-//        );
     }
 
     @Test
@@ -174,11 +167,6 @@ class OrderServiceImplTest {
                 () -> assertEquals(orderService.findById(order[1].getId()).getOrderType()
                         , OrderType.DONE)
         );
-
-/*        order[1].setOrderType(OrderType.PAID);
-        assertAll(
-                () -> assertThrows(CustomExceptionUpdate.class, () -> orderService.endOfTheWork(order[1])
-                ));*/
     }
 
     @Test

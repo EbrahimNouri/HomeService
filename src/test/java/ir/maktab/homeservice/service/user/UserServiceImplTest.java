@@ -1,7 +1,6 @@
 package ir.maktab.homeservice.service.user;
 
 import ir.maktab.homeservice.entity.User;
-import ir.maktab.homeservice.repository.user.UserRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,9 +18,6 @@ class UserServiceImplTest {
 
     @Autowired
     UserService service;
-    @Autowired
-    private UserRepository userRepository;
-
     @BeforeAll
     public static void initialize() {
         user = User.builder().firstname("testname").lastname("testlname").email("test@mail.com")
@@ -35,7 +31,7 @@ class UserServiceImplTest {
 
     @AfterEach
     public void purgeDatabase(){
-        userRepository.delete(user);
+        service.delete(user);
         user.setId(null);
     }
     @AfterAll
@@ -55,34 +51,4 @@ class UserServiceImplTest {
         assertEquals(newPass, Objects
                 .requireNonNull(service.findById(user.getId())).getPassword());
     }
-
-
-
-//    @Test
-//    void passwordPatternTest() {
-//        String newPass = "1234QWer";
-//        assertThrows(Exception.class, () -> service.changePassword(user, "123"));
-//        user.setPassword(newPass);
-//        assertEquals(newPass, Objects.requireNonNull(service.findById(user
-//                .getId()).orElse(null)).getPassword());
-//    }
-
-/*    @Test
-    void passwordUnchangedTest() {
-        assertThrows(CustomPatternInvalidException.class, () -> service.changePassword(user
-                , user.getPassword()), "password not changed");
-    }*/
-
-//    @Test
-//    void emailPatternTest() {
-//        Expert expert1 = Expert.builder().firstname("testName")
-//                .lastname("testLastname").email("tesst1emailcom")
-//                .password("1234QWer").build();
-//        ;
-//        assertThrows(ConstraintViolationException.class, () -> service.save(user));
-///*        assertThrows(CustomExceptionSave.class
-//                , () -> service.registerExpert(expert1, null)
-//                ,"expert not saved");*/
-//    }
-
 }

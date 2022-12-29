@@ -15,4 +15,8 @@ public interface TypeServiceService {
     List<TypeService> showTypeServices(Long basicServiceId);
 
     void descriptionChange(Long typeServiceId, String description);
+
+    List<TypeService> findByBasicServiceId(Long basicId);
+
+    void save(TypeService typeService);
 }

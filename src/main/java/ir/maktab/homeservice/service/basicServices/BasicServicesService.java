@@ -19,4 +19,8 @@ public interface BasicServicesService {
     BasicService findById(Long id);
 
     boolean checkByName(String name);
+
+    void save(BasicService basicService);
+
+    void delete(BasicService basicService);
 }

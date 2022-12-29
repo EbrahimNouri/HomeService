@@ -3,7 +3,6 @@ package ir.maktab.homeservice.service.offer;
 import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.entity.enums.OrderType;
-import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
@@ -45,8 +44,6 @@ class OfferServiceImplTest {
 
     @Autowired
     ExpertUserService expertUserService;
-    @Autowired
-    ExpertRepository expertRepository;
 
     @Autowired
     ExpertService expertService;
@@ -161,8 +158,7 @@ class OfferServiceImplTest {
         service.chooseOffer(offerTest[0][1]);
         assertAll(
                 () -> assertEquals(Objects.requireNonNull(service.findById(offerTest[0][1].getId())).getOrder()
-                                .getOrderType(), OrderType.WAITING_FOR_COME_TO_YOUR_PLACE
-                        /*|| OrderType.WAITING_FOR_THE_SUGGESTIONS*/),
+                                .getOrderType(), OrderType.WAITING_FOR_COME_TO_YOUR_PLACE),
 
                 () -> assertTrue(offerTest[0][1].isChoose())
         );
@@ -174,7 +170,6 @@ class OfferServiceImplTest {
         assertNotNull(service.findById(1L));
 
         assertEquals(3, service.findByOrder(order[0]).size());
-//        assertEquals(4,service.findByOrder(order).size()) ;
     }
 
     @Test
@@ -188,7 +183,6 @@ class OfferServiceImplTest {
 
     @Test
     void findByOrderIdSortedPoint() {
-//        assertNotNull(service.findById(1L));
         List<Double> experts1 = new java.util.ArrayList<>(service.findByOrder(offerTest[3][0].getOrder())
                 .stream().map(offer1 -> offer1.getExpert().getAverageScore()).toList());
         Collections.sort(experts1);

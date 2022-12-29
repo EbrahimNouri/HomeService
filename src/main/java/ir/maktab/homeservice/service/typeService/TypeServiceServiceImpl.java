@@ -59,4 +59,14 @@ public class TypeServiceServiceImpl implements TypeServiceService {
         typeServiceRepository.save(typeService);
 
     }
+
+    @Override
+    public List<TypeService> findByBasicServiceId(Long basicId){
+        return typeServiceRepository.findByBasicServiceId(basicId);
+    }
+
+    @Override
+    public void save(TypeService typeService){
+        typeServiceRepository.save(typeService);
+    }
 }

@@ -29,4 +29,6 @@ public interface UserService {
     List<User> findBy(Map<String, String> find);
 
     boolean existsByEmail(String email);
+
+    void delete(User user);
 }

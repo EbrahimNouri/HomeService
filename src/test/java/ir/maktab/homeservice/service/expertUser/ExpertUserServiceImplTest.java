@@ -3,7 +3,6 @@ package ir.maktab.homeservice.service.expertUser;
 import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.repository.order.OrderRepository;
-import ir.maktab.homeservice.repository.user.UserRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.order.OrderService;
@@ -39,8 +38,6 @@ class ExpertUserServiceImplTest {
 
     @Autowired
     UserService userService;
-    @Autowired
-    UserRepository userRepository;
     @Autowired
     OrderService orderService;
     @Autowired
@@ -85,7 +82,6 @@ class ExpertUserServiceImplTest {
                 () -> service.addCommentAndPoint(expertUserMain),
 
                 () -> assertNotNull(service.findByOrderId(order.getId()))
-//        assertThat(orderRepository.findById(order.getId()).get()).isEqualTo(user);
 
         );
     }

@@ -1,7 +1,6 @@
 package ir.maktab.homeservice.service.basicServices;
 
 import ir.maktab.homeservice.entity.BasicService;
-import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,7 @@ class BasicServicesServiceTest {
     @Autowired
     private BasicServicesService service;
     @Autowired
-    private BasicServiceRepository basicServiceRepository;
-    @Autowired
-    private BasicServiceRepository repository;
+    private BasicServicesService basicServicesService;
 
 
     @Test
@@ -39,7 +36,7 @@ class BasicServicesServiceTest {
         assertAll(
                 () -> service.addBasicService(basicService[1]),
                 () -> assertTrue(service.checkByName(basicService[1].getName())),
-                () -> repository.delete(basicService[1]),
+                () -> service.delete(basicService[1]),
                 () -> assertFalse(service.checkByName(basicService[1].getName()))
         );
     }
@@ -65,10 +62,6 @@ class BasicServicesServiceTest {
                 () -> service.addBasicService(basicService[2]),
 
                 () -> assertTrue(service.checkByName(basicService[2].getName())),
-
-/*                () -> assertThrows(CustomExceptionSave.class
-                        , () -> service.addBasicService(tempBase)
-                        , "this name is invalid"),*/
 
                 () -> assertNull(tempBase.getId())
         );

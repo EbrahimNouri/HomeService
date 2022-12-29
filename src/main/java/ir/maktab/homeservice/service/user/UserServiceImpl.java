@@ -102,6 +102,11 @@ public class UserServiceImpl implements UserService {
         return repository.existsByEmail(email);
     }
 
+    @Override
+    public void delete(User user){
+        repository.delete(user);
+    }
+
     private Specification<User> mapToSpecification(Map<String, String> find) {
 
         List<Specification<User>> specifications = new ArrayList<>();

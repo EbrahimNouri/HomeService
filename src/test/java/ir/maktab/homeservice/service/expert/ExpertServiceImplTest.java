@@ -61,7 +61,6 @@ class ExpertServiceImplTest {
                         (service.findById(registerExpert[0].getId(),
                                 Path.of("/Users/ebrahimnouri/IdeaProjects/HomeService/farzad.jpg")))),
 
-                // TODO: 12/19/2022 AD find it 
                 () -> assertTrue(new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg").isFile())
         );
     }
@@ -97,17 +96,9 @@ class ExpertServiceImplTest {
     @Test
     void passwordPatternTest() {
         String newPass = "1234QWer";
-/*        assertThrows(Exception.class, () -> service.changePassword(registerExpert[3], "123"));
-        registerExpert[3].setPassword(newPass);*/
         assertEquals(newPass, Objects.requireNonNull(service.findById(registerExpert[3]
                 .getId())).getPassword());
     }
-
-/*    @Test
-    void passwordUnchangedTest() {
-        assertThrows(CustomPatternInvalidException.class, () -> service.changePassword(registerExpert[3]
-                , registerExpert[3].getPassword()), "password not changed");
-    }*/
 
     @Test
     void emailPatternTest() {
@@ -116,18 +107,10 @@ class ExpertServiceImplTest {
                 .password("1234QWer").build();
         ;
         assertThrows(ConstraintViolationException.class, () -> service.save(expert1));
-/*        assertThrows(CustomExceptionSave.class
-                , () -> service.registerExpert(expert1, null)
-                ,"expert not saved");*/
     }
 
     @Test
     void emailUniqueTest() {
-/*        assertThrows(CustomExceptionSave.class
-                , () -> service.registerExpert
-                        (Expert.builder().email("tesst1@email.com")
-                                        .password("qwe123ASD").build()
-                                , new File("/Users/ebrahimnouri/ss.jpg")));*/
         assertThrows(UnexpectedRollbackException.class
                 , () -> service.registerExpert
                         (Expert.builder().email("tesst1@email.com")

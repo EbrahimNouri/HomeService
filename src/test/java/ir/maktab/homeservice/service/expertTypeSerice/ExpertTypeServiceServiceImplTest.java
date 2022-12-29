@@ -4,14 +4,12 @@ import ir.maktab.homeservice.entity.BasicService;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
 import ir.maktab.homeservice.entity.TypeService;
-import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
-import ir.maktab.homeservice.repository.expert.ExpertRepository;
-import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
-import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -42,13 +40,7 @@ class ExpertTypeServiceServiceImplTest {
     BasicServicesService basicServicesService;
 
     @Autowired
-    ExpertRepository expertRepository;
-    @Autowired
-    BasicServiceRepository basicServiceRepository;
-    @Autowired
-    TypeServiceRepository typeServiceRepository;
-    @Autowired
-    private ExpertTypeServiceRepository expertTypeServiceRepository;
+    private ExpertTypeServiceService expertTypeServiceService;
 
 
     @BeforeAll

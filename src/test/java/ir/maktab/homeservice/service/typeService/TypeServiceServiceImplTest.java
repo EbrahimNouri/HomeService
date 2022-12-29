@@ -2,15 +2,17 @@ package ir.maktab.homeservice.service.typeService;
 
 import ir.maktab.homeservice.entity.BasicService;
 import ir.maktab.homeservice.entity.TypeService;
-import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
-import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
-import org.junit.jupiter.api.*;
+import ir.maktab.homeservice.service.basicServices.BasicServicesService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class TypeServiceServiceImplTest {
@@ -20,9 +22,9 @@ class TypeServiceServiceImplTest {
     @Autowired
     TypeServiceService service;
     @Autowired
-    TypeServiceRepository typeServiceRepository;
+    TypeServiceService typeServiceservice;
     @Autowired
-    BasicServiceRepository basicServiceRepository;
+    BasicServicesService basicServiceService;
 
     @BeforeAll
     static void initialize() {
@@ -33,8 +35,8 @@ class TypeServiceServiceImplTest {
     @BeforeEach
     void setToDatabase() {
 
-        basicServiceRepository.save(basicService);
-        typeServiceRepository.save(typeService);
+        basicServiceService.save(basicService);
+        typeServiceservice.save(typeService);
 
     }
 
@@ -48,14 +50,14 @@ class TypeServiceServiceImplTest {
     @Test
     void addSubService() {
         assertEquals(typeService.getSubService()
-                , typeServiceRepository.findByBasicServiceId(basicService.getId()).get(0).getSubService());
+                , typeServiceservice.findByBasicServiceId(basicService.getId()).get(0).getSubService());
     }
 
     @Test
     void paymentPriceChange() {
         service.paymentPriceChange(typeService, 120);
-        assertEquals(120, Objects.requireNonNull(typeServiceRepository
-                .findById(typeService.getId()).orElse(null)).getBasePrice());
+        assertEquals(120, Objects.requireNonNull(typeServiceservice
+                .findById(typeService.getId())));
     }
 
     @Test
