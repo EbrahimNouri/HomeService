@@ -15,6 +15,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -118,9 +119,7 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public void SetAveragePoint(Double point, Long expertId) {
 
-
         repository.setAveragePont(point, expertId);
-
 
     }
 
@@ -175,15 +174,14 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     @Override
-    public void addAvatar(Long expertId, File file) {
-        Expert expert = repository.findByIdCustom(expertId).orElseThrow
-                ((() -> new CustomExceptionNotFind("expert not found")));
+    public void addAvatar(Long expertId, MultipartFile file) {
+        Expert expert = findById(expertId);
 
-        if (file.length() / 1024 < 300
+        if (file.getSize() / 1024 < 300
                 && !file.getName().endsWith(".jpg")) {
             throw new CustomExceptionInvalid("image file is invalid");
         }
-        byte[] avatar = FileUtil.imageConverter(file);
+        byte[] avatar = FileUtil.imageConverter((File) file);
         expert.setAvatar(avatar);
         repository.save(expert);
     }

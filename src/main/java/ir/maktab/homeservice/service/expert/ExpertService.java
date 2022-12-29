@@ -1,6 +1,7 @@
 package ir.maktab.homeservice.service.expert;
 
 import ir.maktab.homeservice.entity.Expert;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +39,7 @@ public interface ExpertService {
 
     List<Expert> findBy(Map<String, String> find);
 
-    void addAvatar(Long expertId, File file);
+    void addAvatar(Long expertId, MultipartFile file);
 
     void delete(Long e);
 }

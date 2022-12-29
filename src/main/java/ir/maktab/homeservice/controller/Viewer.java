@@ -11,39 +11,10 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 public class Viewer {
 
     @RequestMapping()
-    public ModelAndView index (/*@RequestParam ("g-recaptcha-response") String captcha*/ ){
+    public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("index");
 
-
-
-
-/*
-        https://www.google.com/recaptcha/api/siteverify?secret=6LdIt6gjAAAAAFqVRLrryJ4CzFMoPWKw3GAUzDhn
-*/
         return modelAndView;
     }
-
-///*    @PostMapping("")
-//    @RequestParam("g-recaptcha-response")*/
-//
-//    public class RegistrationController {
-//
-//        @Autowired
-//        private ICaptchaService captchaService;
-//
-//    ...
-//
-//        @RequestMapping(value = "/user/registration", method = RequestMethod.POST)
-//        @ResponseBody
-//        public GenericResponse registerUserAccount(@Valid UserDto accountDto, HttpServletRequest request) {
-//            String response = request.getParameter("g-recaptcha-response");
-//            captchaService.processResponse(response);
-//
-//            // Rest of implementation
-//        }
-//
-//    ...
-//    }
-
 }

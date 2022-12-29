@@ -1,7 +1,10 @@
 package ir.maktab.homeservice.controller.expert;
 
 
-import ir.maktab.homeservice.dto.*;
+import ir.maktab.homeservice.dto.OfferDto;
+import ir.maktab.homeservice.dto.OrderDto;
+import ir.maktab.homeservice.dto.PersonChangePasswordDto;
+import ir.maktab.homeservice.dto.PersonRegisterDto;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
@@ -16,8 +19,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.List;
 
 
@@ -102,9 +105,9 @@ public class ExpertControllerImpl {
         return expertUserService.listOfScore(id);
     }
 
-    @PostMapping("/addAvatar")
-    public void addAvatar(@RequestBody ExpertAvatarDto expertAvatarDto) {
-        expertService.addAvatar(expertAvatarDto.getExpertId(), new File(expertAvatarDto.getPath()));
+    @PostMapping("/addAvatar/{expertId}")
+    public void addAvatar(@PathVariable Long expertId, @RequestBody MultipartFile file) {
+        expertService.addAvatar(expertId,file);
     }
 
     @GetMapping("/showAllOrderList/{typeService}")

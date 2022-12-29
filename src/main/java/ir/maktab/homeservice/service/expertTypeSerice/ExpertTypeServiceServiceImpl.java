@@ -31,24 +31,16 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
 
     @Override
     public void addExpertToTypeService(ExpertTypeService expertTypeService) {
-/*
         List<ExpertTypeService> expertTypeServices = findExpertTypeServiceByExpertId(expertTypeService.getExpert().getId());
-*/
 
-    /*    if (repository.findById
+        if (repository.findById
                 (expertTypeService.getExpert().getId(), expertTypeService.getTypeService().getId()).isEmpty()
-                || repository.findBasicService(expertTypeService.getTypeService().getId()).get()
-                .equals(expertTypeServices.get(0).getTypeService().getBasicService())) {*/
+                || repository.findBasicService(expertTypeService.getTypeService().getId())
+                .orElseThrow(() -> new CustomExceptionNotFind("expert type service not found"))
+                .equals(expertTypeServices.get(0).getTypeService().getBasicService())) {
 
             repository.save(expertTypeService);
-            log.debug("debug add expert to basic service {} ", expertTypeService);
-
-
-  /*      } else {
-            log.error("error add expert to basic service expert type service is null or {} "
-                    , expertTypeService.getTypeService());
-        }*/
-
+        }
     }
 
     @Override
@@ -58,9 +50,6 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
                         , expertTypeService.getTypeService().getId());
 
         temp.ifPresent(typeService -> repository.delete(expertTypeService));
-
-
-        log.debug("debug remove expert type service {} ", expertTypeService);
 
     }
 

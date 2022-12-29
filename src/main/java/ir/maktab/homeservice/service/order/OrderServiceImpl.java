@@ -1,10 +1,7 @@
 package ir.maktab.homeservice.service.order;
 
 
-import ir.maktab.homeservice.entity.Offer;
-import ir.maktab.homeservice.entity.Order;
-import ir.maktab.homeservice.entity.Transaction;
-import ir.maktab.homeservice.entity.TypeService;
+import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.entity.enums.PaymentType;
 import ir.maktab.homeservice.entity.enums.TransactionType;
@@ -197,6 +194,12 @@ public class OrderServiceImpl implements OrderService {
 
     public void onlinePayment(Offer offer) {
         transactionService.onlinePayment(offer.getExpert(), offer.getSuggestedPrice());
+    }
+
+    @Override
+    public Order findOrderEndWork(User user){
+        return repository.findOrderByUserAndOrderType(user, OrderType.DONE)
+                .orElseThrow(() -> new CustomExceptionNotFind("order not found!"));
     }
 
     @Override

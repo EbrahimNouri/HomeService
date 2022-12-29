@@ -1,4 +1,3 @@
-/*
 package ir.maktab.homeservice.util;
 
 import ir.maktab.homeservice.exception.*;
@@ -46,11 +45,27 @@ public class GlobalMvcExceptionHandler {
     }
 
     @ExceptionHandler(value = CustomExceptionInvalid.class)
-    public ResponseEntity CustomPatternInvalidException(Exception ex, WebRequest request) {
+    public ResponseEntity handleRuntimeException(CustomExceptionInvalid ex, WebRequest request) {
         // 1. status --> BAD REQUEST
         // 2. return exception message to user
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
-
+    @ExceptionHandler(value = CustomExceptionAmount.class)
+    public ResponseEntity handleRuntimeException(CustomExceptionAmount ex, WebRequest request) {
+        // 1. status --> BAD REQUEST
+        // 2. return exception message to user
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+    @ExceptionHandler(value = CustomExceptionOrderType.class)
+    public ResponseEntity handleRuntimeException(CustomExceptionOrderType ex, WebRequest request) {
+        // 1. status --> BAD REQUEST
+        // 2. return exception message to user
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+    @ExceptionHandler(value = ReCaptchaInvalidException.class)
+    public ResponseEntity handleRuntimeException(ReCaptchaInvalidException ex, WebRequest request) {
+        // 1. status --> BAD REQUEST
+        // 2. return exception message to user
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }
-*/

@@ -16,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -69,8 +70,8 @@ public class ExpertUserServiceImpl implements ExpertUserService {
         Expert expert = order.getExpertUser().getExpert();
         User user = order.getExpertUser().getUser();
 
-/*        addCommentAndPoint(new ExpertUser(expert, user, order
-                , LocalDate.now(), (double) -hours, null));*/
+        addCommentAndPoint(new ExpertUser(expert, user, order
+                , LocalDate.now(), (double) -hours, null));
 
         Double countAll = repository.countOfAllPointByExpertId(expert.getId()) - hours;
 

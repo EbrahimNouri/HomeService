@@ -97,6 +97,11 @@ public class UserServiceImpl implements UserService {
         return repository.findAll(mapToSpecification(find));
     }
 
+    @Override
+    public boolean existsByEmail(String email){
+        return repository.existsByEmail(email);
+    }
+
     private Specification<User> mapToSpecification(Map<String, String> find) {
 
         List<Specification<User>> specifications = new ArrayList<>();

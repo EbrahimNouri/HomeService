@@ -1,7 +1,6 @@
 package ir.maktab.homeservice.controller.user;
 
 
-import cn.apiclub.captcha.Captcha;
 import ir.maktab.homeservice.dto.*;
 import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.OrderType;
@@ -12,11 +11,8 @@ import ir.maktab.homeservice.service.order.OrderService;
 import ir.maktab.homeservice.service.transaction.TransactionService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
-import ir.maktab.homeservice.util.CaptchaGenerator;
-import ir.maktab.homeservice.util.CaptchaSettings;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -141,9 +137,6 @@ public class UserControllerImpl {
     public List<Offer> findByOrderIdSortedByPoint(@PathVariable Long orderId) {
         return offerService.findByOrderIdSortedByPoint(orderId);
     }
-    // TODO: 12/19/2022 AD find by findByOrderIdSortedPoint
-
-
 
     @GetMapping("/showAllTypeService/{id}")
     public List<TypeService> findByBasicServiceId(@PathVariable Long id) {
@@ -152,7 +145,6 @@ public class UserControllerImpl {
 
     @GetMapping("/{orderId}")
     public ExpertUser findByOrderId(@PathVariable Long orderId) {
-
         return expertUserService.findByOrderId(orderId);
     }
 
@@ -161,36 +153,15 @@ public class UserControllerImpl {
         orderService.setOrderToPaidAppPayment(orderService.findById(orderId));
     }
 
-    @GetMapping("/verify")
-    public String register(Model model) {
-        model.addAttribute("captcha", genCaptcha());
-        return "verifyCaptcha";
+    @PostMapping("/onlinePayment")
+    public void onlinePayment(@RequestBody PaymentOnlineDto paymentOnlineDto){
+        User user = userService.findByEmail(paymentOnlineDto.getEmail());
+        Order order = orderService.findOrderEndWork(user);
+        orderService.setOrderToPaidOnlinePayment(order);
+        System.out.println("done");
     }
 
-    @PostMapping("/verify/{orderId}")
-    public String setOrderToPaidOnlinePayment(@ModelAttribute CaptchaSettings captchaSettings
-            , Model model, @PathVariable Long orderId) {
 
-        if (captchaSettings.getCaptcha().equals(captchaSettings.getHiddenCaptcha())) {
-            model.addAttribute("message", "Captcha verified successfully");
-            orderService.setOrderToPaidOnlinePayment(orderService.findById(orderId));
-            return "success";
-        } else {
-            model.addAttribute("message", "Invalid Captcha");
-            model.addAttribute("captcha", genCaptcha());
-        }
-        return "verifyCaptcha";
-
-    }
-
-    private CaptchaSettings genCaptcha() {
-        CaptchaSettings captchaSettings = new CaptchaSettings();
-        Captcha captcha = CaptchaGenerator.generateCaptcha(260, 80);
-        captchaSettings.setHiddenCaptcha(captcha.getAnswer());
-        captchaSettings.setCaptcha("");
-        captchaSettings.setRealCaptcha(CaptchaGenerator.encodeCaptchaToBinary(captcha));
-        return captchaSettings;
-    }
 
     private OfferDto offerMapping(Offer offer) {
         return OfferDto.builder()
@@ -204,7 +175,7 @@ public class UserControllerImpl {
                 .build();
     }
 
-    private PersonFindDto userMapping(User user) {
+    private PersonFindDto userMapper(User user) {
         return PersonFindDto.builder()
                 .id(user.getId())
                 .signupDate(user.getSignupDateTime())

@@ -55,6 +55,4 @@ public class AdminServiceImpl implements AdminService {
                 (() -> new CustomExceptionNotFind("admin not found"));
 
     }
-
-
 }

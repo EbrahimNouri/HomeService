@@ -3,6 +3,7 @@ package ir.maktab.homeservice.service.order;
 
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.TypeService;
+import ir.maktab.homeservice.entity.User;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
@@ -25,6 +26,8 @@ public interface OrderService {
 
     @Transactional
     void setOrderToPaidOnlinePayment(Order order);
+
+    Order findOrderEndWork(User user);
 
     List<Order> showOrderSuggestionOrSelection();
 

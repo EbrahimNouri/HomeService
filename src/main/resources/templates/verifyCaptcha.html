@@ -105,63 +105,90 @@
         }
     </style>
 
-    <title>Document</title>
+    <title>پرداخت آنلاین</title>
 </head>
-<body>
-<div class="container p-0">
-    <div class="card px-4">
-        <p class="h8 py-3">Payment Details</p>
-        <div class="row gx-3">
-            <div class="col-12">
-                <div class="d-flex flex-column">
-                    <p class="text mb-1">Person Name</p>
-                    <input class="form-control mb-3" type="text" placeholder="Name" value="Barry Allen">
+<body dir="rtl">
+<form th:action="@{/app/verify}" method="POST" th:object="${captcha}">
+    <div class="container p-0">
+        <div class="card px-4">
+            <p class="h8 py-3">Payment Details</p>
+            <div class="row gx-3">
+                <div class="col-12">
+                    <div class="d-flex flex-column">
+                        <p class="text mb-1">نام و نام خانوادگی</p>
+                        <input class="form-control mb-3" type="text" placeholder="Name"/>
+                    </div>
                 </div>
-            </div>
-            <div class="col-12">
-                <div class="d-flex flex-column">
-                    <p class="text mb-1">Card Number</p>
-                    <input class="form-control mb-3" type="text" placeholder="1234 5678 435678">
+                <div class="col-12">
+                    <div class="d-flex flex-column">
+                        <p class="text mb-1">شماره کارت</p>
+                        <input id="card" class="form-control mb-3" type="text" placeholder="1234 5678 435678"/>
+                    </div>
                 </div>
-            </div>
-            <div class="col-6">
-                <div class="d-flex flex-column">
-                    <p class="text mb-1">Expiry</p>
-                    <input class="form-control mb-3" type="text" placeholder="MM/YYYY">
+                <div class="col-12">
+                    <div class="d-flex flex-column">
+                        <p class="text mb-1">ایمیل</p>
+                        <input id="email" class="form-control mb-3" type="text" placeholder="email@example.com"/>
+                    </div>
                 </div>
-            </div>
-            <div class="col-6">
-                <div class="d-flex flex-column">
-                    <p class="text mb-1">CVV/CVC</p>
-                    <input class="form-control mb-3 pt-2 " type="password" placeholder="***">
+                <div class="col-6">
+                    <div class="d-flex flex-column">
+                        <p class="text mb-1">تاریخ انتضا</p>
+                        <input class="form-control mb-3" type="text" placeholder="MM/YYYY"/>
+                    </div>
                 </div>
-            </div>
-            <div class="col-12">
+                <div class="col-6">
+                    <div class="d-flex flex-column">
+                        <p class="text mb-1">CVV/CVC</p>
+                        <input class="form-control mb-3 pt-2 " type="password" placeholder="***"/>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="flex-column d-flex align-items-center pb-3">
+                        <input type="image" id="image" th:src="*{'data:realCaptcha/jpg;base64,'+realCaptcha}"/>
+                        <input type="hidden" th:field="*{hiddenCaptcha}"/><br>
+                        <lable for
+                        "captchatext"> Enter Captch text </lable>
+                        <input type="text" id="captchatext" th:field="*{captcha}"/>
+                        <input class="btn btn-primary mb-3" type="submit" value="Verify"/>
 
-                <form th:action="@{/app/verify}" method="POST" th:object="${captcha}">
-                    <label for "image"> CAPTCHA</label>
-                    <input type="image" id="image" th:src="*{'data:realCaptcha/jpg;base64,'+realCaptcha}">
-                    <input type="hidden" th:field="*{hiddenCaptcha}"/><br>
-                    <lable for
-                    "captchatext"> Enter Captch text </lable>
-                    <input type="text" id="captchatext" th:field="*{captcha}"/>
-                </form>
-                <div class="btn btn-primary mb-3">
-                    <span class="ps-3">Pay $243</span>
-                    <span class="fas fa-arrow-right"></span>
-                    <input type="submit" value="Verify"/>
-                </div>
-                <div th:if="${message!=null}">
-                    <span style="color:red;" th:text="${message}"></span>
-                </div>
+                    </div>
 
+                </div>
             </div>
         </div>
-    </div>
-    <script>
+</form>
 
+<!--<div th:if="${message!=null}">
+    <span style="color:red;" th:text="${message}"></span>
+</div>
+<div th:if="${messageSuccess!=null}">
+    <span style="color:red;" th:text="${messageSuccess}"></span>
+</div>-->
+<script>
+    let paymentDto = {};
+    let card = $('#card');
+    let email = $('#email');
 
-    </script>
+    function register(event) {
+        event.preventDefault();
+
+        paymentDto.card = card.val();
+        paymentDto.email = email.val();
+    }
+
+    $('#verify').click(register);
+    $.ajax({
+        type: "POST",
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: "/api/v1/user/onlinePayment" ,
+        data: JSON.stringify(paymentDto),
+        success: function (result) {
+            console.log(result);
+        }
+    });
+</script>
 </body>
 </html>
 

@@ -27,4 +27,6 @@ public interface UserService {
     User findByEmail(String email);
 
     List<User> findBy(Map<String, String> find);
+
+    boolean existsByEmail(String email);
 }
