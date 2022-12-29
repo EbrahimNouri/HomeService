@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class PersonFindDto {
+public class personFindDto {
     private Long id;
     private String firstname;
     private String lastname;

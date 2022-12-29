@@ -88,4 +88,5 @@ public class ExpertUserServiceImpl implements ExpertUserService {
     public List<Double> listOfScore(Long id) {
         return repository.listOfScore(id);
     }
+
 }

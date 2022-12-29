@@ -192,16 +192,16 @@ public class AdminControllerImpl {
 
     // TODO: 12/24/2022 AD postman
     @GetMapping("/all")
-    public List<PersonFindDto> showAll() {
-        List<PersonFindDto> all = new ArrayList<>();
+    public List<personFindDto> showAll() {
+        List<personFindDto> all = new ArrayList<>();
         all.addAll(expertService.findAll().stream().map(this::expertMapping).toList());
         all.addAll(userService.findAll().stream().map(this::userMapping).toList());
         return all;
     }
 
     @GetMapping("/findByFirstName/")
-    public List<PersonFindDto> findByFirstNameAll(@RequestParam String firstname) {
-        List<PersonFindDto> all = new ArrayList<>();
+    public List<personFindDto> findByFirstNameAll(@RequestParam String firstname) {
+        List<personFindDto> all = new ArrayList<>();
         all.addAll(expertService.findByFirstName(firstname).stream().map(this::expertMapping).toList());
         all.addAll(userService.findByFirstname(firstname).stream().map(this::userMapping).toList());
         return all;
@@ -209,75 +209,75 @@ public class AdminControllerImpl {
 
 
     @GetMapping("/findByFirstName/allExperts/{firstname}")
-    public List<PersonFindDto> findByFirstnameExpert(@PathVariable String firstname) {
+    public List<personFindDto> findByFirstnameExpert(@PathVariable String firstname) {
 
         return expertService.findByFirstName(firstname).stream().map(this::expertMapping).toList();
 
     }
 
     @GetMapping("/findByFirstName/allUsers/{firstname}")
-    public List<PersonFindDto> findByFirstnameUser(@PathVariable String firstname) {
+    public List<personFindDto> findByFirstnameUser(@PathVariable String firstname) {
         return userService.findByFirstname(firstname).stream().map(this::userMapping).toList();
 
     }
 
     @GetMapping("/findByLastnameAll/{lastname}")
-    public List<PersonFindDto> findByLastName(@PathVariable String lastname) {
-        List<PersonFindDto> all = new ArrayList<>();
+    public List<personFindDto> findByLastName(@PathVariable String lastname) {
+        List<personFindDto> all = new ArrayList<>();
         all.addAll(expertService.findByLastName(lastname).stream().map(this::expertMapping).toList());
         all.addAll(userService.findByLastname(lastname).stream().map(this::userMapping).toList());
         return all;
     }
 
     @GetMapping("/findByLastname/allExperts/{lastname}")
-    public List<PersonFindDto> findByLastnameExpert(@PathVariable String lastname) {
+    public List<personFindDto> findByLastnameExpert(@PathVariable String lastname) {
 
         return expertService.findByLastName(lastname).stream().map(this::expertMapping).toList();
 
     }
 
     @GetMapping("/findByLastname/allUsers/{lastname}")
-    public List<PersonFindDto> findByLastnameUser(@PathVariable String lastname) {
+    public List<personFindDto> findByLastnameUser(@PathVariable String lastname) {
         return userService.findByLastname(lastname).stream().map(this::userMapping).toList();
 
     }
 
     @GetMapping("/findByEmailAll/{email}")
-    public PersonFindDto[] findByEmailExpert(@PathVariable String email) {
-        PersonFindDto[] persons = new PersonFindDto[2];
+    public personFindDto[] findByEmailExpert(@PathVariable String email) {
+        personFindDto[] persons = new personFindDto[2];
         persons[0] = Optional.of(expertService.findByEmail(email)).map(this::expertMapping).orElse(null);
         persons[1] = Optional.of(userService.findByEmail(email)).map(this::userMapping).orElse(null);
         return persons;
     }
 
     @GetMapping("/findByEmailExpert/{email}")
-    public PersonFindDto findByEmailAll(@PathVariable String email) {
+    public personFindDto findByEmailAll(@PathVariable String email) {
         return Optional.of(expertService.findByEmail(email)).map(this::expertMapping).orElse(null);
     }
 
     @GetMapping("/findByEmailUser/{email}")
-    public PersonFindDto findByEmailUser(@PathVariable String email) {
+    public personFindDto findByEmailUser(@PathVariable String email) {
         return Optional.of(userService.findByEmail(email)).map(this::userMapping).orElse(null);
     }
 
     @GetMapping("/finAllReqParam")
-    public List<PersonFindDto> findAllReq(@RequestParam Map<String, String> stringMap) {
-        List<PersonFindDto> findDtos = new ArrayList<>();
+    public List<personFindDto> findAllReq(@RequestParam Map<String, String> stringMap) {
+        List<personFindDto> findDtos = new ArrayList<>();
         findDtos.addAll(expertService.findBy(stringMap).stream().map(this::expertMapping).toList());
         findDtos.addAll(userService.findBy(stringMap).stream().map(this::userMapping).toList());
         return findDtos;
     }
     @GetMapping("/findAllExpertReq")
-    public List<PersonFindDto> findAllExpertReq(@RequestParam Map<String, String> stringMap) {
+    public List<personFindDto> findAllExpertReq(@RequestParam Map<String, String> stringMap) {
         return expertService.findBy(stringMap).stream().map(this::expertMapping).toList();
     }
     @GetMapping("/findAllUserReq")
-    public List<PersonFindDto> findAllUserReq(@RequestParam Map<String, String> stringMap) {
+    public List<personFindDto> findAllUserReq(@RequestParam Map<String, String> stringMap) {
         return userService.findBy(stringMap).stream().map(this::userMapping).toList();
     }
 
-    private PersonFindDto expertMapping(Expert expert) {
-        return PersonFindDto.builder()
+    private personFindDto expertMapping(Expert expert) {
+        return personFindDto.builder()
                 .id(expert.getId())
                 .firstname(expert.getFirstname())
                 .lastname(expert.getLastname())
@@ -288,8 +288,8 @@ public class AdminControllerImpl {
                 .build();
     }
 
-    private PersonFindDto userMapping(User user) {
-        return PersonFindDto.builder()
+    private personFindDto userMapping(User user) {
+        return personFindDto.builder()
                 .id(user.getId())
                 .firstname(user.getFirstname())
                 .lastname(user.getLastname())
@@ -300,12 +300,17 @@ public class AdminControllerImpl {
                 .build();
     }
 
-    private TypeServiceDto typeServiceMapped(TypeService typeService) {
+    public TypeServiceDto typeServiceMapped(TypeService typeService) {
         return TypeServiceDto.builder()
                 .typeServiceId(typeService.getId())
                 .baseServiceId(typeService.getBasicService().getId())
                 .name(typeService.getSubService())
                 .price(typeService.getBasePrice())
                 .build();
+    }
+
+    @GetMapping("/findByBasicService/{basicServiceId}")
+    public List<personFindDto> findByBasicService(@PathVariable Long basicServiceId){
+       return expertService.findByBasicService(basicServiceId).stream().map(this::expertMapping).toList();
     }
 }

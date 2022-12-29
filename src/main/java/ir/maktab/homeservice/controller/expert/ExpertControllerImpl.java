@@ -21,6 +21,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -106,7 +107,7 @@ public class ExpertControllerImpl {
     }
 
     @PostMapping("/addAvatar/{expertId}")
-    public void addAvatar(@PathVariable Long expertId, @RequestBody MultipartFile file) {
+    public void addAvatar(@PathVariable Long expertId, @RequestBody MultipartFile file) throws IOException {
         expertService.addAvatar(expertId,file);
     }
 
@@ -116,7 +117,12 @@ public class ExpertControllerImpl {
         return orderService.findByTypeService(typeServices).stream().map(this::orderMapping).toList();
     }
 
-    private OrderDto orderMapping(Order order) {
+    @GetMapping("/getScore/{expertId}")
+    public Double getScore(@PathVariable Long expertId){
+        return expertService.getScore(expertId);
+    }
+
+    public OrderDto orderMapping(Order order) {
         return OrderDto.builder()
                 .userId(order.getUser().getId())
                 .address(order.getAddress())

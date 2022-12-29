@@ -19,6 +19,8 @@ public interface ExpertService {
 
     Expert findById(Long id);
 
+    List<Expert> findByBasicService(Long basicId);
+
     void changePassword(Expert expert, String password);
 
     Expert findById(Long id, Path path) throws IOException;
@@ -39,7 +41,9 @@ public interface ExpertService {
 
     List<Expert> findBy(Map<String, String> find);
 
-    void addAvatar(Long expertId, MultipartFile file);
+    void addAvatar(Long expertId, MultipartFile file) throws IOException;
 
     void delete(Long e);
+
+    Double getScore(Long id);
 }

@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Log4j2
@@ -81,6 +82,14 @@ public class ExpertServiceImpl implements ExpertService {
     public Expert findById(Long id) {
         return repository.findByIdCustom(id).orElseThrow(()
                 -> new CustomExceptionNotFind("expert not found"));
+    }
+
+    @Override
+    public List<Expert> findByBasicService(Long basicId) {
+        return findAll().stream().filter
+                (expert -> expert.getExpertTypeServices()
+                        .get(0).getTypeService().getBasicService()
+                        .getId().equals(basicId)).toList();
     }
 
     @Override
@@ -164,30 +173,38 @@ public class ExpertServiceImpl implements ExpertService {
     private Specification<Expert> mapToSpecification(Map<String, String> find) {
 
         List<Specification<Expert>> specifications = new ArrayList<>();
-        for (Map.Entry<String, String> ee
-                : find.entrySet()) {
+        for (Map.Entry<String, String> ee : find.entrySet()) {
             Specification<Expert> specification =
-                    ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(ee.getKey()), ee.getValue()));
+                    ((root, query, criteriaBuilder) ->
+                            criteriaBuilder.equal(root.get(ee.getKey()), ee.getValue()));
             specifications.add(specification);
         }
         return Specification.allOf(specifications);
     }
 
     @Override
-    public void addAvatar(Long expertId, MultipartFile file) {
+    public void addAvatar(Long expertId, MultipartFile file) throws IOException {
         Expert expert = findById(expertId);
+        int AVATAR_SIZE = 300000;
 
-        if (file.getSize() / 1024 < 300
-                && !file.getName().endsWith(".jpg")) {
+        if (file.getSize() < AVATAR_SIZE
+                && Objects.equals(file.getContentType(), "image/jpeg")) {
+            byte[] avatar = file.getBytes();
+            expert.setAvatar(avatar);
+            repository.save(expert);
+        } else
             throw new CustomExceptionInvalid("image file is invalid");
-        }
-        byte[] avatar = FileUtil.imageConverter((File) file);
-        expert.setAvatar(avatar);
-        repository.save(expert);
+
+
     }
 
     @Override
     public void delete(Long e) {
         repository.deleteById(e);
+    }
+
+    @Override
+    public Double getScore(Long id) {
+        return findById(id).getAverageScore();
     }
 }

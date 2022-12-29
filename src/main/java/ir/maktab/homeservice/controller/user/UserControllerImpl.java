@@ -1,6 +1,7 @@
 package ir.maktab.homeservice.controller.user;
 
 
+import ir.maktab.homeservice.controller.admin.AdminControllerImpl;
 import ir.maktab.homeservice.dto.*;
 import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.OrderType;
@@ -8,7 +9,6 @@ import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.order.OrderService;
-import ir.maktab.homeservice.service.transaction.TransactionService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
 import lombok.AllArgsConstructor;
@@ -28,8 +28,8 @@ public class UserControllerImpl {
     private final OrderService orderService;
     private final ExpertUserService expertUserService;
     private final OfferService offerService;
-    private final TransactionService transactionService;
     private final TypeServiceService typeServiceService;
+    private final AdminControllerImpl adminController;
 
     @PostMapping("/add")
     public void registerUser(@RequestBody PersonRegisterDto personRegisterDto) {
@@ -53,7 +53,7 @@ public class UserControllerImpl {
 
     @PostMapping("/addCommentAndPoint")
     public void addCommentAndPoint(@RequestBody ExpertUserDto expertUserDto) {
-        ExpertUser expertUser = new ExpertUser();
+        ExpertUser expertUser;
 
         Expert expert = expertService.findById(expertUserDto.getExpId());
 
@@ -129,18 +129,18 @@ public class UserControllerImpl {
 
 
     @GetMapping("/findByOrderIdSortedPrice/{orderId}")
-    public List<Offer> findByOrderIdSortedPrice(@PathVariable Long orderId) {
-        return offerService.findByOrderIdSortedPrice(orderId);
+    public List<OfferDto> findByOrderIdSortedPrice(@PathVariable Long orderId) {
+        return offerService.findByOrderIdSortedPrice(orderId).stream().map(this::offerMapping).toList();
     }
 
     @GetMapping("/findByOrderIdSortedByPoint/{orderId}")
-    public List<Offer> findByOrderIdSortedByPoint(@PathVariable Long orderId) {
-        return offerService.findByOrderIdSortedByPoint(orderId);
+    public List<OfferDto> findByOrderIdSortedByPoint(@PathVariable Long orderId) {
+        return offerService.findByOrderIdSortedByPoint(orderId).stream().map(this::offerMapping).toList();
     }
 
     @GetMapping("/showAllTypeService/{id}")
-    public List<TypeService> findByBasicServiceId(@PathVariable Long id) {
-        return typeServiceService.showTypeServices(id);
+    public List<TypeServiceDto> findByBasicServiceId(@PathVariable Long id) {
+        return typeServiceService.showTypeServices(id).stream().map(adminController::typeServiceMapped).toList();
     }
 
     @GetMapping("/{orderId}")
@@ -149,18 +149,25 @@ public class UserControllerImpl {
     }
 
     @PostMapping("/setOrderToPaidAppPayment/{orderId}")
-    public void setOrderToPaidAppPayment(@PathVariable Long orderId){
+    public void setOrderToPaidAppPayment(@PathVariable Long orderId) {
         orderService.setOrderToPaidAppPayment(orderService.findById(orderId));
     }
 
     @PostMapping("/onlinePayment")
-    public void onlinePayment(@RequestBody PaymentOnlineDto paymentOnlineDto){
+    public void onlinePayment(@RequestBody PaymentOnlineDto paymentOnlineDto) {
+
         User user = userService.findByEmail(paymentOnlineDto.getEmail());
         Order order = orderService.findOrderEndWork(user);
         orderService.setOrderToPaidOnlinePayment(order);
         System.out.println("done");
     }
 
+    @PutMapping("/setOrderToPaidAppPayment/{orderId}")
+    public void appPayment(@PathVariable Long orderId) {
+
+        Order order = orderService.findById(orderId);
+        orderService.setOrderToPaidAppPayment(order);
+    }
 
 
     private OfferDto offerMapping(Offer offer) {
@@ -175,8 +182,8 @@ public class UserControllerImpl {
                 .build();
     }
 
-    private PersonFindDto userMapper(User user) {
-        return PersonFindDto.builder()
+    private personFindDto userMapper(User user) {
+        return personFindDto.builder()
                 .id(user.getId())
                 .signupDate(user.getSignupDateTime())
                 .personType(PersonType.USER)

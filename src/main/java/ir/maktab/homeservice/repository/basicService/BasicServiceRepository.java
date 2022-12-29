@@ -15,4 +15,5 @@ public interface BasicServiceRepository extends JpaRepository<BasicService, Long
     Optional<BasicService> findBasicServiceById(Long id);
     @Query("from BasicService ")
     List<BasicService> findAllC();
+
 }

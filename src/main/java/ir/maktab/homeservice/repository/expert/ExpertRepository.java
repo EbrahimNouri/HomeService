@@ -32,5 +32,4 @@ public interface ExpertRepository extends JpaRepository<Expert, Long>, JpaSpecif
 
     @Query("from Expert e where e.id =:id")
     Optional<Expert> findByIdCustom( Long id);
-
 }
