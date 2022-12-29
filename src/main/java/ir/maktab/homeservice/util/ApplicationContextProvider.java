@@ -1,4 +1,4 @@
-package ir.maktab.homeservice.config;
+package ir.maktab.homeservice.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;

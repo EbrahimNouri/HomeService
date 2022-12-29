@@ -73,7 +73,6 @@ public class OrderServiceImpl implements OrderService {
 
         if (offer.getStartDate().isBefore(LocalDateTime.now()))
             throw new CustomExceptionUpdate("start of work is after offer set");
-// TODO: 12/28/2022 AD for test commented 
 
         order.setOrderType(OrderType.STARTED);
         repository.save(order);
@@ -210,7 +209,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> findByTypeService(TypeService typeService) {
-        return repository.findByTypeService(typeService);
+        return repository.findOrderByTypeService(typeService);
     }
 
     private boolean orderChecker(Order order) {

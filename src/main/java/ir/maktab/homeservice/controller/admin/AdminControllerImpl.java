@@ -110,10 +110,6 @@ public class AdminControllerImpl {
                         , expert.getLastname()
                         , expert.getEmail()
                         , expert.getAverageScore()
-                        // TODO: 12/28/2022 AD i need that for test avatar
-/*
-                        , FileUtil.fileWriter(Path.of("/Users/ebrahimnouri/Desktop/text.jpg"), expert.getAvatar())
-*/
                         , expert.getCredit()
                         , expert.getAverageScore()
                         , typeService.getSubService()

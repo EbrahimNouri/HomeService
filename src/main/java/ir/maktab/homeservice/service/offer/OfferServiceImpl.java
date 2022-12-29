@@ -18,6 +18,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -135,8 +136,7 @@ public class OfferServiceImpl implements OfferService {
     private boolean checkLevelWork(Offer offer) {
         Order order = offer.getOrder();
         return order.getId() != null && offer.getId() != null
-                /*&& offer.getStartDate().isAfter(LocalDateTime.now())*/;
-        // TODO: 12/28/2022 AD for test commented
+                && offer.getStartDate().isAfter(LocalDateTime.now());
     }
 
 

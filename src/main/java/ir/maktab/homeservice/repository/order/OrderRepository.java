@@ -20,7 +20,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("from Order od where od.orderType = \"WAITING_FOR_THE_SUGGESTIONS\"" +
             " OR od.orderType = \"WAITING_EXPERT_SELECTION\" and od.typeService = :typeService")
-    List<Order> findByTypeService(TypeService typeService);
+    List<Order> findOrderByTypeService(TypeService typeService);
 
     Optional<Order> findOrderByUserAndOrderType(User user, OrderType orderType);
 

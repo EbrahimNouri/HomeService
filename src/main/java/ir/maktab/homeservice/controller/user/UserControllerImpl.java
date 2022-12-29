@@ -4,7 +4,6 @@ package ir.maktab.homeservice.controller.user;
 import ir.maktab.homeservice.controller.admin.AdminControllerImpl;
 import ir.maktab.homeservice.dto.*;
 import ir.maktab.homeservice.entity.*;
-import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
@@ -60,8 +59,6 @@ public class UserControllerImpl {
         User user = userService.findById(expertUserDto.getUserId());
 
         Order order = orderService.findById(expertUserDto.getOrderId());
-        // TODO: 12/17/2022 AD this is for test ⬇︎
-        order.setOrderType(OrderType.PAID);
 
         expertUser = ExpertUser.builder()
                 .user(user)
