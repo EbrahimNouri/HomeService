@@ -1,7 +1,7 @@
 package ir.maktab.homeservice.controller.user;
 
 import cn.apiclub.captcha.Captcha;
-import ir.maktab.homeservice.util.CaptchaGenerator;
+import ir.maktab.homeservice.config.CaptchaGenerator;
 import ir.maktab.homeservice.util.CaptchaSettings;
 import lombok.Data;
 import org.springframework.stereotype.Controller;
@@ -54,4 +54,5 @@ public class CaptchaController {
             }
         } else return false;
     }
+
 }

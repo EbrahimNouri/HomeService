@@ -1,4 +1,4 @@
-package ir.maktab.homeservice.util;
+package ir.maktab.homeservice.config;
 
 import cn.apiclub.captcha.Captcha;
 import cn.apiclub.captcha.backgrounds.GradiatedBackgroundProducer;

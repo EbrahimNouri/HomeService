@@ -30,6 +30,9 @@ public abstract class Person extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(unique = true)
+    private String username;
+
     @Column(nullable = false)
     @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$", message = "password is not valid")
     private String password;

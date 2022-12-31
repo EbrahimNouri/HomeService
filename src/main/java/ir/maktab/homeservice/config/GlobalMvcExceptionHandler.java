@@ -1,4 +1,4 @@
-package ir.maktab.homeservice.util;
+package ir.maktab.homeservice.config;
 
 import ir.maktab.homeservice.exception.*;
 import org.springframework.http.HttpStatus;
