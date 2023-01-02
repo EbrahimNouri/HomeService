@@ -12,6 +12,8 @@ import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,14 +32,15 @@ public class UserControllerImpl {
     private final TypeServiceService typeServiceService;
     private final AdminControllerImpl adminController;
 
-    @PostMapping("/add")
-    public void registerUser(@RequestBody PersonRegisterDto personRegisterDto) {
+    @Secured("permitAll")
+    @PostMapping("/register")
+    public void registerUser(@RequestBody @Validated PersonRegisterDto personRegisterDto) {
         User temp = User.builder()
                 .firstname(personRegisterDto.getFirstname())
                 .lastname(personRegisterDto.getLastname())
                 .email(personRegisterDto.getEmail())
+                .username(personRegisterDto.getUsername())
                 .password(personRegisterDto.getPassword())
-                .credit(0)
                 .build();
 
         userService.mainRegisterUser(temp);

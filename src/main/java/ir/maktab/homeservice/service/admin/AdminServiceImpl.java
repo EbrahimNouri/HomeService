@@ -2,15 +2,15 @@ package ir.maktab.homeservice.service.admin;
 
 
 import ir.maktab.homeservice.entity.Admin;
+import ir.maktab.homeservice.entity.enums.Role;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.exception.CustomExceptionUpdate;
 import ir.maktab.homeservice.repository.admin.AdminRepository;
-import ir.maktab.homeservice.service.expert.ExpertService;
-import ir.maktab.homeservice.service.user.UserService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,13 +19,14 @@ import org.springframework.stereotype.Service;
 public class AdminServiceImpl implements AdminService {
 
     private final AdminRepository adminRepository;
-    private final ExpertService expertService;
-    private final UserService userService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
     public void addAdmin(Admin admin) {
 
+        admin.setRole(Role.ROLE_ADMIN);
+        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
         adminRepository.save(admin);
 
         log.debug("admin created {} ", admin);
@@ -35,10 +36,10 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void changePassword(@Valid Admin admin, String password) {
 
-        if (!admin.getPassword().equals(password)
+        if (!admin.getPassword().equals(passwordEncoder.encode(admin.getPassword()))
                 && admin.getId() != null) {
 
-            admin.setPassword(password);
+            admin.setPassword(passwordEncoder.encode(password));
             adminRepository.save(admin);
 
             log.debug("admin created {} ", admin);

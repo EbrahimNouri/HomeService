@@ -3,18 +3,17 @@ package ir.maktab.homeservice.entity;
 
 import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
+import ir.maktab.homeservice.entity.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 
 @Entity
@@ -23,7 +22,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @ToString
-public class Expert extends Person implements UserDetails {
+public class Expert extends Person {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -49,20 +48,24 @@ public class Expert extends Person implements UserDetails {
     @Lob
     private byte[] avatar;
 
-    public Expert(
-            @NotEmpty(message = "Blank is not acceptable") String firstname
+    @Builder
+    public Expert(@NotEmpty(message = "Blank is not acceptable") String firstname
             , @NotEmpty(message = "Blank is not acceptable") String lastname
             , @Email(/*groups = CustomPatternInvalidException.class,*/ message = "email address is not valid") String email
-            , String username, @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$"
+            , @NotEmpty String username
+            , @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$"
             , message = "password is not valid") String password
             , double credit
             , LocalDateTime signupDateTime
+            , Role role
             , ExpertStatus expertStatus
             , List<ExpertTypeService> expertTypeServices
-            , List<ExpertUser> expertUsers, List<Transaction> transactions
-            , Double averageScore, byte[] avatar
-    ) {
-        super(firstname, lastname, email, username, password, credit, signupDateTime);
+            , List<ExpertUser> expertUsers
+            , List<Transaction> transactions
+            , Double averageScore
+            , byte[] avatar) {
+
+        super(firstname, lastname, email, username, password, credit, signupDateTime, role);
         this.expertStatus = expertStatus;
         this.expertTypeServices = expertTypeServices;
         this.expertUsers = expertUsers;
@@ -72,27 +75,16 @@ public class Expert extends Person implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptySet();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Expert expert = (Expert) o;
+        return getId() != null && Objects.equals(getId(), expert.getId());
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
+    public int hashCode() {
+        return getClass().hashCode();
     }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

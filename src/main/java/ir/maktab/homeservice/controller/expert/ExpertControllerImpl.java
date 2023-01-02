@@ -9,7 +9,6 @@ import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.TypeService;
-import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
@@ -18,6 +17,8 @@ import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,24 +37,19 @@ public class ExpertControllerImpl {
     private final TypeServiceService typeServiceService;
     private final ExpertUserService expertUserService;
 
-    @PostMapping("/regExpert")
-    public void registerExpert(@RequestBody @Valid PersonRegisterDto personRegisterDto) {
+    // TODO: 12/31/2022 AD
+    @Secured("permitAll")
+    @PostMapping("/register")
+    public void registerExpert(@RequestBody @Validated PersonRegisterDto personRegisterDto) {
         Expert temp = Expert.builder()
-                .expertStatus(ExpertStatus.NEW)
                 .firstname(personRegisterDto.getFirstname())
                 .lastname(personRegisterDto.getLastname())
                 .email(personRegisterDto.getEmail())
                 .password(personRegisterDto.getPassword())
-                .credit(0)
-                .averageScores(0.0)
+                .username(personRegisterDto.getUsername())
                 .build();
 
-        expertService.mainRegisterExpert(temp/*,new File("/Users/ebrahimnouri/ss.jpg"*/);
-
-
-//        Expert expert = Expert.builder().firstname("testName").lastname("testLastname").email("test@email.com")
-//                .password("1234QWer").build();
-//        expertService.registerExpert(expert, new File("/Users/ebrahimnouri/ss.jpg"));
+        expertService.mainRegisterExpert(temp);
     }
 
 

@@ -3,8 +3,10 @@ package ir.maktab.homeservice.service.expert;
 
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
+import ir.maktab.homeservice.entity.enums.Role;
 import ir.maktab.homeservice.exception.CustomExceptionInvalid;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
+import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.exception.CustomExceptionUpdate;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
@@ -13,8 +15,10 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -31,11 +35,22 @@ import java.util.Objects;
 public class ExpertServiceImpl implements ExpertService {
     private final ExpertTypeServiceService expertTypeServiceService;
     private ExpertRepository repository;
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public void mainRegisterExpert(@Valid Expert expert) {
+    public void mainRegisterExpert(@Validated Expert expert) {
+        if (repository.existsByEmail(expert.getEmail()))
+            throw new CustomExceptionSave("this email is exist");
+
+        if (repository.existsByUsername(expert.getUsername()))
+            throw new CustomExceptionSave("this username is exist");
 
         expert.setExpertStatus(ExpertStatus.NEW);
+        expert.setPassword(passwordEncoder.encode(expert.getPassword()));
+        expert.setRole(Role.ROLE_EXPERT);
+        expert.setAverageScore(0.0);
+        expert.setCredit(0.0);
+
         repository.save(expert);
 
     }
@@ -96,7 +111,7 @@ public class ExpertServiceImpl implements ExpertService {
     public void changePassword(@Valid Expert expert, String password) {
 
 
-        if (expert.getPassword().equals(password))
+        if (expert.getPassword().equals(passwordEncoder.encode(password)))
             throw new CustomExceptionInvalid("password not changed");
 
 
@@ -104,7 +119,7 @@ public class ExpertServiceImpl implements ExpertService {
             throw new CustomExceptionInvalid("expert id is null");
 
 
-        expert.setPassword(password);
+        expert.setPassword(passwordEncoder.encode(password));
         repository.save(expert);
 
         log.debug("debug change password expert {} to {} ", expert, password);
@@ -184,14 +199,18 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Override
     public void addAvatar(Long expertId, MultipartFile file) throws IOException {
+
         Expert expert = findById(expertId);
-        int AVATAR_SIZE = 300000;
+        final int AVATAR_SIZE = 307200;  // 300 * 1024 = 300kb
 
         if (file.getSize() < AVATAR_SIZE
-                && Objects.equals(file.getContentType(), "image/jpeg")) {
+                && Objects.equals(file.getContentType()
+                , "image/jpeg")) {
+
             byte[] avatar = file.getBytes();
             expert.setAvatar(avatar);
             repository.save(expert);
+
         } else
             throw new CustomExceptionInvalid("image file is invalid");
 
@@ -204,7 +223,7 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     @Override
-    public Double getScore(Long id) {
-        return findById(id).getAverageScore();
+    public Double getScore(Long expertId) {
+        return findById(expertId).getAverageScore();
     }
 }

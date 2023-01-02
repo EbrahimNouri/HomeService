@@ -2,7 +2,6 @@ package ir.maktab.homeservice.repository.expert;
 
 
 import ir.maktab.homeservice.entity.Expert;
-import ir.maktab.homeservice.entity.User;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -35,5 +34,8 @@ public interface ExpertRepository extends JpaRepository<Expert, Long>, JpaSpecif
     Optional<Expert> findByIdCustom( Long id);
 
     Optional<Expert> findByUsername(String username);
+
+    boolean existsByEmail(String email);
+    boolean existsByUsername(String username);
 
 }

@@ -3,9 +3,11 @@ package ir.maktab.homeservice.entity;
 import ir.maktab.homeservice.entity.id.ExpertUserId;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,5 +43,20 @@ public class ExpertUser implements Serializable {
     @PrePersist
     void setDate(){
         localDate = LocalDate.now();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        ExpertUser that = (ExpertUser) o;
+        return expert != null && Objects.equals(expert, that.expert)
+                && user != null && Objects.equals(user, that.user)
+                && order != null && Objects.equals(order, that.order);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(expert, user, order);
     }
 }

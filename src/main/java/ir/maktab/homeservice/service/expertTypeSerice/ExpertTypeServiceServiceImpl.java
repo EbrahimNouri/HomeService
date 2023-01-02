@@ -66,6 +66,4 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
         return repository.findExpertTypeServiceByExpertId(expertId);
 
     }
-
-
 }

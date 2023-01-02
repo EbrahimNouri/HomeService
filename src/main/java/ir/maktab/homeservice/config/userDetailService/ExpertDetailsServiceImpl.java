@@ -1,10 +1,12 @@
-package ir.maktab.homeservice.config;
+package ir.maktab.homeservice.config.userDetailService;
 
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ExpertDetailsServiceImpl implements UserDetailsService {
 
     private final ExpertRepository expertRepository;

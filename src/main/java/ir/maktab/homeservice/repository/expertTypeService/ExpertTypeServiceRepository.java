@@ -13,7 +13,6 @@ import java.util.Optional;
 
 public interface ExpertTypeServiceRepository extends JpaRepository<ExpertTypeService, ExpertTypeServiceId> {
 
-//    void addTypeServiceToExpert(ExpertTypeService expertTypeService);
 
     List<ExpertTypeService> findExpertTypeServiceByExpertId(Long expertId);
 

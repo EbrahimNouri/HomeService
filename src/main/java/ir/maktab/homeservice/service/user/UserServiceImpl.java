@@ -2,6 +2,8 @@ package ir.maktab.homeservice.service.user;
 
 
 import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.entity.enums.Role;
+import ir.maktab.homeservice.exception.CustomExceptionInvalid;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.repository.user.UserRepository;
@@ -10,12 +12,13 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 @Log4j2
@@ -24,6 +27,7 @@ import java.util.Objects;
 public class UserServiceImpl implements UserService {
 
     private UserRepository repository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public void save(User user) {
@@ -31,7 +35,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void mainRegisterUser(@Valid User user) {
+    public void mainRegisterUser(@Validated User user) {
+        if (repository.existsByEmail(user.getEmail()))
+            throw new CustomExceptionSave("this email is exist");
+
+        if (repository.existsByUsername(user.getUsername()))
+            throw new CustomExceptionSave("this username is exist");
+
+        user.setCredit(0.0);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.ROLE_USER);
         repository.save(user);
     }
 
@@ -50,18 +63,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changePassword(@Valid User user, String password) {
 
-        if (!user.getPassword().equals(password)
-                && user.getPassword().equals(Objects.requireNonNull(findById(user.getId())
-                .getPassword()))) {
+        if (user.getPassword().equals(passwordEncoder.encode(password)))
+            throw new CustomExceptionInvalid("password not changed");
 
-            user.setPassword(password);
-            repository.save(user);
 
-            log.debug("debug change password user {} to {} ", user, password);
-        } else {
-            throw new CustomExceptionSave("password not changed");
-        }
-    }
+        if (user.getId() == null)
+            throw new CustomExceptionInvalid("user id is null");
+
+        user.setPassword(passwordEncoder.encode(password));
+        repository.save(user);
+
+        log.debug("debug change password user {} to {} ", user, password);
+
+}
 
     @Override
     public User findById(Long id) {
@@ -98,12 +112,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existsByEmail(String email){
+    public boolean existsByEmail(String email) {
         return repository.existsByEmail(email);
     }
 
     @Override
-    public void delete(User user){
+    public void delete(User user) {
         repository.delete(user);
     }
 
