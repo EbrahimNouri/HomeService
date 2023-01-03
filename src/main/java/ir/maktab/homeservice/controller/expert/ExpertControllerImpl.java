@@ -3,7 +3,6 @@ package ir.maktab.homeservice.controller.expert;
 
 import ir.maktab.homeservice.dto.OfferDto;
 import ir.maktab.homeservice.dto.OrderDto;
-import ir.maktab.homeservice.dto.PersonChangePasswordDto;
 import ir.maktab.homeservice.dto.PersonRegisterDto;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Offer;
@@ -18,6 +17,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,30 +53,23 @@ public class ExpertControllerImpl {
     }
 
 
-    @GetMapping("/{id}")
-    public Expert findById(@PathVariable Long id) {
-        return expertService.findById(id);
+    @GetMapping()
+    public Expert showExpert(Authentication authentication) {
+        return (Expert) authentication.getPrincipal();
 
     }
 
     @PutMapping("/chPass")
-    public void changePassword(@RequestBody @Valid PersonChangePasswordDto personChangePasswordDto) {
-        Expert expert = expertService.findById(personChangePasswordDto.getId());
-        expertService.changePassword(expert, personChangePasswordDto.getPassword());
-    }
-
-    @GetMapping("findExpertById/{id}")
-    public String findExpertById(@PathVariable Long id) {
-        Expert expert = expertService.findById(id);
-        System.out.println(expert.getEmail());
-        return "ok";
+    public void changePassword(@RequestParam @Valid String password, Authentication authentication) {
+        Expert expert = (Expert) authentication.getPrincipal();
+        expertService.changePassword(expert, password);
     }
 
     @PostMapping("/offerRegistrationOrUpdate")
-    public void offerRegistrationOrUpdate(@RequestBody @Valid OfferDto offerDto) {
+    public void offerRegistrationOrUpdate(@RequestBody @Valid OfferDto offerDto, Authentication authentication) {
 
         Offer offer = Offer.builder()
-                .expert(expertService.findById(offerDto.getExpertId()))
+                .expert((Expert) authentication.getPrincipal())
                 .order(orderService.findById(offerDto.getOrderId()))
                 .description(offerDto.getDescription())
                 .startDate(offerDto.getStartDate())
@@ -92,19 +85,22 @@ public class ExpertControllerImpl {
         return orderService.showOrderSuggestionOrSelection();
     }
 
-    @GetMapping("/getAverageScore/{id}")
-    public Double getAverageScore(@PathVariable Long id) {
-        return expertService.findById(id).getAverageScore();
+    @GetMapping("/getAverageScore")
+    public Double getAverageScore(Authentication authentication) {
+        Expert expert = (Expert) authentication.getPrincipal();
+        return expert.getAverageScore();
     }
 
-    @GetMapping("/getAllScores/{id}")
-    public List<Double> getAllScores(@PathVariable Long id) {
-        return expertUserService.listOfScore(id);
+    @GetMapping("/getAllScores")
+    public List<Double> getAllScores(Authentication authentication) {
+        Expert expert = (Expert) authentication.getPrincipal();
+        return expertUserService.listOfScore(expert.getId());
     }
 
-    @PostMapping("/addAvatar/{expertId}")
-    public void addAvatar(@PathVariable Long expertId, @RequestBody MultipartFile file) throws IOException {
-        expertService.addAvatar(expertId,file);
+    @PostMapping("/addAvatar")
+    public void addAvatar(Authentication authentication, @RequestBody MultipartFile file) throws IOException {
+        Expert expert = (Expert) authentication.getPrincipal();
+        expertService.addAvatar(expert.getId(),file);
     }
 
     @GetMapping("/showAllOrderList/{typeService}")
@@ -113,9 +109,10 @@ public class ExpertControllerImpl {
         return orderService.findByTypeService(typeServices).stream().map(this::orderMapping).toList();
     }
 
-    @GetMapping("/getScore/{expertId}")
-    public Double getScore(@PathVariable Long expertId){
-        return expertService.getScore(expertId);
+    @GetMapping("/getScore")
+    public Double getScore(Authentication authentication){
+        Expert expert = (Expert) authentication.getPrincipal();
+        return expertService.getScore(expert.getId());
     }
 
     public OrderDto orderMapping(Order order) {

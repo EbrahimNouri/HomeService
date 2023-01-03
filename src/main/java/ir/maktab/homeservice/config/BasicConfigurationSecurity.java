@@ -1,9 +1,8 @@
 package ir.maktab.homeservice.config;
 
-import ir.maktab.homeservice.config.userDetailService.AdminDetailsServiceImpl;
-import ir.maktab.homeservice.config.userDetailService.ExpertDetailsServiceImpl;
-import ir.maktab.homeservice.config.userDetailService.UserDetailsServiceImpl;
-import lombok.RequiredArgsConstructor;
+import ir.maktab.homeservice.repository.admin.AdminRepository;
+import ir.maktab.homeservice.repository.expert.ExpertRepository;
+import ir.maktab.homeservice.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -23,41 +23,49 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-@RequiredArgsConstructor
+@EnableGlobalMethodSecurity(
+        prePostEnabled = true,
+        jsr250Enabled = true,
+        securedEnabled = true
+)
 public class BasicConfigurationSecurity {
+    private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final ExpertRepository expertRepository;
+    private final AdminRepository adminRepository;
 
-    private final UserDetailsServiceImpl userDetailsService;
-    private final ExpertDetailsServiceImpl expertDetailsService;
-    private final AdminDetailsServiceImpl adminDetailsService;
+    public BasicConfigurationSecurity(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
+                                      ExpertRepository expertRepository, AdminRepository adminRepository) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.expertRepository = expertRepository;
+        this.adminRepository = adminRepository;
+    }
 
 
+/*    @Bean
+    protected void userConfigure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(username -> userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username))
+        ).passwordEncoder(passwordEncoder);
+    }
 
+    @Bean
+    protected void adminConfigure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(username -> adminRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username))
+        ).passwordEncoder(passwordEncoder);
+    }
 
-//    @Bean
-//    protected void userConfigure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(username -> userRepository
-//                .findByUsername(username)
-//                .orElseThrow(() -> new UsernameNotFoundException(username))
-//        );
-//    }
-//
-//    @Bean
-//    protected void adminConfigure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(username -> adminRepository
-//                .findByUsername(username)
-//                .orElseThrow(() -> new UsernameNotFoundException(username))
-//        );
-//    }
-//
-//    @Bean
-//    protected void expertConfigure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(username -> expertRepository
-//                .findByUsername(username)
-//                .orElseThrow(() -> new UsernameNotFoundException(username))
-//        );
-//    }
+    @Bean
+    protected void expertConfigure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(username -> expertRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username))
+        ).passwordEncoder(passwordEncoder);
+    }*/
 
     @Bean
     public InMemoryUserDetailsManager userDetailsServiceInMemory(PasswordEncoder passwordEncoder) {
@@ -121,13 +129,22 @@ public class BasicConfigurationSecurity {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 
-        auth.userDetailsService(adminDetailsService)
+        auth.userDetailsService(username -> userRepository
+                        .findByUsername(username)
+                        .orElseThrow(() -> new UsernameNotFoundException(String
+                                .format("this %s not found", username))))
                 .passwordEncoder(passwordEncoder);
 
-        auth.userDetailsService(userDetailsService)
+        auth.userDetailsService(username -> adminRepository
+                        .findByUsername(username)
+                        .orElseThrow(() -> new UsernameNotFoundException(String
+                                .format("this %s not found", username))))
                 .passwordEncoder(passwordEncoder);
 
-        auth.userDetailsService(expertDetailsService)
+        auth.userDetailsService(username -> expertRepository
+                        .findByUsername(username)
+                        .orElseThrow(() -> new UsernameNotFoundException(String
+                                .format("this %s not found", username))))
                 .passwordEncoder(passwordEncoder);
 
     }

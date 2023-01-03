@@ -13,6 +13,7 @@ import ir.maktab.homeservice.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -40,14 +41,13 @@ public class AdminControllerImpl {
     }
 
     @PutMapping("/chPass")
-    public void changePassword(@RequestBody @Valid adminPassDto admin) {
-        Admin id_not_found = service.findById(admin.getId());
-        service.changePassword(id_not_found, admin.getPassword());
+    public void changePassword(@RequestParam @Valid String password , Authentication authentication) {
+        Admin admin = (Admin) authentication.getPrincipal();
+        service.changePassword(admin, password);
     }
 
     @GetMapping("/{id}")
     public Admin findById(@PathVariable Long id) {
-//        return new ResponseEntity.ok(service.findById(adminId)
         return service.findById(id);
     }
 
