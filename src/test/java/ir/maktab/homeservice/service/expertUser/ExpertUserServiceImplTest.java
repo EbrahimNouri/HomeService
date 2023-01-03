@@ -81,7 +81,7 @@ class ExpertUserServiceImplTest {
         assertAll(
                 () -> service.addCommentAndPoint(expertUserMain),
 
-                () -> assertNotNull(service.findByOrderId(order.getId()))
+                () -> assertNotNull(service.findByOrderId(order.getId(), user.getId()))
 
         );
     }

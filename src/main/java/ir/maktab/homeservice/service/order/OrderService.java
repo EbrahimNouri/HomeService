@@ -22,7 +22,7 @@ public interface OrderService {
     void setOrderToDone(Order order);
 
     @Transactional
-    void setOrderToPaidAppPayment(Order order);
+    void setOrderToPaidAppPayment(Order order, User user);
 
     @Transactional
     void setOrderToPaidOnlinePayment(Order order);

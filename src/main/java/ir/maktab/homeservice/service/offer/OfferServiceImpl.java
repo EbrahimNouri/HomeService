@@ -5,10 +5,7 @@ import ir.maktab.homeservice.entity.ExpertTypeService;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.enums.OrderType;
-import ir.maktab.homeservice.exception.CustomExceptionNotFind;
-import ir.maktab.homeservice.exception.CustomExceptionOrderType;
-import ir.maktab.homeservice.exception.CustomExceptionSave;
-import ir.maktab.homeservice.exception.CustomExceptionUpdate;
+import ir.maktab.homeservice.exception.*;
 import ir.maktab.homeservice.repository.offer.OfferRepository;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
 import ir.maktab.homeservice.service.order.OrderService;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -119,16 +117,24 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public List<Offer> findByOrderIdSortedPrice(Long orderId) {
+    public List<Offer> findByOrderIdSortedPrice(Long orderId, Long userId) {
+        OfferService offerService = applicationContextProvider.getBean(OfferService.class);
 
-        return repository.findOfferSortedByPrice(orderId);
+        if (Objects.equals(offerService.findById(orderId).getOrder().getUser().getId(), userId))
+            return repository.findOfferSortedByPrice(orderId);
+
+        else throw new CustomExceptionInvalid("this order for another user");
 
     }
 
     @Override
-    public List<Offer> findByOrderIdSortedByPoint(Long orderId) {
+    public List<Offer> findByOrderIdSortedByPoint(Long orderId, Long userId) {
+        OfferService offerService = applicationContextProvider.getBean(OfferService.class);
 
-        return repository.findByOrderIdSortedByPoint(orderId);
+        if (Objects.equals(offerService.findById(orderId).getOrder().getUser().getId(), userId))
+            return repository.findByOrderIdSortedByPoint(orderId);
+
+        else throw new CustomExceptionInvalid("this order for another user");
 
     }
 

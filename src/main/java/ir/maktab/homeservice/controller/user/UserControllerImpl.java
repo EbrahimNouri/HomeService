@@ -13,6 +13,7 @@ import ir.maktab.homeservice.service.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,19 +48,19 @@ public class UserControllerImpl {
     }
 
     @PutMapping("/chPass")
-    public void changePassword(@RequestBody PersonChangePasswordDto personChangePasswordDto) {
-        User temp = userService.findById(personChangePasswordDto.getId());
+    public void changePassword(@RequestBody String password, Authentication authentication) {
+        User temp = (User) authentication.getPrincipal();
 
-        userService.changePassword(temp, personChangePasswordDto.getPassword());
+        userService.changePassword(temp, password);
     }
 
     @PostMapping("/addCommentAndPoint")
-    public void addCommentAndPoint(@RequestBody ExpertUserDto expertUserDto) {
+    public void addCommentAndPoint(@RequestBody ExpertUserDto expertUserDto, Authentication authentication) {
         ExpertUser expertUser;
 
         Expert expert = expertService.findById(expertUserDto.getExpId());
 
-        User user = userService.findById(expertUserDto.getUserId());
+        User user = (User) authentication.getPrincipal();
 
         Order order = orderService.findById(expertUserDto.getOrderId());
 
@@ -105,9 +106,9 @@ public class UserControllerImpl {
     }
 
     @PostMapping("/orderRegistration")
-    public void orderRegistration(@RequestBody OrderDto orderDto) {
+    public void orderRegistration(@RequestBody OrderDto orderDto, Authentication authentication) {
 
-        User user = userService.findById(orderDto.getUserId());
+        User user = (User) authentication.getPrincipal();
         TypeService typeService = typeServiceService.findById(orderDto.getTypeId());
         Order order = Order.builder()
                 .address(orderDto.getAddress())
@@ -129,28 +130,37 @@ public class UserControllerImpl {
 
 
     @GetMapping("/findByOrderIdSortedPrice/{orderId}")
-    public List<OfferDto> findByOrderIdSortedPrice(@PathVariable Long orderId) {
-        return offerService.findByOrderIdSortedPrice(orderId).stream().map(this::offerMapping).toList();
+    public List<OfferDto> findByOrderIdSortedPrice(@PathVariable Long orderId, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return offerService.findByOrderIdSortedPrice(orderId, user.getId()).stream().map(this::offerMapping).toList();
     }
 
     @GetMapping("/findByOrderIdSortedByPoint/{orderId}")
-    public List<OfferDto> findByOrderIdSortedByPoint(@PathVariable Long orderId) {
-        return offerService.findByOrderIdSortedByPoint(orderId).stream().map(this::offerMapping).toList();
+    public List<OfferDto> findByOrderIdSortedByPoint(@PathVariable Long orderId
+            , Authentication authentication) {
+
+        User user = (User) authentication.getPrincipal();
+
+        return offerService.findByOrderIdSortedByPoint(orderId, user.getId()).stream()
+                .map(this::offerMapping).toList();
     }
 
     @GetMapping("/showAllTypeService/{id}")
     public List<TypeServiceDto> findByBasicServiceId(@PathVariable Long id) {
-        return typeServiceService.showTypeServices(id).stream().map(adminController::typeServiceMapped).toList();
+        return typeServiceService.showTypeServices(id).stream()
+                .map(adminController::typeServiceMapped).toList();
     }
 
     @GetMapping("/{orderId}")
-    public ExpertUser findByOrderId(@PathVariable Long orderId) {
-        return expertUserService.findByOrderId(orderId);
+    public ExpertUser findByOrderId(@PathVariable Long orderId, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return expertUserService.findByOrderId(orderId, user.getId());
     }
 
     @PostMapping("/setOrderToPaidAppPayment/{orderId}")
-    public void setOrderToPaidAppPayment(@PathVariable Long orderId) {
-        orderService.setOrderToPaidAppPayment(orderService.findById(orderId));
+    public void setOrderToPaidAppPayment(@PathVariable Long orderId, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        orderService.setOrderToPaidAppPayment(orderService.findById(orderId), user);
     }
 
     @PostMapping("/onlinePayment")
@@ -163,10 +173,10 @@ public class UserControllerImpl {
     }
 
     @PutMapping("/setOrderToPaidAppPayment/{orderId}")
-    public void appPayment(@PathVariable Long orderId) {
-
+    public void appPayment(@PathVariable Long orderId, Authentication authentication) {
         Order order = orderService.findById(orderId);
-        orderService.setOrderToPaidAppPayment(order);
+        User user = (User) authentication.getPrincipal();
+        orderService.setOrderToPaidAppPayment(order, user);
     }
 
 

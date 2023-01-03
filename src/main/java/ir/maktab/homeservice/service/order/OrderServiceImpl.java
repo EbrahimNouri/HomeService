@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -124,32 +125,34 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public void setOrderToPaidAppPayment(Order order) {
+    public void setOrderToPaidAppPayment(Order order, User user) {
+        if (Objects.equals(order.getUser().getId(), user.getId())) {
 
-        Offer offer = offerService.findOfferByOrder_Id(order.getId())
-                .stream().filter(Offer::isChoose).findFirst()
-                .orElseThrow(() -> new CustomExceptionNotFind("offer not found"));
+            Offer offer = offerService.findOfferByOrder_Id(order.getId())
+                    .stream().filter(Offer::isChoose).findFirst()
+                    .orElseThrow(() -> new CustomExceptionNotFind("offer not found"));
 
 
-        if (orderChecker(order)
-                && !order.getOrderType().equals(OrderType.DONE))
-            throw new CustomExceptionOrderType("order type is invalid");
+            if (orderChecker(order)
+                    && !order.getOrderType().equals(OrderType.DONE))
+                throw new CustomExceptionOrderType("order type is invalid");
 
-        if (order.getPaymentType().equals(PaymentType.CREDIT_PAYMENT)) {
+            if (order.getPaymentType().equals(PaymentType.CREDIT_PAYMENT)) {
 
-            transactionService.addTransaction(Transaction.builder()
-                    .expert(offer.getExpert())
-                    .user(order.getUser())
-                    .transactionType(TransactionType.TRANSFER)
-                    .transfer(offer.getSuggestedPrice())
-                    .build());
+                transactionService.addTransaction(Transaction.builder()
+                        .expert(offer.getExpert())
+                        .user(order.getUser())
+                        .transactionType(TransactionType.TRANSFER)
+                        .transfer(offer.getSuggestedPrice())
+                        .build());
 
-        }else
-            throw new CustomNotChoosingException("didn't choose any of the payment methods");
+            } else
+                throw new CustomNotChoosingException("didn't choose any of the payment methods");
 
-        order.setOrderType(OrderType.PAID);
+            order.setOrderType(OrderType.PAID);
 
-        timeChecker(order, offer);
+            timeChecker(order, offer);
+        }
     }
 
     @Transactional

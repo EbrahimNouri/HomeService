@@ -21,7 +21,7 @@ public interface OfferService {
 
     List<Offer> findByOrder(Order order);
 
-    List<Offer> findByOrderIdSortedPrice(Long OrderId);
+    List<Offer> findByOrderIdSortedPrice(Long OrderId, Long userId);
 
-    List<Offer> findByOrderIdSortedByPoint(Long orderId);
+    List<Offer> findByOrderIdSortedByPoint(Long orderId, Long userId);
 }

@@ -57,7 +57,7 @@ public class ExpertUserServiceImpl implements ExpertUserService {
     }
 
     @Override
-    public ExpertUser findByOrderId(Long orderId) {
+    public ExpertUser findByOrderId(Long orderId, Long userId) {
 
         return repository.findByOrderIdNative(orderId)
                 .orElseThrow(() -> new CustomExceptionNotFind("comment not found"));

@@ -177,7 +177,7 @@ class OfferServiceImplTest {
         assertNotNull(service.findById(1L));
         assertEquals(service.findByOrder(offerTest[3][2].getOrder()).stream()
                         .map((Offer::getSuggestedPrice)).sorted(Comparator.reverseOrder()).toList().get(1)
-                , service.findByOrderIdSortedPrice(offerTest[3][2].getOrder().getId()).stream()
+                , service.findByOrderIdSortedPrice(offerTest[3][2].getOrder().getId(), user[3].getId()).stream()
                         .map(Offer::getSuggestedPrice).toList().get(1));
     }
 
@@ -187,7 +187,7 @@ class OfferServiceImplTest {
                 .stream().map(offer1 -> offer1.getExpert().getAverageScore()).toList());
         Collections.sort(experts1);
         assertEquals(experts1.get(0)
-                , service.findByOrderIdSortedByPoint(offerTest[3][0].getOrder().getId()).stream()
+                , service.findByOrderIdSortedByPoint(offerTest[3][0].getOrder().getId(), user[3].getId()).stream()
                         .map(offer -> offer.getExpert().getAverageScore()).toList().get(0));
 
     }
