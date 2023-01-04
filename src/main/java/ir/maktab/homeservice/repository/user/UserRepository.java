@@ -23,5 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> , JpaSpecifica
     boolean existsByUsername(String username);
 
     Optional<User> findByUsername(String username);
+    @Query("FROM user_table u WHERE u.verificationCode = ?1")
+    Optional<User> findByVerificationCode(String code);
 
 }

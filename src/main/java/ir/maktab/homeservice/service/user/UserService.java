@@ -2,13 +2,21 @@ package ir.maktab.homeservice.service.user;
 
 
 import ir.maktab.homeservice.entity.User;
+import jakarta.mail.MessagingException;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
 public interface UserService {
 
     void save(User user);
+
+    void register(User user, String siteURL)
+                throws MessagingException, UnsupportedEncodingException;
+
+
+    boolean verify(String verificationCode);
 
     void mainRegisterUser(User user);
 

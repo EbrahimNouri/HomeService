@@ -40,32 +40,14 @@ public class Expert extends Person {
     @ToString.Exclude
     private List<Transaction> transactions;
 
-    /*
-        @ColumnDefault("0")
-    */
-    private Double averageScore;
+    private Double averageScore = 0.0;
 
     @Lob
     private byte[] avatar;
 
     @Builder
-    public Expert(@NotEmpty(message = "Blank is not acceptable") String firstname
-            , @NotEmpty(message = "Blank is not acceptable") String lastname
-            , @Email(/*groups = CustomPatternInvalidException.class,*/ message = "email address is not valid") String email
-            , @NotEmpty String username
-            , @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$"
-            , message = "password is not valid") String password
-            , double credit
-            , LocalDateTime signupDateTime
-            , Role role
-            , ExpertStatus expertStatus
-            , List<ExpertTypeService> expertTypeServices
-            , List<ExpertUser> expertUsers
-            , List<Transaction> transactions
-            , Double averageScore
-            , byte[] avatar) {
-
-        super(firstname, lastname, email, username, password, credit, signupDateTime, role);
+    public Expert(@NotEmpty(message = "Blank is not acceptable") String firstname, @NotEmpty(message = "Blank is not acceptable") String lastname, @Email(/*groups = CustomExceptionInvalid.class,*/ message = "email address is not valid") String email, @NotEmpty String username, @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$", message = "password is not valid") String password, double credit, LocalDateTime signupDateTime, Role role, boolean enabled, String verificationCode, ExpertStatus expertStatus, List<ExpertTypeService> expertTypeServices, List<ExpertUser> expertUsers, List<Transaction> transactions, Double averageScore, byte[] avatar) {
+        super(firstname, lastname, email, username, password, credit, signupDateTime, role, enabled, verificationCode);
         this.expertStatus = expertStatus;
         this.expertTypeServices = expertTypeServices;
         this.expertUsers = expertUsers;

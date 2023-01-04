@@ -1,15 +1,22 @@
 package ir.maktab.homeservice.service.expert;
 
 import ir.maktab.homeservice.entity.Expert;
+import jakarta.mail.MessagingException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
 public interface ExpertService {
+
+    void register(Expert expert, String siteURL)
+            throws MessagingException, UnsupportedEncodingException;
+
+    boolean verify(String verificationCode);
 
     void mainRegisterExpert(Expert expert);
 

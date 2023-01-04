@@ -16,6 +16,7 @@ import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -52,6 +53,14 @@ public class ExpertControllerImpl {
         expertService.mainRegisterExpert(temp);
     }
 
+    @GetMapping("/verify")
+    public String verifyUser(@Param("code") String code) {
+        if (expertService.verify(code)) {
+            return "verify_success";
+        } else {
+            return "verify_fail";
+        }
+    }
 
     @GetMapping()
     public Expert showExpert(Authentication authentication) {

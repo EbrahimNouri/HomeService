@@ -11,10 +11,15 @@ import ir.maktab.homeservice.exception.CustomExceptionUpdate;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
 import ir.maktab.homeservice.util.FileUtil;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +42,67 @@ public class ExpertServiceImpl implements ExpertService {
     private final ExpertTypeServiceService expertTypeServiceService;
     private ExpertRepository repository;
     private BCryptPasswordEncoder passwordEncoder;
+    private final JavaMailSender mailSender;
+
+
+    @Override
+    public void register(Expert expert, String siteURL)
+            throws MessagingException, UnsupportedEncodingException {
+        String encodedPassword = passwordEncoder.encode(expert.getPassword());
+        expert.setPassword(encodedPassword);
+
+        String randomCode = RandomString.make(64);
+        expert.setVerificationCode(randomCode);
+        expert.setEnabled(false);
+
+        repository.save(expert);
+
+        sendVerificationEmail(expert, siteURL);
+    }
+
+    private void sendVerificationEmail(Expert expert, String siteURL)
+            throws MessagingException, UnsupportedEncodingException {
+        String toAddress = expert.getEmail();
+        String fromAddress = "homeservice.springboot@hotmail.com";
+        String senderName = "home service";
+        String subject = "Please verify your registration";
+        String content = "Dear [[name]],<br>"
+                + "Please click the link below to verify your registration:<br>"
+                + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
+                + "Thank you,<br>"
+                + "Your company name.";
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setFrom(fromAddress, senderName);
+        helper.setTo(toAddress);
+        helper.setSubject(subject);
+
+        content = content.replace("[[name]]", expert.getFirstname() + " " + expert.getLastname());
+        String verifyURL = siteURL + "/verify?code=" + expert.getVerificationCode();
+
+        content = content.replace("[[URL]]", verifyURL);
+
+        helper.setText(content, true);
+
+        mailSender.send(message);
+    }
+
+    @Override
+    public boolean verify(String verificationCode) {
+        Expert expert = repository.findByVerificationCode(verificationCode).orElse(null);
+
+        if (expert == null || expert.isEnabled()) {
+            return false;
+        } else {
+            expert.setVerificationCode(null);
+            expert.setEnabled(true);
+            repository.save(expert);
+
+            return true;
+        }
+    }
 
     @Override
     public void mainRegisterExpert(@Validated Expert expert) {

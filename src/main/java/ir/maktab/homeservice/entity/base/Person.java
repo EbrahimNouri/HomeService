@@ -54,6 +54,13 @@ public abstract class Person extends BaseEntity implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name = "enabled")
+    private boolean enabled = false;
+
+    @Column(name = "verification_code", length = 64)
+    private String verificationCode;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(getRole().name()));
