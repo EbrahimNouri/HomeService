@@ -10,6 +10,7 @@ import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.order.OrderService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
+import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.repository.query.Param;
@@ -18,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @RestController
@@ -36,7 +38,9 @@ public class UserControllerImpl {
 
     @Secured("permitAll")
     @PostMapping("/register")
-    public void registerUser(@RequestBody @Validated PersonRegisterDto personRegisterDto) {
+    public void registerUser(@RequestBody @Validated PersonRegisterDto personRegisterDto)
+            throws MessagingException, UnsupportedEncodingException {
+        
         User temp = User.builder()
                 .firstname(personRegisterDto.getFirstname())
                 .lastname(personRegisterDto.getLastname())
@@ -45,7 +49,7 @@ public class UserControllerImpl {
                 .password(personRegisterDto.getPassword())
                 .build();
 
-        userService.mainRegisterUser(temp);
+        userService.register(temp, "/api/v1/user");
     }
 
     @GetMapping("/verify")

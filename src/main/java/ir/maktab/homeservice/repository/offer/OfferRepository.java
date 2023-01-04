@@ -22,4 +22,9 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
     @Query("from Offer o where o.order.id =:orderId order by o.expert.averageScore DESC ")
     List<Offer> findByOrderIdSortedByPoint(Long orderId);
 
+    @Query("select count(o) from Offer o where o.expert = ?1")
+    int countOfOffers(Long expertId);
+
+    @Query("select count(o.order)from Offer o where o.expert= ?1 and o.order.orderType = \"PAID\"")
+    int countOffOrderToDone(Long expertId);
 }

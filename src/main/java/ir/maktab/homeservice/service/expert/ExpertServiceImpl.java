@@ -23,7 +23,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -48,8 +47,18 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public void register(Expert expert, String siteURL)
             throws MessagingException, UnsupportedEncodingException {
-        String encodedPassword = passwordEncoder.encode(expert.getPassword());
-        expert.setPassword(encodedPassword);
+
+        if (repository.existsByEmail(expert.getEmail()))
+            throw new CustomExceptionSave("this email is exist");
+
+        if (repository.existsByUsername(expert.getUsername()))
+            throw new CustomExceptionSave("this username is exist");
+
+        expert.setExpertStatus(ExpertStatus.NEW);
+        expert.setPassword(passwordEncoder.encode(expert.getPassword()));
+        expert.setRole(Role.ROLE_EXPERT);
+        expert.setAverageScore(0.0);
+        expert.setCredit(0.0);
 
         String randomCode = RandomString.make(64);
         expert.setVerificationCode(randomCode);
@@ -102,24 +111,6 @@ public class ExpertServiceImpl implements ExpertService {
 
             return true;
         }
-    }
-
-    @Override
-    public void mainRegisterExpert(@Validated Expert expert) {
-        if (repository.existsByEmail(expert.getEmail()))
-            throw new CustomExceptionSave("this email is exist");
-
-        if (repository.existsByUsername(expert.getUsername()))
-            throw new CustomExceptionSave("this username is exist");
-
-        expert.setExpertStatus(ExpertStatus.NEW);
-        expert.setPassword(passwordEncoder.encode(expert.getPassword()));
-        expert.setRole(Role.ROLE_EXPERT);
-        expert.setAverageScore(0.0);
-        expert.setCredit(0.0);
-
-        repository.save(expert);
-
     }
 
 

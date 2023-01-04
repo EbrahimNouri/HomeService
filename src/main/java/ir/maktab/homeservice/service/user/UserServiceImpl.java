@@ -6,23 +6,22 @@ import ir.maktab.homeservice.entity.enums.Role;
 import ir.maktab.homeservice.exception.CustomExceptionInvalid;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.exception.CustomExceptionSave;
+import ir.maktab.homeservice.repository.order.OrderRepository;
 import ir.maktab.homeservice.repository.user.UserRepository;
+import ir.maktab.homeservice.util.SpecificationUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.jpa.domain.Specification;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-import net.bytebuddy.utility.RandomString;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,10 +30,12 @@ import java.util.Map;
 @AllArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
+    private final OrderRepository orderRepository;
 
     private UserRepository repository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
+    private final SpecificationUtil<User> specificationUtil;
 
 
     @Override
@@ -45,8 +46,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void register(User user, String siteURL)
             throws MessagingException, UnsupportedEncodingException {
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+
+        if (repository.existsByEmail(user.getEmail()))
+            throw new CustomExceptionSave("this email is exist");
+
+        if (repository.existsByUsername(user.getUsername()))
+            throw new CustomExceptionSave("this username is exist");
+
+        user.setCredit(0.0);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.ROLE_USER);
 
         String randomCode = RandomString.make(64);
         user.setVerificationCode(randomCode);
@@ -99,20 +108,6 @@ public class UserServiceImpl implements UserService {
 
             return true;
         }
-    }
-
-    @Override
-    public void mainRegisterUser(@Validated User user) {
-        if (repository.existsByEmail(user.getEmail()))
-            throw new CustomExceptionSave("this email is exist");
-
-        if (repository.existsByUsername(user.getUsername()))
-            throw new CustomExceptionSave("this username is exist");
-
-        user.setCredit(0.0);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(Role.ROLE_USER);
-        repository.save(user);
     }
 
     @Override
@@ -175,7 +170,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findBy(Map<String, String> find) {
-        return repository.findAll(mapToSpecification(find));
+        return repository.findAll(specificationUtil.mapToSpecification(find));
     }
 
     @Override
@@ -188,15 +183,7 @@ public class UserServiceImpl implements UserService {
         repository.delete(user);
     }
 
-    private Specification<User> mapToSpecification(Map<String, String> find) {
+    // TODO: 1/4/2023 AD
 
-        List<Specification<User>> specifications = new ArrayList<>();
-        for (Map.Entry<String, String> ee
-                : find.entrySet()) {
-            Specification<User> specification =
-                    ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(ee.getKey()), ee.getValue()));
-            specifications.add(specification);
-        }
-        return Specification.allOf(specifications);
-    }
+
 }

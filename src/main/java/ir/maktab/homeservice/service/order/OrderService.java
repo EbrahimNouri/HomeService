@@ -32,4 +32,6 @@ public interface OrderService {
     List<Order> showOrderSuggestionOrSelection();
 
     List<Order> findByTypeService(TypeService typeService);
+
+    int countOfOrdersByUserId(Long userId);
 }

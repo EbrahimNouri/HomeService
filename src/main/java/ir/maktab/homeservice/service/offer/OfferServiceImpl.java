@@ -138,6 +138,17 @@ public class OfferServiceImpl implements OfferService {
 
     }
 
+    // TODO: 1/4/2023 AD test blow 
+    @Override
+    public int countOfOffers(Long expertId){
+        return repository.countOfOffers(expertId);
+    }
+
+    @Override
+    public int countOffOrderToDone(Long expertId){
+        return repository.countOffOrderToDone(expertId);
+    }
+
 
     private boolean checkLevelWork(Offer offer) {
         Order order = offer.getOrder();

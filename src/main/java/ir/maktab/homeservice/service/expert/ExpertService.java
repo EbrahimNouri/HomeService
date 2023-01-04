@@ -18,8 +18,6 @@ public interface ExpertService {
 
     boolean verify(String verificationCode);
 
-    void mainRegisterExpert(Expert expert);
-
     void registerExpert(Expert expert, File file);
 
     void acceptExpert(Expert expert);

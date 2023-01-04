@@ -13,6 +13,7 @@ import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.order.OrderService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 
@@ -41,7 +43,9 @@ public class ExpertControllerImpl {
     // TODO: 12/31/2022 AD
     @Secured("permitAll")
     @PostMapping("/register")
-    public void registerExpert(@RequestBody @Validated PersonRegisterDto personRegisterDto) {
+    public void registerExpert(@RequestBody @Validated PersonRegisterDto personRegisterDto)
+            throws MessagingException, UnsupportedEncodingException {
+
         Expert temp = Expert.builder()
                 .firstname(personRegisterDto.getFirstname())
                 .lastname(personRegisterDto.getLastname())
@@ -50,7 +54,7 @@ public class ExpertControllerImpl {
                 .username(personRegisterDto.getUsername())
                 .build();
 
-        expertService.mainRegisterExpert(temp);
+        expertService.register(temp, "/api/v1/expert");
     }
 
     @GetMapping("/verify")

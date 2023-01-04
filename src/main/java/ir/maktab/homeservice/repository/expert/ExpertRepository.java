@@ -40,5 +40,4 @@ public interface ExpertRepository extends JpaRepository<Expert, Long>, JpaSpecif
 
     @Query("FROM Expert x WHERE x.verificationCode = ?1")
     Optional<Expert> findByVerificationCode(String code);
-
 }

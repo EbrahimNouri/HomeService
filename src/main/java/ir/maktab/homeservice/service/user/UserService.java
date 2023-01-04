@@ -18,8 +18,6 @@ public interface UserService {
 
     boolean verify(String verificationCode);
 
-    void mainRegisterUser(User user);
-
     void registerUser(User user);
 
     void changePassword(User user, String password);
@@ -39,4 +37,6 @@ public interface UserService {
     boolean existsByEmail(String email);
 
     void delete(User user);
+
+    // TODO: 1/4/2023 AD
 }

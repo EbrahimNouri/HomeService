@@ -6,18 +6,23 @@ import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.entity.enums.PaymentType;
 import ir.maktab.homeservice.entity.enums.TransactionType;
 import ir.maktab.homeservice.exception.*;
+import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
 import ir.maktab.homeservice.repository.order.OrderRepository;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.transaction.TransactionService;
+import ir.maktab.homeservice.util.SpecificationUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -25,9 +30,11 @@ import java.util.Objects;
 @Log4j2
 @Transactional
 public class OrderServiceImpl implements OrderService {
+    private final BasicServiceRepository basicServiceRepository;
 
     private final ExpertUserService expertUserService;
     private final TransactionService transactionService;
+    private final SpecificationUtil<Order> specificationUtil;
 
     private OrderRepository repository;
     private OfferService offerService;
@@ -180,6 +187,33 @@ public class OrderServiceImpl implements OrderService {
         timeChecker(order, offer);
     }
 
+    // TODO: 1/4/2023 AD test it
+    public List<Order> findBySpecification(Map<String, String> find) {
+        List<Order> orders = new ArrayList<>();
+        // "from" date "to" date
+        if (find.containsKey("from") || find.containsKey("to")) {
+            orders.addAll(repository.findOrdersByPriodTime
+                    (LocalDate.parse(find.get("from")), LocalDate.parse(find.get("to"))));
+
+            find.remove("from");
+            find.remove("to");
+        }
+
+        if (find.containsKey("basicService")) {
+            orders.addAll(repository.findByBasicServiceName(find.get("basicService")));
+            find.remove("basicService");
+        }
+
+        if (find.containsKey("subService")) {
+            orders.addAll(repository.findOrderByTypeServiceName(find.get("subService")));
+            find.remove("subService");
+        }
+
+        orders.addAll(repository.findAll(specificationUtil.mapToSpecification(find)));
+
+        return orders;
+    }
+
     private void timeChecker(Order order, Offer offer) {
         if (LocalDateTime.now().isAfter(offer.getEndDate())) {
 
@@ -198,14 +232,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findOrderEndWork(User user){
+    public Order findOrderEndWork(User user) {
         return repository.findOrderByUserAndOrderType(user, OrderType.DONE)
                 .orElseThrow(() -> new CustomExceptionNotFind("order not found!"));
     }
 
     @Override
     public List<Order> showOrderSuggestionOrSelection() {
-        
+
         return repository.findByOrderTypeBeforeStart();
 
     }
@@ -214,6 +248,12 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> findByTypeService(TypeService typeService) {
         return repository.findOrderByTypeService(typeService);
     }
+
+    @Override
+    public int countOfOrdersByUserId(Long userId){
+        return repository.countOfOrdersByUserId(userId);
+    }
+
 
     private boolean orderChecker(Order order) {
         return

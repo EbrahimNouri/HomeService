@@ -24,4 +24,8 @@ public interface OfferService {
     List<Offer> findByOrderIdSortedPrice(Long OrderId, Long userId);
 
     List<Offer> findByOrderIdSortedByPoint(Long orderId, Long userId);
+
+    int countOfOffers(Long expertId);
+
+    int countOffOrderToDone(Long expertId);
 }
