@@ -149,12 +149,17 @@ public class OfferServiceImpl implements OfferService {
         return repository.countOffOrderToDone(expertId);
     }
 
+    @Override
+    public List<Offer> findByExpertId(Long expertId){
+        return repository.findOfferByExpertId(expertId);
+    }
 
     private boolean checkLevelWork(Offer offer) {
         Order order = offer.getOrder();
         return order.getId() != null && offer.getId() != null
                 && offer.getStartDate().isAfter(LocalDateTime.now());
     }
+
 
 
     private boolean offerRegistrationCheck(Offer offer, Order order) {

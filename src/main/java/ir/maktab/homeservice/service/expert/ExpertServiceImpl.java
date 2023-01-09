@@ -2,6 +2,7 @@ package ir.maktab.homeservice.service.expert;
 
 
 import ir.maktab.homeservice.entity.Expert;
+import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.entity.enums.Role;
 import ir.maktab.homeservice.exception.CustomExceptionInvalid;
@@ -10,6 +11,8 @@ import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.exception.CustomExceptionUpdate;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
+import ir.maktab.homeservice.service.offer.OfferService;
+import ir.maktab.homeservice.util.ApplicationContextProvider;
 import ir.maktab.homeservice.util.FileUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -42,6 +45,8 @@ public class ExpertServiceImpl implements ExpertService {
     private ExpertRepository repository;
     private BCryptPasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
+
+    private final ApplicationContextProvider applicationContext;
 
 
     @Override
@@ -111,6 +116,20 @@ public class ExpertServiceImpl implements ExpertService {
 
             return true;
         }
+    }
+
+    // TODO: 1/8/2023 AD controller
+    @Override
+    public Expert expertDetail(Long expertId){
+
+        Expert expert = findById(expertId);
+        List<Offer> offers = applicationContext
+                .getContext()
+                .getBean(OfferService.class)
+                .findByExpertId(expertId);
+        expert.setOffers(offers);
+        return expert;
+
     }
 
 

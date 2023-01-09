@@ -34,7 +34,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final ExpertUserService expertUserService;
     private final TransactionService transactionService;
-    private final SpecificationUtil<Order> specificationUtil;
+    private final SpecificationUtil specificationUtil;
 
     private OrderRepository repository;
     private OfferService offerService;
@@ -215,13 +215,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void timeChecker(Order order, Offer offer) {
-        if (LocalDateTime.now().isAfter(offer.getEndDate())) {
+        if (LocalDateTime.now().isBefore(offer.getEndDate())) {
 
             repository.save(order);
 
-        } else if (offer.getEndDate().isAfter(LocalDateTime.now())) {
+        } else if (offer.getEndDate().isBefore(LocalDateTime.now())) {
 
             int hour = offer.getEndDate().getHour() - LocalDateTime.now().getHour();
+
             expertUserService.deductPoints(hour, order);
         }
     }

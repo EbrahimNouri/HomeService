@@ -32,6 +32,10 @@ public class Expert extends Person {
     @ToString.Exclude
     private List<ExpertTypeService> expertTypeServices;
 
+    @OneToMany(mappedBy = "expert")
+    @ToString.Exclude
+    private List<Offer> offers;
+
     @OneToMany(mappedBy = "expert"/*, fetch = FetchType.EAGER*/)
     @ToString.Exclude
     private List<ExpertUser> expertUsers;

@@ -18,6 +18,9 @@ public interface ExpertService {
 
     boolean verify(String verificationCode);
 
+    // TODO: 1/8/2023 AD controller
+    Expert expertDetail(Long expertId);
+
     void registerExpert(Expert expert, File file);
 
     void acceptExpert(Expert expert);

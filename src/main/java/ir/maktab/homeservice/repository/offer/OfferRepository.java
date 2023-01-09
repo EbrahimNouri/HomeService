@@ -27,4 +27,6 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
 
     @Query("select count(o.order)from Offer o where o.expert= ?1 and o.order.orderType = \"PAID\"")
     int countOffOrderToDone(Long expertId);
+
+    List<Offer> findOfferByExpertId(Long expertId);
 }

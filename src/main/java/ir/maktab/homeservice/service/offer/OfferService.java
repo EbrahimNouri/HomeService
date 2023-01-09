@@ -28,4 +28,6 @@ public interface OfferService {
     int countOfOffers(Long expertId);
 
     int countOffOrderToDone(Long expertId);
+
+    List<Offer> findByExpertId(Long expertId);
 }
