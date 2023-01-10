@@ -103,7 +103,8 @@ public class BasicConfigurationSecurity {
                         (auth) -> auth.requestMatchers(
                                 "api/v1/admin/**").hasRole("ADMIN"))
 
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+
                 .httpBasic();
 
         return http.build();
@@ -115,8 +116,10 @@ public class BasicConfigurationSecurity {
         return (web) -> web.ignoring()
                 .requestMatchers(
                         "/api/v1/user/register"
-                        , "/api/v1/expert/register"
-                        , "/api/v1/admin/add");
+                        , "/api/v1/admin/add"
+                        , "/api/v1/expert/verify"
+                        , "/api/v1/expert/process_register"
+                        , "/api/v1/expert/register");
     }
 
     @Bean

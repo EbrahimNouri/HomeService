@@ -20,7 +20,7 @@ public class EmailSenderUtil {
     public<E extends Person> void sendVerificationEmail(E e, String siteURL)
             throws MessagingException, UnsupportedEncodingException {
         String toAddress = e.getEmail();
-        String fromAddress = "homeservice.springboot@hotmail.com";
+        String fromAddress = "homeservice.springboot@gmail.com";
         String senderName = "home service";
         String subject = "Please verify your registration";
         String content = "Dear [[name]],<br>"

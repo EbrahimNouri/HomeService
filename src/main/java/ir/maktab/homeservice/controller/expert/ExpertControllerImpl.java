@@ -13,20 +13,14 @@ import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.order.OrderService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
-import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.repository.query.Param;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 
@@ -42,28 +36,6 @@ public class ExpertControllerImpl {
     private final ExpertUserService expertUserService;
 
     // TODO: 12/31/2022 AD
-    @Secured("permitAll")
-    @PostMapping("/register")
-    public String registerExpert(@RequestBody @Validated PersonRegisterDto personRegisterDto, HttpServletRequest request)
-            throws MessagingException, UnsupportedEncodingException {
-
-        Expert temp = personDtoMapping(personRegisterDto);
-
-        expertService.register(temp, getSiteURL(request));
-
-        return "register_success";
-    }
-
-    private String getSiteURL(HttpServletRequest request) {
-        String siteURL = request.getRequestURL().toString();
-        return siteURL.replace(request.getServletPath(), "");
-    }
-
-    @GetMapping("register/verify")
-    public String verifyUser(@Param("code") String code) {
-        return expertService.getString(code);
-    }
-
 
     @GetMapping()
     public Expert showExpert(Authentication authentication) {
