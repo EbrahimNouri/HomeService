@@ -29,4 +29,10 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
     int countOffOrderToDone(Long expertId);
 
     List<Offer> findOfferByExpertId(Long expertId);
+
+    @Query("select o from Offer o where o.choose = true")
+    List<Offer> getAllAcceptedOffersByUserId(Long userId);
+
+    @Query("select o from Offer o where o.choose = true and o.order.orderType = \"PAID\"")
+    List<Offer> getAllDoneOffersByUserId(Long userId);
 }

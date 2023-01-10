@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -105,5 +106,14 @@ public class TransactionServiceImpl implements TransactionService {
                 transaction.getExpert().getId(),
                 transaction.getUser().getId());
 
+    }
+
+    @Override
+    public List<Transaction> findByUserId(Long userId){
+        return repository.findTransactionByUserId(userId);
+    }
+    @Override
+    public List<Transaction> findByExpertId(Long expertId){
+        return repository.findTransactionByUserId(expertId);
     }
 }

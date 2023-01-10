@@ -29,5 +29,9 @@ public interface OfferService {
 
     int countOffOrderToDone(Long expertId);
 
+    List<Offer> getAllAcceptedOffersByUserId(Long userId);
+
+    List<Offer> getAllDoneOffersByUserId(Long userId);
+
     List<Offer> findByExpertId(Long expertId);
 }

@@ -2,6 +2,7 @@ package ir.maktab.homeservice.service.expert;
 
 import ir.maktab.homeservice.entity.Expert;
 import jakarta.mail.MessagingException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -54,4 +55,6 @@ public interface ExpertService {
     void delete(Long e);
 
     Double getScore(Long id);
+
+    @NotNull String getString(String code);
 }

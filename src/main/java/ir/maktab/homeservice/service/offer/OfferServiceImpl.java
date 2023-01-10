@@ -150,6 +150,17 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
+    public List<Offer> getAllAcceptedOffersByUserId(Long userId){
+        return repository.getAllAcceptedOffersByUserId(userId);
+    }
+
+    @Override
+    public List<Offer> getAllDoneOffersByUserId(Long userId){
+        return repository.getAllDoneOffersByUserId(userId);
+    }
+    // TODO: 1/9/2023 AD up
+
+    @Override
     public List<Offer> findByExpertId(Long expertId){
         return repository.findOfferByExpertId(expertId);
     }

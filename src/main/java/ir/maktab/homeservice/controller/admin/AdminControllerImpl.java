@@ -35,39 +35,40 @@ public class AdminControllerImpl {
     private final TypeServiceService typeServiceService;
     private final OfferService offerService;
 
-    @PostMapping("/add")
+    @PostMapping("/add") //checked
     public void addAdmin(@RequestBody @Valid Admin admin) {
         service.addAdmin(admin);
     }
 
-    @PutMapping("/chPass")
+    @PutMapping("/chPass") //checked
     public void changePassword(@RequestParam @Valid String password , Authentication authentication) {
         Admin admin = (Admin) authentication.getPrincipal();
         service.changePassword(admin, password);
     }
 
-    @GetMapping("/{id}")
-    public Admin findById(@PathVariable Long id) {
-        return service.findById(id);
+    @GetMapping() //checked
+    public AdminDto admin(Authentication authentication) {
+        Admin admin =  (Admin) authentication.getPrincipal();
+        return adminDtoMapper(admin);
     }
 
-    @PostMapping("/addBasicService")
+    @PostMapping("/addBasicService") //checked
     public void addBasicService(@RequestBody @Valid BasicService basicService) {
         basicServicesService.addBasicService(basicService);
     }
 
-    @GetMapping("/showAllBasicServices")
+    @GetMapping("/showAllBasicServices") //checked
     public List<BasicServiceDto> showAllBasicServices() {
         return basicServicesService.findAll().stream()
                 .map(bs -> new BasicServiceDto(bs.getId(), bs.getName())).toList();
     }
 
-    @PutMapping("/descriptionChange/{typeServiceId}/{description}")
+    @PutMapping("/descriptionChange/{typeServiceId}/{description}") //checked
     public void descriptionChange(@PathVariable Long typeServiceId, @PathVariable String description) {
         typeServiceService.descriptionChange(typeServiceId, description);
     }
 
-    @PutMapping("/acceptExpert/{expertId}")
+    @PutMapping("/acceptExpert/{expertId}") //checked
     public void acceptExpert(@PathVariable Long expertId) {
         Expert acceptExpert = expertService.findById(expertId);
         expertService.acceptExpert(acceptExpert);
@@ -290,6 +291,14 @@ public class AdminControllerImpl {
                 .email(user.getEmail())
                 .credit(user.getCredit())
                 .signupDate(user.getSignupDateTime())
+                .build();
+    }
+
+    private AdminDto adminDtoMapper(Admin admin){
+        return AdminDto.builder()
+                .username(admin.getUsername())
+                .email(admin.getEmail())
+                .name(admin.getName())
                 .build();
     }
 

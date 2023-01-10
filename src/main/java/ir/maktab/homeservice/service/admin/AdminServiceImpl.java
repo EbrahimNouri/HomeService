@@ -3,6 +3,7 @@ package ir.maktab.homeservice.service.admin;
 
 import ir.maktab.homeservice.entity.Admin;
 import ir.maktab.homeservice.entity.enums.Role;
+import ir.maktab.homeservice.exception.CustomExceptionInvalid;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.exception.CustomExceptionUpdate;
 import ir.maktab.homeservice.repository.admin.AdminRepository;
@@ -24,6 +25,16 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     @Override
     public void addAdmin(Admin admin) {
+
+        if (adminRepository.existsByName(admin.getName()))
+            throw new CustomExceptionInvalid("name is invalid");
+
+        if (adminRepository.existsByEmail(admin.getEmail()))
+            throw new CustomExceptionInvalid("email is invalid");
+
+        if (adminRepository.existsByUsername(admin.getUsername()))
+            throw new CustomExceptionInvalid("username is invalid");
+
 
         admin.setRole(Role.ROLE_ADMIN);
         admin.setPassword(passwordEncoder.encode(admin.getPassword()));

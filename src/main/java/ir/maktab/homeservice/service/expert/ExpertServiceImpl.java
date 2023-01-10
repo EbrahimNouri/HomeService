@@ -13,16 +13,14 @@ import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.util.ApplicationContextProvider;
+import ir.maktab.homeservice.util.EmailSenderUtil;
 import ir.maktab.homeservice.util.FileUtil;
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,11 +40,10 @@ import java.util.Objects;
 @AllArgsConstructor
 public class ExpertServiceImpl implements ExpertService {
     private final ExpertTypeServiceService expertTypeServiceService;
-    private ExpertRepository repository;
-    private BCryptPasswordEncoder passwordEncoder;
-    private final JavaMailSender mailSender;
-
+    private final ExpertRepository repository;
+    private final BCryptPasswordEncoder passwordEncoder;
     private final ApplicationContextProvider applicationContext;
+    private final EmailSenderUtil emailSenderUtil;
 
 
     @Override
@@ -71,36 +68,7 @@ public class ExpertServiceImpl implements ExpertService {
 
         repository.save(expert);
 
-        sendVerificationEmail(expert, siteURL);
-    }
-
-    private void sendVerificationEmail(Expert expert, String siteURL)
-            throws MessagingException, UnsupportedEncodingException {
-        String toAddress = expert.getEmail();
-        String fromAddress = "homeservice.springboot@hotmail.com";
-        String senderName = "home service";
-        String subject = "Please verify your registration";
-        String content = "Dear [[name]],<br>"
-                + "Please click the link below to verify your registration:<br>"
-                + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
-                + "Thank you,<br>"
-                + "Your company name.";
-
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-
-        helper.setFrom(fromAddress, senderName);
-        helper.setTo(toAddress);
-        helper.setSubject(subject);
-
-        content = content.replace("[[name]]", expert.getFirstname() + " " + expert.getLastname());
-        String verifyURL = siteURL + "/verify?code=" + expert.getVerificationCode();
-
-        content = content.replace("[[URL]]", verifyURL);
-
-        helper.setText(content, true);
-
-        mailSender.send(message);
+        emailSenderUtil.sendVerificationEmail(expert, siteURL);
     }
 
     @Override
@@ -303,4 +271,14 @@ public class ExpertServiceImpl implements ExpertService {
     public Double getScore(Long expertId) {
         return findById(expertId).getAverageScore();
     }
+
+    @Override
+    public String getString(String code) {
+        if (verify(code)) {
+            return "verify_success";
+        } else {
+            return "verify_fail";
+        }
+    }
+
 }

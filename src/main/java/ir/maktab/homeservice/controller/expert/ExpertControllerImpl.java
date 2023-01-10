@@ -14,6 +14,7 @@ import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.order.OrderService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -43,28 +44,26 @@ public class ExpertControllerImpl {
     // TODO: 12/31/2022 AD
     @Secured("permitAll")
     @PostMapping("/register")
-    public void registerExpert(@RequestBody @Validated PersonRegisterDto personRegisterDto)
+    public String registerExpert(@RequestBody @Validated PersonRegisterDto personRegisterDto, HttpServletRequest request)
             throws MessagingException, UnsupportedEncodingException {
 
-        Expert temp = Expert.builder()
-                .firstname(personRegisterDto.getFirstname())
-                .lastname(personRegisterDto.getLastname())
-                .email(personRegisterDto.getEmail())
-                .password(personRegisterDto.getPassword())
-                .username(personRegisterDto.getUsername())
-                .build();
+        Expert temp = personDtoMapping(personRegisterDto);
 
-        expertService.register(temp, "/api/v1/expert");
+        expertService.register(temp, getSiteURL(request));
+
+        return "register_success";
     }
 
-    @GetMapping("/verify")
+    private String getSiteURL(HttpServletRequest request) {
+        String siteURL = request.getRequestURL().toString();
+        return siteURL.replace(request.getServletPath(), "");
+    }
+
+    @GetMapping("register/verify")
     public String verifyUser(@Param("code") String code) {
-        if (expertService.verify(code)) {
-            return "verify_success";
-        } else {
-            return "verify_fail";
-        }
+        return expertService.getString(code);
     }
+
 
     @GetMapping()
     public Expert showExpert(Authentication authentication) {
@@ -113,7 +112,7 @@ public class ExpertControllerImpl {
     @PostMapping("/addAvatar")
     public void addAvatar(Authentication authentication, @RequestBody MultipartFile file) throws IOException {
         Expert expert = (Expert) authentication.getPrincipal();
-        expertService.addAvatar(expert.getId(),file);
+        expertService.addAvatar(expert.getId(), file);
     }
 
     @GetMapping("/showAllOrderList/{typeService}")
@@ -123,7 +122,7 @@ public class ExpertControllerImpl {
     }
 
     @GetMapping("/getScore")
-    public Double getScore(Authentication authentication){
+    public Double getScore(Authentication authentication) {
         Expert expert = (Expert) authentication.getPrincipal();
         return expertService.getScore(expert.getId());
     }
@@ -135,6 +134,16 @@ public class ExpertControllerImpl {
                 .price(order.getSuggestedPrice())
                 .startOfWork(order.getStartOfWork())
                 .description(order.getDescription())
+                .build();
+    }
+
+    private Expert personDtoMapping(PersonRegisterDto personRegisterDto) {
+        return Expert.builder()
+                .firstname(personRegisterDto.getFirstname())
+                .lastname(personRegisterDto.getLastname())
+                .email(personRegisterDto.getEmail())
+                .password(personRegisterDto.getPassword())
+                .username(personRegisterDto.getUsername())
                 .build();
     }
 
