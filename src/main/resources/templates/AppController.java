@@ -50,7 +50,7 @@ public class AppController {
 	}	
 	
 	@GetMapping("/verify")
-	public String verifyUser(@Param("code") String code) {
+	public String verifyUser(@Param("code") Integer code) {
 		if (service.verify(code)) {
 			return "verify_success";
 		} else {

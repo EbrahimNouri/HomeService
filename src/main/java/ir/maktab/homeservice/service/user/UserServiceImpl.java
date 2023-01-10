@@ -15,7 +15,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.bytebuddy.utility.RandomString;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +54,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.ROLE_USER);
 
-        String randomCode = RandomString.make(64);
+        int randomCode = (int)(Math.random()*(99999-10000+1)+10000);
         user.setVerificationCode(randomCode);
         user.setEnabled(false);
 
@@ -65,7 +64,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean verify(String verificationCode) {
+    public boolean verify(Integer verificationCode) {
         User user = repository.findByVerificationCode(verificationCode).orElse(null);
 
         if (user == null || user.isEnabled()) {

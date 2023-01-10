@@ -19,7 +19,6 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.bytebuddy.utility.RandomString;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -62,7 +61,7 @@ public class ExpertServiceImpl implements ExpertService {
         expert.setAverageScore(0.0);
         expert.setCredit(0.0);
 
-        String randomCode = RandomString.make(64);
+        int randomCode = (int)(Math.random()*(99999-10000+1)+10000);
         expert.setVerificationCode(randomCode);
         expert.setEnabled(false);
 
@@ -72,7 +71,7 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     @Override
-    public boolean verify(String verificationCode) {
+    public boolean verify(Integer verificationCode) {
         Expert expert = repository.findByVerificationCode(verificationCode).orElse(null);
 
         if (expert == null || expert.isEnabled()) {
@@ -272,13 +271,5 @@ public class ExpertServiceImpl implements ExpertService {
         return findById(expertId).getAverageScore();
     }
 
-    @Override
-    public String getString(String code) {
-        if (verify(code)) {
-            return "verify_success";
-        } else {
-            return "verify_fail";
-        }
-    }
 
 }

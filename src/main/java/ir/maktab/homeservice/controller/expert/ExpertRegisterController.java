@@ -18,7 +18,7 @@ import java.io.UnsupportedEncodingException;
 
 @Controller
 @AllArgsConstructor
-@RequestMapping("api/v1/reg-expert")
+@RequestMapping("api/v1/register")
 public class ExpertRegisterController {
 
     private final ExpertService expertService;
@@ -30,7 +30,7 @@ public class ExpertRegisterController {
         return "signup_form";
     }*/
 
-    @PostMapping("/process_register")
+    @PostMapping("/expert")
     public String registerExpert(@RequestBody @Validated PersonRegisterDto personRegisterDto, HttpServletRequest request)
             throws MessagingException, UnsupportedEncodingException {
 
@@ -47,8 +47,12 @@ public class ExpertRegisterController {
     }
 
     @GetMapping("verify")
-    public String verifyUser(@Param("code") String code) {
-        return expertService.getString(code);
+    public String verifyUser(@Param("code") Integer code) {
+        if (expertService.verify(code)) {
+            return "verify_success";
+        } else {
+            return "verify_fail";
+        }
     }
 
 

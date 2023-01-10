@@ -2,7 +2,6 @@ package ir.maktab.homeservice.service.expert;
 
 import ir.maktab.homeservice.entity.Expert;
 import jakarta.mail.MessagingException;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -17,7 +16,7 @@ public interface ExpertService {
     void register(Expert expert, String siteURL)
             throws MessagingException, UnsupportedEncodingException;
 
-    boolean verify(String verificationCode);
+    boolean verify(Integer verificationCode);
 
     // TODO: 1/8/2023 AD controller
     Expert expertDetail(Long expertId);
@@ -55,6 +54,4 @@ public interface ExpertService {
     void delete(Long e);
 
     Double getScore(Long id);
-
-    @NotNull String getString(String code);
 }

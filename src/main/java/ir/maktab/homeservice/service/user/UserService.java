@@ -16,7 +16,7 @@ public interface UserService {
                 throws MessagingException, UnsupportedEncodingException;
 
 
-    boolean verify(String verificationCode);
+    boolean verify(Integer verificationCode);
 
     void registerUser(User user);
 

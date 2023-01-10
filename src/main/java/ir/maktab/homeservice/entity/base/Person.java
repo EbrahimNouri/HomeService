@@ -58,8 +58,8 @@ public abstract class Person extends BaseEntity implements UserDetails {
     @Column(name = "enabled")
     private boolean enabled = false;
 
-    @Column(name = "verification_code", length = 64)
-    private String verificationCode;
+    @Column(name = "verification_code", length = 5)
+    private Integer verificationCode;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

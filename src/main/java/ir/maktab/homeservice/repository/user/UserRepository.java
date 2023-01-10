@@ -24,6 +24,6 @@ public interface UserRepository extends JpaRepository<User, Long> , JpaSpecifica
 
     Optional<User> findByUsername(String username);
     @Query("FROM user_table u WHERE u.verificationCode = ?1")
-    Optional<User> findByVerificationCode(String code);
+    Optional<User> findByVerificationCode(Integer code);
 
 }
