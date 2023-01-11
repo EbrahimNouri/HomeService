@@ -32,9 +32,9 @@ public class UserRegisterController {
     @GetMapping("verifyUser/{code}")
     public String verifyExpert(@PathVariable Integer code) {
         if (userService.verify(code)) {
-            return "verify_success";
+            return "verify success waiting for accept by admin";
         } else {
-            return "verify_fail";
+            return "verify fail";
         }
     }
 }

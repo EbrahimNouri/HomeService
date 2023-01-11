@@ -38,5 +38,7 @@ public interface UserService {
 
     void delete(User user);
 
+    User userDetail(User user);
+
     // TODO: 1/4/2023 AD
 }

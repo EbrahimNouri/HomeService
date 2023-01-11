@@ -34,4 +34,8 @@ public interface OrderService {
     List<Order> findByTypeService(TypeService typeService);
 
     int countOfOrdersByUserId(Long userId);
+
+    List<Order> findByUserId(User id);
+
+    List<Order> findByUserId(Long id);
 }

@@ -255,6 +255,11 @@ public class OrderServiceImpl implements OrderService {
         return repository.countOfOrdersByUserId(userId);
     }
 
+    @Override
+    public List<Order> findByUserId(Long id) {
+        return repository.findByUserId(id);
+    }
+
 
     private boolean orderChecker(Order order) {
         return

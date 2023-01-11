@@ -1,6 +1,7 @@
 package ir.maktab.homeservice.service.user;
 
 
+import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.User;
 import ir.maktab.homeservice.entity.enums.Role;
 import ir.maktab.homeservice.exception.CustomExceptionInvalid;
@@ -9,6 +10,8 @@ import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.exception.CustomNotChoosingException;
 import ir.maktab.homeservice.repository.order.OrderRepository;
 import ir.maktab.homeservice.repository.user.UserRepository;
+import ir.maktab.homeservice.service.order.OrderService;
+import ir.maktab.homeservice.util.ApplicationContextProvider;
 import ir.maktab.homeservice.util.EmailSenderUtil;
 import ir.maktab.homeservice.util.SpecificationUtil;
 import jakarta.mail.MessagingException;
@@ -34,6 +37,8 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final SpecificationUtil specificationUtil;
     private final EmailSenderUtil emailSenderUtil;
+
+    private final ApplicationContextProvider applicationContext;
 
 
     @Override
@@ -155,7 +160,14 @@ public class UserServiceImpl implements UserService {
         repository.delete(user);
     }
 
-    // TODO: 1/4/2023 AD
-
+    @Override
+    public User userDetail(User user){
+        List<Order> orders = applicationContext
+                .getContext()
+                .getBean(OrderService.class)
+                .findByUserId(user.getId());
+        user.setOrders(orders);
+        return user;
+    }
 
 }

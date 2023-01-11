@@ -40,7 +40,7 @@ public class UserControllerImpl {
     @PostMapping("/register")
     public void registerUser(@RequestBody @Validated PersonRegisterDto personRegisterDto)
             throws MessagingException, UnsupportedEncodingException {
-        
+
         User temp = User.builder()
                 .firstname(personRegisterDto.getFirstname())
                 .lastname(personRegisterDto.getLastname())
@@ -95,7 +95,7 @@ public class UserControllerImpl {
         Order order = orderService.findById(orderId);
 
         return offerService.showOffersByOrder(order).stream()
-                .map(this::offerMapping).toList();
+                .map(OfferDto::offerToOfferDtoMapping).toList();
     }
 
     @PutMapping("/chooseOffer/{offerId}")
@@ -146,7 +146,7 @@ public class UserControllerImpl {
     @GetMapping("/findByOrderIdSortedPrice/{orderId}")
     public List<OfferDto> findByOrderIdSortedPrice(@PathVariable Long orderId, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        return offerService.findByOrderIdSortedPrice(orderId, user.getId()).stream().map(this::offerMapping).toList();
+        return offerService.findByOrderIdSortedPrice(orderId, user.getId()).stream().map(OfferDto::offerToOfferDtoMapping).toList();
     }
 
     @GetMapping("/findByOrderIdSortedByPoint/{orderId}")
@@ -156,7 +156,7 @@ public class UserControllerImpl {
         User user = (User) authentication.getPrincipal();
 
         return offerService.findByOrderIdSortedByPoint(orderId, user.getId()).stream()
-                .map(this::offerMapping).toList();
+                .map(OfferDto::offerToOfferDtoMapping).toList();
     }
 
     @GetMapping("/showAllTypeService/{id}")
@@ -193,29 +193,13 @@ public class UserControllerImpl {
         orderService.setOrderToPaidAppPayment(order, user);
     }
 
-
-    private OfferDto offerMapping(Offer offer) {
-        return OfferDto.builder()
-                .orderId(offer.getOrder().getId())
-                .expertId(offer.getExpert().getId())
-                .startDate(offer.getStartDate())
-                .suggestedPrice(offer.getSuggestedPrice())
-                .endDate(offer.getEndDate())
-                .description(offer.getDescription())
-                .suggestedPrice(offer.getSuggestedPrice())
-                .build();
+    @GetMapping("/detail")
+    public UserOrderDto userDetail(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return UserOrderDto.userToUserOrderDtoMapper(userService.userDetail(user));
     }
 
-    private personFindDto userMapper(User user) {
-        return personFindDto.builder()
-                .id(user.getId())
-                .signupDate(user.getSignupDateTime())
-                .personType(PersonType.USER)
-                .email(user.getEmail())
-                .credit(user.getCredit())
-                .firstname(user.getFirstname())
-                .lastname(user.getLastname())
-                .build();
-    }
+
+
 }
 

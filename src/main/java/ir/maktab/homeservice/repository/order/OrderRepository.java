@@ -37,4 +37,6 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
 
     @Query("select count(o) from Order o where o.user.id = ?1")
     int countOfOrdersByUserId(Long userId);
+
+    List<Order> findByUserId(Long userId);
 }

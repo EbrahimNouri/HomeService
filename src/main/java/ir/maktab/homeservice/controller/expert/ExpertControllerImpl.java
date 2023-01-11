@@ -1,9 +1,9 @@
 package ir.maktab.homeservice.controller.expert;
 
 
+import ir.maktab.homeservice.dto.ExpertOffersDto;
 import ir.maktab.homeservice.dto.OfferDto;
 import ir.maktab.homeservice.dto.OrderDto;
-import ir.maktab.homeservice.dto.PersonRegisterDto;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
@@ -90,7 +90,7 @@ public class ExpertControllerImpl {
     @GetMapping("/showAllOrderList/{typeService}")
     public List<OrderDto> showAllOrderList(@PathVariable Long typeService) {
         TypeService typeServices = typeServiceService.findById(typeService);
-        return orderService.findByTypeService(typeServices).stream().map(this::orderMapping).toList();
+        return orderService.findByTypeService(typeServices).stream().map(OrderDto::orderToOrderDtoMapper).toList();
     }
 
     @GetMapping("/getScore")
@@ -99,24 +99,11 @@ public class ExpertControllerImpl {
         return expertService.getScore(expert.getId());
     }
 
-    public OrderDto orderMapping(Order order) {
-        return OrderDto.builder()
-                .userId(order.getUser().getId())
-                .address(order.getAddress())
-                .price(order.getSuggestedPrice())
-                .startOfWork(order.getStartOfWork())
-                .description(order.getDescription())
-                .build();
-    }
-
-    private Expert personDtoMapping(PersonRegisterDto personRegisterDto) {
-        return Expert.builder()
-                .firstname(personRegisterDto.getFirstname())
-                .lastname(personRegisterDto.getLastname())
-                .email(personRegisterDto.getEmail())
-                .password(personRegisterDto.getPassword())
-                .username(personRegisterDto.getUsername())
-                .build();
+    @GetMapping("/detail")
+    public ExpertOffersDto expertDetail(Authentication authentication) {
+        Expert expert = (Expert) authentication.getPrincipal();
+        return
+                ExpertOffersDto.expertMappingToExpertOfferDto(expertService.expertDetail(expert.getId()));
     }
 
 }

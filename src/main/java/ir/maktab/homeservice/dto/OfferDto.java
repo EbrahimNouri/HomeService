@@ -1,6 +1,7 @@
 package ir.maktab.homeservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import ir.maktab.homeservice.entity.Offer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,4 +28,15 @@ public class OfferDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startDate;
+
+    public static OfferDto offerToOfferDtoMapping(Offer offer){
+        return OfferDto.builder()
+                .suggestedPrice(offer.getSuggestedPrice())
+                .description(offer.getDescription())
+                .expertId(offer.getExpert().getId())
+                .orderId(offer.getOrder().getId())
+                .startDate(offer.getStartDate())
+                .endDate(offer.getEndDate())
+                .build();
+    }
 }
