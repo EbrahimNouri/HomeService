@@ -1,8 +1,8 @@
-package ir.maktab.homeservice.controller.expert;
+package ir.maktab.homeservice.controller.user;
 
 import ir.maktab.homeservice.dto.PersonRegisterDto;
-import ir.maktab.homeservice.entity.Expert;
-import ir.maktab.homeservice.service.expert.ExpertService;
+import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.service.user.UserService;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -13,31 +13,25 @@ import java.io.UnsupportedEncodingException;
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/v1/register")
-public class ExpertRegisterController {
+public class UserRegisterController {
 
-    private final ExpertService expertService;
+    private final UserService userService;
 
-/*    @GetMapping("/register")
-    public String showRegistrationForm(Model model) {
-        model.addAttribute("user", new Expert());
 
-        return "signup_form";
-    }*/
-
-    @PostMapping("/expert")
+    @PostMapping("/user")
     public String registerExpert(@RequestBody @Validated PersonRegisterDto personRegisterDto)
             throws MessagingException, UnsupportedEncodingException {
 
-        Expert temp = PersonRegisterDto.personDtoExpertMapping(personRegisterDto);
+        User temp = PersonRegisterDto.personDtoUserMapping(personRegisterDto);
 
-        expertService.register(temp, "http://localhost:8099/api/v1/register/verifyExpert/");
+        userService.register(temp, "http://localhost:8099/api/v1/register/verifyUser/");
 
         return "register_success";
     }
 
-    @GetMapping("verifyExpert/{code}")
+    @GetMapping("verifyUser/{code}")
     public String verifyExpert(@PathVariable Integer code) {
-        if (expertService.verify(code)) {
+        if (userService.verify(code)) {
             return "verify_success";
         } else {
             return "verify_fail";

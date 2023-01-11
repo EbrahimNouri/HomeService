@@ -38,6 +38,7 @@ public interface ExpertRepository extends JpaRepository<Expert, Long>, JpaSpecif
     boolean existsByEmail(String email);
     boolean existsByUsername(String username);
 
-    @Query("FROM Expert x WHERE x.verificationCode = ?1")
     Optional<Expert> findByVerificationCode(Integer code);
+
+    List<Expert> findByExpertStatus(ExpertStatus expertStatus);
 }

@@ -5,10 +5,7 @@ import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.entity.enums.Role;
-import ir.maktab.homeservice.exception.CustomExceptionInvalid;
-import ir.maktab.homeservice.exception.CustomExceptionNotFind;
-import ir.maktab.homeservice.exception.CustomExceptionSave;
-import ir.maktab.homeservice.exception.CustomExceptionUpdate;
+import ir.maktab.homeservice.exception.*;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
 import ir.maktab.homeservice.service.offer.OfferService;
@@ -58,10 +55,11 @@ public class ExpertServiceImpl implements ExpertService {
         expert.setExpertStatus(ExpertStatus.NEW);
         expert.setPassword(passwordEncoder.encode(expert.getPassword()));
         expert.setRole(Role.ROLE_EXPERT);
+        expert.setEnabled(false);
         expert.setAverageScore(0.0);
         expert.setCredit(0.0);
 
-        int randomCode = (int)(Math.random()*(99999-10000+1)+10000);
+        int randomCode = (int) (Math.random() * (99999 - 10000 + 1) + 10000);
         expert.setVerificationCode(randomCode);
         expert.setEnabled(false);
 
@@ -72,22 +70,28 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Override
     public boolean verify(Integer verificationCode) {
-        Expert expert = repository.findByVerificationCode(verificationCode).orElse(null);
+        Expert expert = repository.findByVerificationCode(verificationCode)
+                .orElseThrow(() -> new CustomNotChoosingException("this code is invalid"));
 
-        if (expert == null || expert.isEnabled()) {
+        if (expert.getVerificationCode() == null || expert.isEnabled()) {
             return false;
         } else {
             expert.setVerificationCode(null);
             expert.setEnabled(true);
+            expert.setExpertStatus(ExpertStatus.NEW);
             repository.save(expert);
 
             return true;
         }
     }
 
+    public List<Expert> showAllNewExperts(){
+        return repository.findByExpertStatus(ExpertStatus.NEW);
+    }
+
     // TODO: 1/8/2023 AD controller
     @Override
-    public Expert expertDetail(Long expertId){
+    public Expert expertDetail(Long expertId) {
 
         Expert expert = findById(expertId);
         List<Offer> offers = applicationContext
@@ -98,7 +102,6 @@ public class ExpertServiceImpl implements ExpertService {
         return expert;
 
     }
-
 
     @Transactional
     @Override

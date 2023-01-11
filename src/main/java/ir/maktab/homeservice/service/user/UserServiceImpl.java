@@ -6,6 +6,7 @@ import ir.maktab.homeservice.entity.enums.Role;
 import ir.maktab.homeservice.exception.CustomExceptionInvalid;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.exception.CustomExceptionSave;
+import ir.maktab.homeservice.exception.CustomNotChoosingException;
 import ir.maktab.homeservice.repository.order.OrderRepository;
 import ir.maktab.homeservice.repository.user.UserRepository;
 import ir.maktab.homeservice.util.EmailSenderUtil;
@@ -54,20 +55,21 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.ROLE_USER);
 
-        int randomCode = (int)(Math.random()*(99999-10000+1)+10000);
+        int randomCode = (int) (Math.random() * (99999 - 10000 + 1) + 10000);
         user.setVerificationCode(randomCode);
         user.setEnabled(false);
 
         repository.save(user);
 
-         emailSenderUtil.sendVerificationEmail(user, siteURL);
+        emailSenderUtil.sendVerificationEmail(user, siteURL);
     }
 
     @Override
     public boolean verify(Integer verificationCode) {
-        User user = repository.findByVerificationCode(verificationCode).orElse(null);
+        User user = repository.findByVerificationCode(verificationCode)
+                .orElseThrow(() -> new CustomNotChoosingException("this code is invalid"));
 
-        if (user == null || user.isEnabled()) {
+        if (user.getVerificationCode() == null || user.isEnabled()) {
             return false;
         } else {
             user.setVerificationCode(null);
@@ -81,7 +83,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void registerUser(@Valid User user) {
 
-        if (user.getEmail() == null && user.getPassword() == null)
+        if (user.getEmail() == null
+                && user.getPassword() == null
+                && user.getUsername() == null)
             throw new CustomExceptionSave("user not saved");
 
         repository.save(user);

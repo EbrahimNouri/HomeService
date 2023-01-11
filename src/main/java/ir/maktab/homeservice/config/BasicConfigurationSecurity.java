@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -110,7 +109,7 @@ public class BasicConfigurationSecurity {
         return http.build();
     }
 
-    @Bean
+/*    @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
 
         return (web) -> web.ignoring()
@@ -120,7 +119,7 @@ public class BasicConfigurationSecurity {
                         , "/api/v1/expert/verify"
                         , "/api/v1/expert/process_register"
                         , "/api/v1/expert/register");
-    }
+    }*/
 
     @Bean
     public AuthenticationManager authenticationManager

@@ -56,7 +56,7 @@ public abstract class Person extends BaseEntity implements UserDetails {
     private Role role;
 
     @Column(name = "enabled")
-    private boolean enabled = false;
+    private boolean enabled;
 
     @Column(name = "verification_code", length = 5)
     private Integer verificationCode;
@@ -83,6 +83,6 @@ public abstract class Person extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 }
