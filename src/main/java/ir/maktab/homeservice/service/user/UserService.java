@@ -40,5 +40,9 @@ public interface UserService {
 
     User userDetail(User user);
 
+    List<User> userFindBySpecification(Map<String, String> map);
+
+    List<User> userSpecification(Map<String, String> map);
+
     // TODO: 1/4/2023 AD
 }

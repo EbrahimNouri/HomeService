@@ -35,7 +35,5 @@ public interface OrderService {
 
     int countOfOrdersByUserId(Long userId);
 
-    List<Order> findByUserId(User id);
-
     List<Order> findByUserId(Long id);
 }

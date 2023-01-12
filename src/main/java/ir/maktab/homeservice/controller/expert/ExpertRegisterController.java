@@ -12,17 +12,11 @@ import java.io.UnsupportedEncodingException;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("api/v1/register")
+@RequestMapping
 public class ExpertRegisterController {
 
     private final ExpertService expertService;
 
-/*    @GetMapping("/register")
-    public String showRegistrationForm(Model model) {
-        model.addAttribute("user", new Expert());
-
-        return "signup_form";
-    }*/
 
     @PostMapping("/expert")
     public String registerExpert(@RequestBody @Validated PersonRegisterDto personRegisterDto)

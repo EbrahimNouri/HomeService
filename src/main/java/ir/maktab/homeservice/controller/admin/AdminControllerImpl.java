@@ -8,6 +8,7 @@ import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
 import ir.maktab.homeservice.service.offer.OfferService;
+import ir.maktab.homeservice.service.order.OrderService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
 import jakarta.validation.Valid;
@@ -34,6 +35,7 @@ public class AdminControllerImpl {
     private final ExpertTypeServiceService expertTypeServiceService;
     private final TypeServiceService typeServiceService;
     private final OfferService offerService;
+    private final OrderService orderService;
 
     @PostMapping("/add") //checked
     public void addAdmin(@RequestBody @Valid Admin admin) {
@@ -41,14 +43,14 @@ public class AdminControllerImpl {
     }
 
     @PutMapping("/chPass") //checked
-    public void changePassword(@RequestParam @Valid String password , Authentication authentication) {
+    public void changePassword(@RequestParam @Valid String password, Authentication authentication) {
         Admin admin = (Admin) authentication.getPrincipal();
         service.changePassword(admin, password);
     }
 
     @GetMapping() //checked
     public AdminDto admin(Authentication authentication) {
-        Admin admin =  (Admin) authentication.getPrincipal();
+        Admin admin = (Admin) authentication.getPrincipal();
         return adminDtoMapper(admin);
     }
 
@@ -132,7 +134,7 @@ public class AdminControllerImpl {
     public OfferDto findOfferById(@PathVariable Long id) {
 
         Offer offer = offerService.findById(id);
-         return OfferDto.builder()
+        return OfferDto.builder()
                 .description(offer.getDescription())
                 .endDate(offer.getEndDate())
                 .startDate(offer.getStartDate())
@@ -265,19 +267,43 @@ public class AdminControllerImpl {
         findDtos.addAll(userService.findBy(stringMap).stream().map(PersonFindDto::userTopPersonFindDtoMapper).toList());
         return findDtos;
     }
+
     @GetMapping("/findAllExpertReq")
     public List<PersonFindDto> findAllExpertReq(@RequestParam Map<String, String> stringMap) {
         return expertService.findBy(stringMap).stream().map(PersonFindDto::expertTopPersonFindDtoMapper).toList();
     }
+
     @GetMapping("/findAllUserReq")
     public List<PersonFindDto> findAllUserReq(@RequestParam Map<String, String> stringMap) {
         return userService.findBy(stringMap).stream()
                 .map((PersonFindDto::userTopPersonFindDtoMapper)).toList();
     }
 
+    @GetMapping("/userDetail/{id}")
+    public User userDetail(@PathVariable Long id) {
+        User byId = userService.findById(id);
+        return userService.userDetail(byId);
+    }
+
+    @PostMapping("/offerInformation")
+    public List<OfferDto> offerDtos(@RequestParam Map<String, String> map) {
+        return offerService.offerSpecification(map).stream()
+                .map(OfferDto::offerToOfferDtoMapping).toList();
+    }
+
+    @PostMapping("/orderInformation")
+    public List<User> orderDtos(@RequestParam Map<String, String> map) {
+        return userService.userSpecification(map).stream()
+                .toList();
+    }
+
+    @GetMapping("/countOfOrder/{userId}}")
+    public int countOfOrder(@PathVariable Long userId) {
+        return orderService.countOfOrdersByUserId(userId);
+    }
 
 
-    private AdminDto adminDtoMapper(Admin admin){
+    private AdminDto adminDtoMapper(Admin admin) {
         return AdminDto.builder()
                 .username(admin.getUsername())
                 .email(admin.getEmail())
@@ -295,10 +321,15 @@ public class AdminControllerImpl {
     }
 
     @GetMapping("/findByBasicService/{basicServiceId}")
-    public List<PersonFindDto> findByBasicService(@PathVariable Long basicServiceId){
-       return expertService.findByBasicService(basicServiceId).stream()
-               .map(PersonFindDto::expertTopPersonFindDtoMapper).toList();
+    public List<PersonFindDto> findByBasicService(@PathVariable Long basicServiceId) {
+        return expertService.findByBasicService(basicServiceId).stream()
+                .map(PersonFindDto::expertTopPersonFindDtoMapper).toList();
     }
 
+    @GetMapping("/showOrderSuggestionOrSelection")
+    public List<OrderDto> showOrderSuggestionOrSelection() {
+        return orderService.showOrderSuggestionOrSelection().stream()
+                .map(OrderDto::orderToOrderDtoMapper).toList();
+    }
 
 }

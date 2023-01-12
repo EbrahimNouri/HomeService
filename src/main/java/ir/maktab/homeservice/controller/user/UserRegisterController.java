@@ -12,7 +12,7 @@ import java.io.UnsupportedEncodingException;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("api/v1/register")
+@RequestMapping
 public class UserRegisterController {
 
     private final UserService userService;

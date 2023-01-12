@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -41,31 +42,6 @@ public class BasicConfigurationSecurity {
         this.adminRepository = adminRepository;
     }
 
-
-/*    @Bean
-    protected void userConfigure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(username -> userRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username))
-        ).passwordEncoder(passwordEncoder);
-    }
-
-    @Bean
-    protected void adminConfigure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(username -> adminRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username))
-        ).passwordEncoder(passwordEncoder);
-    }
-
-    @Bean
-    protected void expertConfigure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(username -> expertRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username))
-        ).passwordEncoder(passwordEncoder);
-    }*/
-
     @Bean
     public InMemoryUserDetailsManager userDetailsServiceInMemory(PasswordEncoder passwordEncoder) {
         UserDetails user = User.withUsername("expert")
@@ -90,6 +66,7 @@ public class BasicConfigurationSecurity {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
+
                 .authorizeHttpRequests(
                         (auth) -> auth.requestMatchers(
                                 "api/v1/expert/**").hasRole("EXPERT"))
@@ -103,23 +80,20 @@ public class BasicConfigurationSecurity {
                                 "api/v1/admin/**").hasRole("ADMIN"))
 
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-
+                .authorizeRequests().anyRequest().permitAll().and()
                 .httpBasic();
 
         return http.build();
     }
 
-/*    @Bean
+    @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
 
         return (web) -> web.ignoring()
                 .requestMatchers(
-                        "/api/v1/user/register"
-                        , "/api/v1/admin/add"
-                        , "/api/v1/expert/verify"
-                        , "/api/v1/expert/process_register"
-                        , "/api/v1/expert/register");
-    }*/
+                        "/api/v1/register/**"
+                );
+    }
 
     @Bean
     public AuthenticationManager authenticationManager
@@ -135,15 +109,15 @@ public class BasicConfigurationSecurity {
                         .findByUsername(username)
                         .orElseThrow(() -> new UsernameNotFoundException(String
                                 .format("this %s not found", username))))
-                .passwordEncoder(passwordEncoder);
+                .passwordEncoder(passwordEncoder).and()
 
-        auth.userDetailsService(username -> adminRepository
+                .userDetailsService(username -> adminRepository
                         .findByUsername(username)
                         .orElseThrow(() -> new UsernameNotFoundException(String
                                 .format("this %s not found", username))))
-                .passwordEncoder(passwordEncoder);
+                .passwordEncoder(passwordEncoder).and()
 
-        auth.userDetailsService(username -> expertRepository
+                .userDetailsService(username -> expertRepository
                         .findByUsername(username)
                         .orElseThrow(() -> new UsernameNotFoundException(String
                                 .format("this %s not found", username))))

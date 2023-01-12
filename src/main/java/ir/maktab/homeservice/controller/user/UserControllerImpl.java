@@ -199,7 +199,18 @@ public class UserControllerImpl {
         return UserOrderDto.userToUserOrderDtoMapper(userService.userDetail(user));
     }
 
+    @GetMapping("/myOrders")
+    public List<OrderDto> myOffers(Authentication authentication){
+        User principal = (User) authentication.getPrincipal();
+        return orderService.findByUserId(principal.getId())
+                .stream().map(OrderDto::orderToOrderDtoMapper).toList();
+    }
 
+    @GetMapping("/myPrice")
+    public Double myPrice(Authentication authentication){
+        User principal = (User) authentication.getPrincipal();
+        return principal.getCredit();
+    }
 
 }
 

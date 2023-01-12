@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User userDetail(User user){
+    public User userDetail(User user) {
         List<Order> orders = applicationContext
                 .getContext()
                 .getBean(OrderService.class)
@@ -170,4 +170,13 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Override
+    public List<User> userFindBySpecification(Map<String, String> map) {
+        return repository.findAll(specificationUtil.userSpecification(map));
+    }
+
+    @Override
+    public List<User> userSpecification(Map<String, String> map){
+        return repository.findAll(specificationUtil.userSpecification(map));
+    }
 }

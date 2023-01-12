@@ -2,7 +2,6 @@ package ir.maktab.homeservice.util;
 
 import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.OrderType;
-import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -26,36 +25,6 @@ public class SpecificationUtil {
         }
         return Specification.allOf(specifications);
     }
-
-    static Specification<Order> hasDate(LocalDateTime start, LocalDateTime end) {
-        return (orderRoot, criteriaQuery, criteriaBuilder) -> {
-            Join<Order, Offer> join = orderRoot.join(Order_.OFFERS);
-            return criteriaBuilder.and(criteriaBuilder.greaterThanOrEqualTo
-                    (join.get(Offer_.START_DATE), start), criteriaBuilder
-                    .lessThanOrEqualTo(join.get(Offer_.END_DATE), end));
-        };
-    }
-
-    static Specification<Order> hasTypeService(Long id) {
-        return (orderRoot, criteriaQuery, criteriaBuilder) ->
-
-                criteriaBuilder.equal(orderRoot.get(TypeService_.id), id);
-
-    }
-
-
-/*    static Specification<Order> hasGtePrice(Double price) {
-        return (orderRoot, criteriaQuery, criteriaBuilder) -> {
-            Join<Order, Offer> join = orderRoot.join(Order_.offers);
-            return criteriaBuilder.greaterThanOrEqualTo(orderRoot.join(Order_.offers).get(Offer_.suggestedPrice), price);
-        };
-    }
-
-    static Specification<Order> hasLtePrice(Double price) {
-        return (orderRoot, criteriaQuery, criteriaBuilder) -> {
-             return criteriaBuilder.lessThanOrEqualTo(orderRoot.join(Order_.offers).get(Offer_.suggestedPrice), price);
-        };
-    }*/
 
     public Specification<Order> OrderSpecification(Map<String, String> map) {
 
@@ -103,8 +72,6 @@ public class SpecificationUtil {
         }
         return orderSpecification;
     }
-
-    // TODO: 1/7/2023 AD
 
     public Specification<Offer> expertSpecification(Map<String, String> map) {
 
@@ -174,20 +141,4 @@ public class SpecificationUtil {
         }
         return userSpecification;
     }
-
-
-
-/*
-    @PersistenceContext
-    EntityManager entityManager;
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
-    Root<Order> root = criteriaQuery.from(Order.class);
-
-    Predicate equal = criteriaBuilder.greaterThanOrEqualTo(root.get(Order_.startOfWork), Long);
-    CriteriaQuery<Order> where = criteriaQuery.where(equal);
-        entityManager.createQuery(where);
-*/
-
-
 }

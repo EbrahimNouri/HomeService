@@ -4,6 +4,7 @@ import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 
 import java.util.List;
+import java.util.Map;
 
 public interface OfferService {
 
@@ -34,4 +35,6 @@ public interface OfferService {
     List<Offer> getAllDoneOffersByUserId(Long userId);
 
     List<Offer> findByExpertId(Long expertId);
+
+    List<Offer> offerSpecification(Map<String, String> map);
 }

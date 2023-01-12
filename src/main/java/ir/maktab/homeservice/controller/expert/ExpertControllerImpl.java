@@ -106,4 +106,17 @@ public class ExpertControllerImpl {
                 ExpertOffersDto.expertMappingToExpertOfferDto(expertService.expertDetail(expert.getId()));
     }
 
+    @GetMapping("/myOffers")
+    public List<OfferDto> myOffers(Authentication authentication){
+        Expert principal = (Expert) authentication.getPrincipal();
+        return offerService.findByExpertId(principal.getId()).stream()
+                .map(OfferDto::offerToOfferDtoMapping).toList();
+    }
+
+    @GetMapping("/myPrice")
+    public Double myPrice(Authentication authentication){
+        Expert principal = (Expert) authentication.getPrincipal();
+        return principal.getCredit();
+    }
+
 }

@@ -9,6 +9,7 @@ import ir.maktab.homeservice.exception.*;
 import ir.maktab.homeservice.repository.offer.OfferRepository;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
 import ir.maktab.homeservice.service.order.OrderService;
+import ir.maktab.homeservice.util.SpecificationUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -25,8 +27,9 @@ import java.util.Objects;
 @Transactional
 public class OfferServiceImpl implements OfferService {
     private final ExpertTypeServiceService expertTypeServiceService;
-    private OfferRepository repository;
-    private ApplicationContext applicationContextProvider;
+    private final OfferRepository repository;
+    private final ApplicationContext applicationContextProvider;
+    private final SpecificationUtil specificationUtil;
 
     @Override
     public void save(Offer offer) {
@@ -140,29 +143,34 @@ public class OfferServiceImpl implements OfferService {
 
     // TODO: 1/4/2023 AD test blow 
     @Override
-    public int countOfOffers(Long expertId){
+    public int countOfOffers(Long expertId) {
         return repository.countOfOffers(expertId);
     }
 
     @Override
-    public int countOffOrderToDone(Long expertId){
+    public int countOffOrderToDone(Long expertId) {
         return repository.countOffOrderToDone(expertId);
     }
 
     @Override
-    public List<Offer> getAllAcceptedOffersByUserId(Long userId){
+    public List<Offer> getAllAcceptedOffersByUserId(Long userId) {
         return repository.getAllAcceptedOffersByUserId(userId);
     }
 
     @Override
-    public List<Offer> getAllDoneOffersByUserId(Long userId){
+    public List<Offer> getAllDoneOffersByUserId(Long userId) {
         return repository.getAllDoneOffersByUserId(userId);
     }
     // TODO: 1/9/2023 AD up
 
     @Override
-    public List<Offer> findByExpertId(Long expertId){
+    public List<Offer> findByExpertId(Long expertId) {
         return repository.findOfferByExpertId(expertId);
+    }
+
+    @Override
+    public List<Offer> offerSpecification(Map<String, String> map) {
+        return repository.findAll(specificationUtil.expertSpecification(map));
     }
 
     private boolean checkLevelWork(Offer offer) {
@@ -170,7 +178,6 @@ public class OfferServiceImpl implements OfferService {
         return order.getId() != null && offer.getId() != null
                 && offer.getStartDate().isAfter(LocalDateTime.now());
     }
-
 
 
     private boolean offerRegistrationCheck(Offer offer, Order order) {
@@ -188,5 +195,7 @@ public class OfferServiceImpl implements OfferService {
         } else
             throw new CustomExceptionSave("offer registration not valid");
     }
+
+
 }
 
