@@ -1,6 +1,7 @@
 package ir.maktab.homeservice.entity;
 
 import ir.maktab.homeservice.entity.base.BaseEntity;
+import ir.maktab.homeservice.entity.base.Person;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -25,7 +26,7 @@ public class Offer extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @NotNull
-    private Expert expert;
+    private Person expert;
 
     @Column(nullable = false)
     private LocalDateTime startDate;

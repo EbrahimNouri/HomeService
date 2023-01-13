@@ -8,4 +8,5 @@ import lombok.Data;
 public class ExpertTypeServiceDto {
     private Long expertId;
     private Long typeServiceId;
+
 }

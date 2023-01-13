@@ -1,7 +1,7 @@
 package ir.maktab.homeservice.service.user;
 
 
-import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.entity.base.Person;
 import jakarta.mail.MessagingException;
 
 import java.io.UnsupportedEncodingException;
@@ -10,39 +10,39 @@ import java.util.Map;
 
 public interface UserService {
 
-    void save(User user);
+    void save(Person user);
 
-    void register(User user, String siteURL)
+    void register(Person user, String siteURL)
                 throws MessagingException, UnsupportedEncodingException;
 
 
     boolean verify(Integer verificationCode);
 
-    void registerUser(User user);
+    void registerUser(Person user);
 
-    void changePassword(User user, String password);
+    void changePassword(Person user, String password);
 
-    User findById(Long id);
+    Person findById(Long id);
 
-    List<User> findAll();
+    List<Person> findAll();
 
-    List<User> findByFirstname(String firstname);
+    List<Person> findByFirstname(String firstname);
 
-    List<User> findByLastname(String lastname);
+    List<Person> findByLastname(String lastname);
 
-    User findByEmail(String email);
+    Person findByEmail(String email);
 
-    List<User> findBy(Map<String, String> find);
+    List<Person> findBy(Map<String, String> find);
 
     boolean existsByEmail(String email);
 
-    void delete(User user);
+    void delete(Person user);
 
-    User userDetail(User user);
+    Person userDetail(Person user);
 
-    List<User> userFindBySpecification(Map<String, String> map);
+    List<Person> userFindBySpecification(Map<String, String> map);
 
-    List<User> userSpecification(Map<String, String> map);
+    List<Person> userSpecification(Map<String, String> map);
 
     // TODO: 1/4/2023 AD
 }

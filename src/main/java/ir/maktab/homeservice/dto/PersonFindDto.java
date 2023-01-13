@@ -1,7 +1,6 @@
 package ir.maktab.homeservice.dto;
 
-import ir.maktab.homeservice.entity.Expert;
-import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.entity.base.Person;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,7 +17,7 @@ public class PersonFindDto {
     private Double credit;
     private LocalDateTime signupDate;
 
-    public static PersonFindDto userTopPersonFindDtoMapper(User user) {
+    public static PersonFindDto userTopPersonFindDtoMapper(Person user) {
         return PersonFindDto.builder()
                 .id(user.getId())
                 .signupDate(user.getSignupDateTime())
@@ -30,11 +29,22 @@ public class PersonFindDto {
                 .build();
     }
 
-    public static PersonFindDto expertTopPersonFindDtoMapper(Expert expert) {
+    public static PersonFindDto expertTopPersonFindDtoMapper(Person expert) {
         return PersonFindDto.builder()
                 .id(expert.getId())
                 .signupDate(expert.getSignupDateTime())
                 .personType(PersonType.EXPERT)
+                .email(expert.getEmail())
+                .credit(expert.getCredit())
+                .firstname(expert.getFirstname())
+                .lastname(expert.getLastname())
+                .build();
+    }
+    public static PersonFindDto adminTopPersonFindDtoMapper(Person expert) {
+        return PersonFindDto.builder()
+                .id(expert.getId())
+                .signupDate(expert.getSignupDateTime())
+                .personType(PersonType.ADMIN)
                 .email(expert.getEmail())
                 .credit(expert.getCredit())
                 .firstname(expert.getFirstname())

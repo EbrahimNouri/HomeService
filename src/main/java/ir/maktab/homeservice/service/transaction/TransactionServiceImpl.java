@@ -1,9 +1,8 @@
 package ir.maktab.homeservice.service.transaction;
 
 
-import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Transaction;
-import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.TransactionType;
 import ir.maktab.homeservice.exception.CustomExceptionAmount;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
@@ -32,8 +31,8 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     @Override
     public void addTransaction(Transaction transaction1) {
-        User user = transaction1.getUser();
-        Expert expert = transaction1.getExpert();
+        Person user = transaction1.getUser();
+        Person expert = transaction1.getExpert();
         double amount = transaction1.getTransfer();
 
         if (transaction1.getTransfer() <= transaction1.getUser().getCredit()) {
@@ -60,7 +59,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public void chargeAccountBalance(User user, Double amount) {
+    public void chargeAccountBalance(Person user, Double amount) {
         if (user.getId() == null)
             throw new CustomExceptionNotFind("user not valid");
 
@@ -80,7 +79,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public void onlinePayment(Expert expert, Double amount) {
+    public void onlinePayment(Person expert, Double amount) {
         if (expert.getId() == null)
             throw new CustomExceptionNotFind("user not valid");
 

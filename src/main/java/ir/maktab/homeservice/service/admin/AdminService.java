@@ -1,11 +1,11 @@
 package ir.maktab.homeservice.service.admin;
 
-import ir.maktab.homeservice.entity.Admin;
+import ir.maktab.homeservice.entity.base.Person;
 
 public interface AdminService{
-    void addAdmin(Admin admin);
-    void changePassword(Admin admin, String password);
+    void addAdmin(Person admin);
+    void changePassword(Person admin, String password);
 
-    Admin findById(Long adminId);
+    Person findById(Long adminId);
 
 }

@@ -1,6 +1,6 @@
 package ir.maktab.homeservice.dto;
 
-import ir.maktab.homeservice.entity.Expert;
+import ir.maktab.homeservice.entity.base.Person;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +24,7 @@ public class ExpertOffersDto {
     private LocalDateTime signupDate;
     private List<OfferDto> offerDtos;
 
-    public static ExpertOffersDto expertMappingToExpertOfferDto(Expert expert){
+    public static ExpertOffersDto expertMappingToExpertOfferDto(Person expert){
         return ExpertOffersDto.builder()
                 .credit(expert.getCredit())
                 .offerDtos(expert.getOffers().stream().map(OfferDto::offerToOfferDtoMapping).toList())

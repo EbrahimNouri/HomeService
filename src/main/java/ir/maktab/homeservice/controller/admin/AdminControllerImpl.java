@@ -2,7 +2,11 @@ package ir.maktab.homeservice.controller.admin;
 
 
 import ir.maktab.homeservice.dto.*;
-import ir.maktab.homeservice.entity.*;
+import ir.maktab.homeservice.entity.BasicService;
+import ir.maktab.homeservice.entity.ExpertTypeService;
+import ir.maktab.homeservice.entity.Offer;
+import ir.maktab.homeservice.entity.TypeService;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.service.admin.AdminService;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
@@ -38,20 +42,20 @@ public class AdminControllerImpl {
     private final OrderService orderService;
 
     @PostMapping("/add") //checked
-    public void addAdmin(@RequestBody @Valid Admin admin) {
+    public void addAdmin(@RequestBody @Valid Person admin) {
         service.addAdmin(admin);
     }
 
     @PutMapping("/chPass") //checked
     public void changePassword(@RequestParam @Valid String password, Authentication authentication) {
-        Admin admin = (Admin) authentication.getPrincipal();
+        Person admin = (Person) authentication.getPrincipal();
         service.changePassword(admin, password);
     }
 
     @GetMapping() //checked
-    public AdminDto admin(Authentication authentication) {
-        Admin admin = (Admin) authentication.getPrincipal();
-        return adminDtoMapper(admin);
+    public PersonFindDto admin(Authentication authentication) {
+        Person admin = (Person) authentication.getPrincipal();
+        return PersonFindDto.adminTopPersonFindDtoMapper(admin);
     }
 
     @PostMapping("/addBasicService") //checked
@@ -72,13 +76,13 @@ public class AdminControllerImpl {
 
     @PutMapping("/acceptExpert/{expertId}") //checked
     public void acceptExpert(@PathVariable Long expertId) {
-        Expert acceptExpert = expertService.findById(expertId);
+        Person acceptExpert = expertService.findById(expertId);
         expertService.acceptExpert(acceptExpert);
     }
 
     @DeleteMapping("/removeExpertFromBasicService/{expertId}")
     public HttpStatus removeExpertFromBasicService(@PathVariable Long expertId) {
-        Expert expert = expertService.findById(expertId);
+        Person expert = expertService.findById(expertId);
 
         return expertTypeServiceService.removeExpertFromBasicService(expert) == 1
                 ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
@@ -105,25 +109,16 @@ public class AdminControllerImpl {
 
         ExpertTypeService expertTypeService = expertTypeServiceService.findById
                 (expertId, typeServiceId);
-        Expert expert = expertTypeService.getExpert();
+        Person expert = expertTypeService.getExpert();
         TypeService typeService = expertTypeService.getTypeService();
 
-        return new ExpertTypeServiceMapped
-                (expert.getFirstname()
-                        , expert.getLastname()
-                        , expert.getEmail()
-                        , expert.getAverageScore()
-                        , expert.getCredit()
-                        , expert.getAverageScore()
-                        , typeService.getSubService()
-                        , typeService.getBasePrice()
-                        , typeService.getBasicService().getName()
-                        , typeService.getDescription()
-                );
+        return ExpertTypeServiceMapped.getExpertTypeServiceMapped(expert, typeService);
     }
 
+
+
     private ExpertTypeService findExpertTypeServiceByDto(ExpertTypeServiceDto expertTypeServiceDto) {
-        Expert expert = expertService.findById(expertTypeServiceDto.getExpertId());
+        Person expert = expertService.findById(expertTypeServiceDto.getExpertId());
 
         TypeService typeService = typeServiceService.findById(expertTypeServiceDto.getTypeServiceId());
 
@@ -280,8 +275,8 @@ public class AdminControllerImpl {
     }
 
     @GetMapping("/userDetail/{id}")
-    public User userDetail(@PathVariable Long id) {
-        User byId = userService.findById(id);
+    public Person userDetail(@PathVariable Long id) {
+        Person byId = userService.findById(id);
         return userService.userDetail(byId);
     }
 
@@ -292,22 +287,21 @@ public class AdminControllerImpl {
     }
 
     @PostMapping("/orderInformation")
-    public List<User> orderDtos(@RequestParam Map<String, String> map) {
+    public List<Person> orderDtos(@RequestParam Map<String, String> map) {
         return userService.userSpecification(map).stream()
                 .toList();
     }
 
-    @GetMapping("/countOfOrder/{userId}}")
+    @GetMapping("/countOfOrder/{userId}")
     public int countOfOrder(@PathVariable Long userId) {
         return orderService.countOfOrdersByUserId(userId);
     }
 
 
-    private AdminDto adminDtoMapper(Admin admin) {
+    private AdminDto adminDtoMapper(Person admin) {
         return AdminDto.builder()
                 .username(admin.getUsername())
                 .email(admin.getEmail())
-                .name(admin.getName())
                 .build();
     }
 

@@ -3,7 +3,11 @@ package ir.maktab.homeservice.controller.user;
 
 import ir.maktab.homeservice.controller.admin.AdminControllerImpl;
 import ir.maktab.homeservice.dto.*;
-import ir.maktab.homeservice.entity.*;
+import ir.maktab.homeservice.entity.ExpertUser;
+import ir.maktab.homeservice.entity.Offer;
+import ir.maktab.homeservice.entity.Order;
+import ir.maktab.homeservice.entity.TypeService;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
@@ -41,7 +45,7 @@ public class UserControllerImpl {
     public void registerUser(@RequestBody @Validated PersonRegisterDto personRegisterDto)
             throws MessagingException, UnsupportedEncodingException {
 
-        User temp = User.builder()
+        Person temp = Person.builder()
                 .firstname(personRegisterDto.getFirstname())
                 .lastname(personRegisterDto.getLastname())
                 .email(personRegisterDto.getEmail())
@@ -63,7 +67,7 @@ public class UserControllerImpl {
 
     @PutMapping("/chPass")
     public void changePassword(@RequestBody String password, Authentication authentication) {
-        User temp = (User) authentication.getPrincipal();
+        Person temp = (Person) authentication.getPrincipal();
 
         userService.changePassword(temp, password);
     }
@@ -72,9 +76,9 @@ public class UserControllerImpl {
     public void addCommentAndPoint(@RequestBody ExpertUserDto expertUserDto, Authentication authentication) {
         ExpertUser expertUser;
 
-        Expert expert = expertService.findById(expertUserDto.getExpId());
+        Person expert = expertService.findById(expertUserDto.getExpId());
 
-        User user = (User) authentication.getPrincipal();
+        Person user = (Person) authentication.getPrincipal();
 
         Order order = orderService.findById(expertUserDto.getOrderId());
 
@@ -122,7 +126,7 @@ public class UserControllerImpl {
     @PostMapping("/orderRegistration")
     public void orderRegistration(@RequestBody OrderDto orderDto, Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
+        Person user = (Person) authentication.getPrincipal();
         TypeService typeService = typeServiceService.findById(orderDto.getTypeId());
         Order order = Order.builder()
                 .address(orderDto.getAddress())
@@ -145,7 +149,7 @@ public class UserControllerImpl {
 
     @GetMapping("/findByOrderIdSortedPrice/{orderId}")
     public List<OfferDto> findByOrderIdSortedPrice(@PathVariable Long orderId, Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
+        Person user = (Person) authentication.getPrincipal();
         return offerService.findByOrderIdSortedPrice(orderId, user.getId()).stream().map(OfferDto::offerToOfferDtoMapping).toList();
     }
 
@@ -153,7 +157,7 @@ public class UserControllerImpl {
     public List<OfferDto> findByOrderIdSortedByPoint(@PathVariable Long orderId
             , Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
+        Person user = (Person) authentication.getPrincipal();
 
         return offerService.findByOrderIdSortedByPoint(orderId, user.getId()).stream()
                 .map(OfferDto::offerToOfferDtoMapping).toList();
@@ -167,20 +171,20 @@ public class UserControllerImpl {
 
     @GetMapping("/{orderId}")
     public ExpertUser findByOrderId(@PathVariable Long orderId, Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
+        Person user = (Person) authentication.getPrincipal();
         return expertUserService.findByOrderId(orderId, user.getId());
     }
 
     @PostMapping("/setOrderToPaidAppPayment/{orderId}")
     public void setOrderToPaidAppPayment(@PathVariable Long orderId, Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
+        Person user = (Person) authentication.getPrincipal();
         orderService.setOrderToPaidAppPayment(orderService.findById(orderId), user);
     }
 
     @PostMapping("/onlinePayment")
     public void onlinePayment(@RequestBody PaymentOnlineDto paymentOnlineDto) {
 
-        User user = userService.findByEmail(paymentOnlineDto.getEmail());
+        Person user = userService.findByEmail(paymentOnlineDto.getEmail());
         Order order = orderService.findOrderEndWork(user);
         orderService.setOrderToPaidOnlinePayment(order);
         System.out.println("done");
@@ -189,26 +193,26 @@ public class UserControllerImpl {
     @PutMapping("/setOrderToPaidAppPayment/{orderId}")
     public void appPayment(@PathVariable Long orderId, Authentication authentication) {
         Order order = orderService.findById(orderId);
-        User user = (User) authentication.getPrincipal();
+        Person user = (Person) authentication.getPrincipal();
         orderService.setOrderToPaidAppPayment(order, user);
     }
 
     @GetMapping("/detail")
     public UserOrderDto userDetail(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
+        Person user = (Person) authentication.getPrincipal();
         return UserOrderDto.userToUserOrderDtoMapper(userService.userDetail(user));
     }
 
     @GetMapping("/myOrders")
     public List<OrderDto> myOffers(Authentication authentication){
-        User principal = (User) authentication.getPrincipal();
+        Person principal = (Person) authentication.getPrincipal();
         return orderService.findByUserId(principal.getId())
                 .stream().map(OrderDto::orderToOrderDtoMapper).toList();
     }
 
     @GetMapping("/myPrice")
     public Double myPrice(Authentication authentication){
-        User principal = (User) authentication.getPrincipal();
+        Person principal = (Person) authentication.getPrincipal();
         return principal.getCredit();
     }
 

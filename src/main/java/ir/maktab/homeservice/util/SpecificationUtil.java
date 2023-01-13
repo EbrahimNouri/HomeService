@@ -1,6 +1,8 @@
 package ir.maktab.homeservice.util;
 
 import ir.maktab.homeservice.entity.*;
+import ir.maktab.homeservice.entity.base.Person;
+import ir.maktab.homeservice.entity.base.Person_;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -54,7 +56,7 @@ public class SpecificationUtil {
                         criteriaBuilder.equal(root.join(Order_.typeService).join(TypeService_.basicService)
                                 .get(BasicService_.id), Long.valueOf(entry.getValue()));
 
-                case "user" -> criteriaBuilder.equal(root.join(Order_.user).get(User_.id),
+                case "user" -> criteriaBuilder.equal(root.join(Order_.user).get(Person_.id),
                         Long.valueOf(entry.getValue()));
 
                 case "description" -> criteriaBuilder.like(root.get(Order_.description), entry.getValue());
@@ -84,10 +86,10 @@ public class SpecificationUtil {
 
                 case "id" -> criteriaBuilder.equal(root.get(Offer_.id), Long.valueOf(entry.getValue()));
 
-                case "from" -> criteriaBuilder.greaterThanOrEqualTo(root.join(Offer_.expert).get(Expert_.signupDateTime)
+                case "from" -> criteriaBuilder.greaterThanOrEqualTo(root.join(Offer_.expert).get(Person_.signupDateTime)
                         , LocalDateTime.parse(entry.getValue()));
 
-                case "to" -> criteriaBuilder.lessThanOrEqualTo(root.join(Offer_.expert).get(Expert_.signupDateTime)
+                case "to" -> criteriaBuilder.lessThanOrEqualTo(root.join(Offer_.expert).get(Person_.signupDateTime)
                         , LocalDateTime.parse(entry.getValue()));
 
 
@@ -107,30 +109,30 @@ public class SpecificationUtil {
         return expertSpecification;
     }
 
-    public Specification<User> userSpecification(Map<String, String> map) {
+    public Specification<Person> userSpecification(Map<String, String> map) {
 
-        Specification<User> userSpecification = Specification.where(null);
+        Specification<Person> userSpecification = Specification.where(null);
 
         for (Map.Entry<String, String> entry : map.entrySet()) {
 
-            Specification<User> specification
+            Specification<Person> specification
                     = (root, query, criteriaBuilder) -> switch (entry.getKey().toLowerCase()) {
 
                 case "id" -> criteriaBuilder.equal(root.get(Offer_.id), Long.valueOf(entry.getValue()));
 
-                case "from" -> criteriaBuilder.greaterThanOrEqualTo(root.get(User_.signupDateTime)
+                case "from" -> criteriaBuilder.greaterThanOrEqualTo(root.get(Person_.signupDateTime)
                         , LocalDateTime.parse(entry.getValue()));
 
-                case "to" -> criteriaBuilder.lessThanOrEqualTo(root.get(User_.signupDateTime)
+                case "to" -> criteriaBuilder.lessThanOrEqualTo(root.get(Person_.signupDateTime)
                         , LocalDateTime.parse(entry.getValue()));
 
 
-                case "countOrderDone" -> criteriaBuilder.equal(root.join(User_.orders)
+                case "countOrderDone" -> criteriaBuilder.equal(root.join(Person_.orders)
                                 .join(Order_.offers).get(Offer_.choose),
                         Boolean.valueOf(entry.getValue()));
 
                 case "ordertype" ->
-                        criteriaBuilder.equal(root.join(User_.orders).get(Order_.orderType)
+                        criteriaBuilder.equal(root.join(Person_.orders).get(Order_.orderType)
                                 , OrderType.valueOf(entry.getValue()));
 
                 default -> criteriaBuilder.and();

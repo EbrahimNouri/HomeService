@@ -2,6 +2,7 @@ package ir.maktab.homeservice.entity;
 
 
 import ir.maktab.homeservice.entity.base.BaseEntity;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.entity.enums.PaymentType;
 import jakarta.persistence.*;
@@ -26,7 +27,7 @@ public class Order extends BaseEntity {
     private TypeService typeService;
 
     @ManyToOne
-    private User user;
+    private Person user;
 
     @OneToOne(mappedBy = "order", fetch = FetchType.EAGER)
     private ExpertUser expertUser;

@@ -1,10 +1,9 @@
 package ir.maktab.homeservice.service.expertUser;
 
 
-import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertUser;
 import ir.maktab.homeservice.entity.Order;
-import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.exception.CustomExceptionOrderType;
@@ -30,7 +29,7 @@ public class ExpertUserServiceImpl implements ExpertUserService {
     @Transactional
     @Override
     public void addCommentAndPoint(ExpertUser expertUser) {
-        Expert expert = expertUser.getExpert();
+        Person expert = expertUser.getExpert();
 
         if (!expertUser.getOrder().getOrderType().equals(OrderType.PAID))
             throw new CustomExceptionOrderType("order type is invalid");
@@ -67,8 +66,8 @@ public class ExpertUserServiceImpl implements ExpertUserService {
     @Override
     public void deductPoints(int hours, Order order) {
 
-        Expert expert = order.getExpertUser().getExpert();
-        User user = order.getExpertUser().getUser();
+        Person expert = order.getExpertUser().getExpert();
+        Person user = order.getExpertUser().getUser();
 
         addCommentAndPoint(new ExpertUser(expert, user, order
                 , LocalDate.now(), (double) -hours, null));

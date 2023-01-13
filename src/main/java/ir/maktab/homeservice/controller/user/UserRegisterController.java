@@ -1,7 +1,8 @@
+/*
 package ir.maktab.homeservice.controller.user;
 
 import ir.maktab.homeservice.dto.PersonRegisterDto;
-import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.service.user.UserService;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,7 @@ public class UserRegisterController {
     public String registerExpert(@RequestBody @Validated PersonRegisterDto personRegisterDto)
             throws MessagingException, UnsupportedEncodingException {
 
-        User temp = PersonRegisterDto.personDtoUserMapping(personRegisterDto);
+        Person temp = PersonRegisterDto.personDtoUserMapping(personRegisterDto);
 
         userService.register(temp, "http://localhost:8099/api/v1/register/verifyUser/");
 
@@ -38,3 +39,4 @@ public class UserRegisterController {
         }
     }
 }
+*/

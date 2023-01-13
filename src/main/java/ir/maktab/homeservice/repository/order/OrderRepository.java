@@ -2,7 +2,7 @@ package ir.maktab.homeservice.repository.order;
 
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.TypeService;
-import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -24,7 +24,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
             " OR od.orderType = \"WAITING_EXPERT_SELECTION\" and od.typeService.subService = :typeService")
     List<Order> findOrderByTypeService(TypeService typeService);
 
-    Optional<Order> findOrderByUserAndOrderType(User user, OrderType orderType);
+    Optional<Order> findOrderByUserAndOrderType(Person user, OrderType orderType);
 
     @Query("from Order o where o.startOfWork >= :start and o.startOfWork < :end")
     List<Order> findOrdersByPriodTime(LocalDate start, LocalDate end);

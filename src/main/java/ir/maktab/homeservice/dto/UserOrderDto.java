@@ -1,6 +1,6 @@
 package ir.maktab.homeservice.dto;
 
-import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.entity.base.Person;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +23,7 @@ public class UserOrderDto {
     private LocalDateTime signupDate;
     private List<OrderDto> orderDtos;
 
-    public static UserOrderDto userToUserOrderDtoMapper(User user){
+    public static UserOrderDto userToUserOrderDtoMapper(Person user){
         return UserOrderDto.builder()
                 .id(user.getId())
                 .orderDtos(user.getOrders().stream().map((OrderDto::orderToOrderDtoMapper)).toList())

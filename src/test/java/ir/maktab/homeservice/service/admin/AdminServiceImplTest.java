@@ -1,6 +1,6 @@
 package ir.maktab.homeservice.service.admin;
 
-import ir.maktab.homeservice.entity.Admin;
+import ir.maktab.homeservice.entity.base.Person;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class AdminServiceImplTest {
     @Autowired
     private AdminService service;
-    static Admin admin;
+    static Person admin;
 
     @BeforeAll
     static void initialsAdmin() {
-        admin = new Admin("admin", "admin@email.com", "1234QWer@");
+        admin = Person.builder()
+                .build();
     }
 
 

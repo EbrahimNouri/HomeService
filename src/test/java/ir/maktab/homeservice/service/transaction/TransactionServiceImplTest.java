@@ -1,8 +1,7 @@
 package ir.maktab.homeservice.service.transaction;
 
-import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Transaction;
-import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.TransactionType;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.user.UserService;
@@ -23,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 */
 @SpringBootTest
 class TransactionServiceImplTest {
-    static Expert expert;
-    static User user;
+    static Person expert;
+    static Person user;
     static File avatar;
     private static Transaction transaction;
     @Autowired
@@ -37,9 +36,9 @@ class TransactionServiceImplTest {
 
     @BeforeAll
     static void initials() {
-        user = User.builder().firstname("fname").lastname("lname").email("userTestmail@email.com").credit(500.0).password("1234QWear").build();
+        user = Person.builder().firstname("fname").lastname("lname").email("userTestmail@email.com").credit(500.0).password("1234QWear").build();
 
-        expert = Expert.builder().firstname("testName").lastname("lname").lastname("testLastname").credit(0.0).email("testmailTrabaction@email.com")
+        expert = Person.builder().firstname("testName").lastname("lname").lastname("testLastname").credit(0.0).email("testmailTrabaction@email.com")
                 .password("1234QWer").build();
         avatar = new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg");
         transaction = new Transaction(expert, user, null, 100.0, TransactionType.TRANSFER);

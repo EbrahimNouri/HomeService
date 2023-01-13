@@ -1,5 +1,6 @@
 package ir.maktab.homeservice.entity;
 
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.id.ExpertUserId;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,11 +22,11 @@ public class ExpertUser implements Serializable {
 
     @ManyToOne
     @Id
-    private Expert expert;
+    private Person expert;
 
     @ManyToOne
     @Id
-    private User user;
+    private Person user;
 
     @OneToOne(/*fetch = FetchType.EAGER*/)
 //    @JoinColumn(name = "order_id")

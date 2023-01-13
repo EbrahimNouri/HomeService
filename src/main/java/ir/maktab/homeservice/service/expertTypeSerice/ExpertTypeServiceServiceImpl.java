@@ -1,8 +1,8 @@
 package ir.maktab.homeservice.service.expertTypeSerice;
 
 
-import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
 import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
@@ -21,7 +21,7 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
     ExpertTypeServiceRepository repository;
 
     @Override
-    public int removeExpertFromBasicService(Expert expert) {
+    public int removeExpertFromBasicService(Person expert) {
 
         log.debug("debug remove expert from basic service {} ", expert);
 

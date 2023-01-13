@@ -1,9 +1,8 @@
 package ir.maktab.homeservice.entity.id;
 
 
-import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Order;
-import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.entity.base.Person;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -17,11 +16,11 @@ import java.io.Serializable;
 public class ExpertUserId implements Serializable {
 //    @ManyToOne
 //    @JoinColumn(name = "expert_id")
-    private Expert expert;
+    private Person expert;
 //
 //    @ManyToOne
 //    @JoinColumn(name = "user_id")
-    private User user;
+    private Person user;
 
 //    @OneToOne(fetch = FetchType.EAGER)
 //    @JoinColumn(name = "order_id")

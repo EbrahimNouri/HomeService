@@ -17,7 +17,7 @@ public class EmailSenderUtil {
     private final JavaMailSender mailSender;
 
 
-    public <E extends Person> void sendVerificationEmail(E e, String siteURL)
+    public void sendVerificationEmail(Person e, String siteURL)
             throws MessagingException, UnsupportedEncodingException {
         String toAddress = e.getEmail();
         String fromAddress = "homeservice.springboot@gmail.com";
