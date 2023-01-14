@@ -1,14 +1,14 @@
 package ir.maktab.homeservice.service.expertTypeSerice;
 
 
-import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
+import ir.maktab.homeservice.entity.base.Person;
 
 import java.util.List;
 
 public interface ExpertTypeServiceService {
 
-    int removeExpertFromBasicService(Expert expert);
+    int removeExpertFromBasicService(Person expert);
 
     void addExpertToTypeService(ExpertTypeService expertTypeService);
 

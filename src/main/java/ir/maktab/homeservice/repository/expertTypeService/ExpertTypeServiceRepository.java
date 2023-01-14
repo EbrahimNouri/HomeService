@@ -1,8 +1,8 @@
 package ir.maktab.homeservice.repository.expertTypeService;
 
 import ir.maktab.homeservice.entity.BasicService;
-import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.id.ExpertTypeServiceId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,7 +18,7 @@ public interface ExpertTypeServiceRepository extends JpaRepository<ExpertTypeSer
 
     @Modifying
     @Query(value = "delete from expert_type_service et where et.expert_id = :expert", nativeQuery = true)
-    int removeByExpert(Expert expert);
+    int removeByExpert(Person expert);
 
     @Query(value = "select * from expert_type_service et where expert_id = :expert and type_service_id = :typeService"
             , nativeQuery = true)

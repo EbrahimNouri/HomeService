@@ -1,8 +1,8 @@
 package ir.maktab.homeservice.service.expert;
 
 
-import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Offer;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.entity.enums.Role;
 import ir.maktab.homeservice.exception.*;
@@ -43,7 +43,7 @@ public class ExpertServiceImpl implements ExpertService {
 
 
     @Override
-    public void register(Expert expert, String siteURL)
+    public void register(Person expert, String siteURL)
             throws MessagingException, UnsupportedEncodingException {
 
         if (repository.existsByEmail(expert.getEmail()))
@@ -70,7 +70,7 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Override
     public boolean verify(Integer verificationCode) {
-        Expert expert = repository.findByVerificationCode(verificationCode)
+        Person expert = repository.findByVerificationCode(verificationCode)
                 .orElseThrow(() -> new CustomNotChoosingException("this code is invalid"));
 
         if (expert.getVerificationCode() == null || expert.isEnabled()) {
@@ -85,15 +85,15 @@ public class ExpertServiceImpl implements ExpertService {
         }
     }
 
-    public List<Expert> showAllNewExperts(){
+    public List<Person> showAllNewExperts(){
         return repository.findByExpertStatus(ExpertStatus.NEW);
     }
 
     // TODO: 1/8/2023 AD controller
     @Override
-    public Expert expertDetail(Long expertId) {
+    public Person expertDetail(Long expertId) {
 
-        Expert expert = findById(expertId);
+        Person expert = findById(expertId);
         List<Offer> offers = applicationContext
                 .getContext()
                 .getBean(OfferService.class)
@@ -105,7 +105,7 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Transactional
     @Override
-    public void registerExpert(@Valid Expert expert, File file) {
+    public void registerExpert(@Valid Person expert, File file) {
         if (expert.getId() == null
                 && file.length() / 1024 < 300
                 && file.getName().endsWith(".jpg")) {
@@ -125,7 +125,7 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     @Override
-    public void acceptExpert(Expert expert) {
+    public void acceptExpert(Person expert) {
 
         if (expert.getId() != null) {
 
@@ -141,13 +141,13 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     @Override
-    public Expert findById(Long id) {
+    public Person findById(Long id) {
         return repository.findByIdCustom(id).orElseThrow(()
                 -> new CustomExceptionNotFind("expert not found"));
     }
 
     @Override
-    public List<Expert> findByBasicService(Long basicId) {
+    public List<Person> findByBasicService(Long basicId) {
         return findAll().stream().filter
                 (expert -> expert.getExpertTypeServices()
                         .get(0).getTypeService().getBasicService()
@@ -155,7 +155,7 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     @Override
-    public void changePassword(@Valid Expert expert, String password) {
+    public void changePassword(@Valid Person expert, String password) {
 
 
         if (expert.getPassword().equals(passwordEncoder.encode(password)))
@@ -175,9 +175,9 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     @Override
-    public Expert findById(Long id, Path path) throws IOException {
+    public Person findById(Long id, Path path) throws IOException {
 
-        Expert expert;
+        Person expert;
 
         expert = repository.findByIdCustom(id).orElseThrow(() -> new CustomExceptionNotFind("expert not found"));
         FileUtil.fileWriter(path, expert.getAvatar());
@@ -195,48 +195,48 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     @Override
-    public void deactivate(Expert expert) {
+    public void deactivate(Person expert) {
         repository.deactivate(expert.getId(), ExpertStatus.DEACTIVATE);
     }
 
     @Override
-    public void save(Expert expert) {
+    public void save(Person expert) {
         repository.save(expert);
     }
 
     @Override
-    public List<Expert> findAll() {
+    public List<Person> findAll() {
         return repository.findAll();
     }
 
     @Override
-    public List<Expert> findByFirstName(String firstname) {
+    public List<Person> findByFirstName(String firstname) {
         return repository.findByFirstname(firstname);
     }
 
     @Override
-    public List<Expert> findByLastName(String lastname) {
+    public List<Person> findByLastName(String lastname) {
         return repository.findByLastname(lastname);
     }
 
 
     @Override
-    public Expert findByEmail(String email) {
+    public Person findByEmail(String email) {
         return repository.findByEmail(email).orElseThrow(() ->
                 new CustomExceptionNotFind("expert not found")
         );
     }
 
     @Override
-    public List<Expert> findBy(Map<String, String> find) {
+    public List<Person> findBy(Map<String, String> find) {
         return repository.findAll(mapToSpecification(find));
     }
 
-    private Specification<Expert> mapToSpecification(Map<String, String> find) {
+    private Specification<Person> mapToSpecification(Map<String, String> find) {
 
-        List<Specification<Expert>> specifications = new ArrayList<>();
+        List<Specification<Person>> specifications = new ArrayList<>();
         for (Map.Entry<String, String> ee : find.entrySet()) {
-            Specification<Expert> specification =
+            Specification<Person> specification =
                     ((root, query, criteriaBuilder) ->
                             criteriaBuilder.equal(root.get(ee.getKey()), ee.getValue()));
             specifications.add(specification);
@@ -247,7 +247,7 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public void addAvatar(Long expertId, MultipartFile file) throws IOException {
 
-        Expert expert = findById(expertId);
+        Person expert = findById(expertId);
         final int AVATAR_SIZE = 307200;  // 300 * 1024 = 300kb
 
         if (file.getSize() < AVATAR_SIZE

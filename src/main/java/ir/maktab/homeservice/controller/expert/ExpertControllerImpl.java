@@ -4,10 +4,10 @@ package ir.maktab.homeservice.controller.expert;
 import ir.maktab.homeservice.dto.ExpertOffersDto;
 import ir.maktab.homeservice.dto.OfferDto;
 import ir.maktab.homeservice.dto.OrderDto;
-import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.TypeService;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
@@ -27,7 +27,7 @@ import java.util.List;
 @RestController
 @Log4j2
 @AllArgsConstructor
-@RequestMapping("api/v1/expert")
+@RequestMapping("/api/v1/expert")
 public class ExpertControllerImpl {
     private final ExpertService expertService;
     private final OfferService offerService;
@@ -38,14 +38,14 @@ public class ExpertControllerImpl {
     // TODO: 12/31/2022 AD
 
     @GetMapping()
-    public Expert showExpert(Authentication authentication) {
-        return (Expert) authentication.getPrincipal();
+    public Person showExpert(Authentication authentication) {
+        return (Person) authentication.getPrincipal();
 
     }
 
     @PutMapping("/chPass")
     public void changePassword(@RequestParam @Valid String password, Authentication authentication) {
-        Expert expert = (Expert) authentication.getPrincipal();
+        Person expert = (Person) authentication.getPrincipal();
         expertService.changePassword(expert, password);
     }
 
@@ -53,7 +53,7 @@ public class ExpertControllerImpl {
     public void offerRegistrationOrUpdate(@RequestBody @Valid OfferDto offerDto, Authentication authentication) {
 
         Offer offer = Offer.builder()
-                .expert((Expert) authentication.getPrincipal())
+                .expert((Person) authentication.getPrincipal())
                 .order(orderService.findById(offerDto.getOrderId()))
                 .description(offerDto.getDescription())
                 .startDate(offerDto.getStartDate())
@@ -71,19 +71,19 @@ public class ExpertControllerImpl {
 
     @GetMapping("/getAverageScore")
     public Double getAverageScore(Authentication authentication) {
-        Expert expert = (Expert) authentication.getPrincipal();
+        Person expert = (Person) authentication.getPrincipal();
         return expert.getAverageScore();
     }
 
     @GetMapping("/getAllScores")
     public List<Double> getAllScores(Authentication authentication) {
-        Expert expert = (Expert) authentication.getPrincipal();
+        Person expert = (Person) authentication.getPrincipal();
         return expertUserService.listOfScore(expert.getId());
     }
 
     @PostMapping("/addAvatar")
     public void addAvatar(Authentication authentication, @RequestBody MultipartFile file) throws IOException {
-        Expert expert = (Expert) authentication.getPrincipal();
+        Person expert = (Person) authentication.getPrincipal();
         expertService.addAvatar(expert.getId(), file);
     }
 
@@ -95,27 +95,27 @@ public class ExpertControllerImpl {
 
     @GetMapping("/getScore")
     public Double getScore(Authentication authentication) {
-        Expert expert = (Expert) authentication.getPrincipal();
+        Person expert = (Person) authentication.getPrincipal();
         return expertService.getScore(expert.getId());
     }
 
     @GetMapping("/detail")
     public ExpertOffersDto expertDetail(Authentication authentication) {
-        Expert expert = (Expert) authentication.getPrincipal();
+        Person expert = (Person) authentication.getPrincipal();
         return
                 ExpertOffersDto.expertMappingToExpertOfferDto(expertService.expertDetail(expert.getId()));
     }
 
     @GetMapping("/myOffers")
     public List<OfferDto> myOffers(Authentication authentication){
-        Expert principal = (Expert) authentication.getPrincipal();
+        Person principal = (Person) authentication.getPrincipal();
         return offerService.findByExpertId(principal.getId()).stream()
                 .map(OfferDto::offerToOfferDtoMapping).toList();
     }
 
     @GetMapping("/myPrice")
     public Double myPrice(Authentication authentication){
-        Expert principal = (Expert) authentication.getPrincipal();
+        Person principal = (Person) authentication.getPrincipal();
         return principal.getCredit();
     }
 

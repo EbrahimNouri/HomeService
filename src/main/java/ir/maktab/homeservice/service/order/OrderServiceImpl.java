@@ -2,6 +2,7 @@ package ir.maktab.homeservice.service.order;
 
 
 import ir.maktab.homeservice.entity.*;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.entity.enums.PaymentType;
 import ir.maktab.homeservice.entity.enums.TransactionType;
@@ -132,7 +133,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public void setOrderToPaidAppPayment(Order order, User user) {
+    public void setOrderToPaidAppPayment(Order order, Person user) {
         if (Objects.equals(order.getUser().getId(), user.getId())) {
 
             Offer offer = offerService.findOfferByOrder_Id(order.getId())
@@ -233,7 +234,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findOrderEndWork(User user) {
+    public Order findOrderEndWork(Person user) {
         return repository.findOrderByUserAndOrderType(user, OrderType.DONE)
                 .orElseThrow(() -> new CustomExceptionNotFind("order not found!"));
     }

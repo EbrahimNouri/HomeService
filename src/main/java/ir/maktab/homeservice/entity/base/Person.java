@@ -1,16 +1,14 @@
 package ir.maktab.homeservice.entity.base;
 
+import ir.maktab.homeservice.entity.*;
+import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.entity.enums.Role;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,12 +19,10 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-@MappedSuperclass
-@AllArgsConstructor
-@NoArgsConstructor
+@Entity
 @Getter
 @Setter
-public abstract class Person extends BaseEntity implements UserDetails {
+public class Person extends BaseEntity implements UserDetails {
 
     @NotEmpty(message = "Blank is not acceptable")
     private String firstname;
@@ -61,6 +57,67 @@ public abstract class Person extends BaseEntity implements UserDetails {
     @Column(name = "verification_code", length = 5)
     private Integer verificationCode;
 
+    @Enumerated(EnumType.STRING)
+    private ExpertStatus expertStatus;
+
+    @OneToMany(mappedBy = "expert"/*, fetch = FetchType.EAGER*/)
+    private List<ExpertTypeService> expertTypeServices;
+
+    @OneToMany(mappedBy = "expert")
+    private List<Offer> offers;
+
+    @OneToMany(mappedBy = "expert"/*, fetch = FetchType.EAGER*/)
+    private List<ExpertUser> expertUsers;
+
+    @OneToMany(mappedBy = "expert")
+    private List<Transaction> expertTransactions;
+
+    private Double averageScore = 0.0;
+
+    @Lob
+    private byte[] avatar;
+
+    @OneToMany(mappedBy = "user")
+    private List<ExpertUser> userExpert;
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
+
+    @OneToMany(mappedBy = "user")
+    private List<Transaction> userTransactions;
+
+    @Builder
+    public Person(Long id, String firstname, String lastname, String email, String username, String password,
+                  double credit, LocalDateTime signupDateTime, Role role, boolean enabled, Integer verificationCode,
+                  ExpertStatus expertStatus, List<ExpertTypeService> expertTypeServices, List<Offer> offers,
+                  List<ExpertUser> expertUsers, List<Transaction> expertTransactions, Double averageScore,
+                  byte[] avatar, List<ExpertUser> userExpert, List<Order> orders, List<Transaction> userTransactions) {
+        super(id);
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.credit = credit;
+        this.signupDateTime = signupDateTime;
+        this.role = role;
+        this.enabled = enabled;
+        this.verificationCode = verificationCode;
+        this.expertStatus = expertStatus;
+        this.expertTypeServices = expertTypeServices;
+        this.offers = offers;
+        this.expertUsers = expertUsers;
+        this.expertTransactions = expertTransactions;
+        this.averageScore = averageScore;
+        this.avatar = avatar;
+        this.userExpert = userExpert;
+        this.orders = orders;
+        this.userTransactions = userTransactions;
+    }
+
+    public Person() {
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(getRole().name()));
@@ -83,6 +140,9 @@ public abstract class Person extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        if (role.equals(Role.ROLE_ADMIN)){
+            return true;
+        }
+        return enabled;
     }
 }

@@ -1,6 +1,6 @@
 package ir.maktab.homeservice.service.expert;
 
-import ir.maktab.homeservice.entity.Expert;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.*;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExpertServiceImplTest {
     private static short counter;
 
-    private static Expert[] registerExpert = new Expert[5];
+    private static Person[] registerExpert = new Person[5];
     @Autowired
     private ExpertService service;
 
@@ -28,7 +28,7 @@ class ExpertServiceImplTest {
     @BeforeAll
     static void initialize() {
         for (int i = 0; i < 5; i++) {
-            registerExpert[i] = Expert.builder()
+            registerExpert[i] = Person.builder()
                     .firstname("testName")
                     .lastname("testLastname")
                     .email("tesst" + i + "a" + counter + "@email.com")
@@ -67,7 +67,7 @@ class ExpertServiceImplTest {
 
     @Test
     void findById() throws IOException {
-        Expert e = service.findById(1L, Path.of("/Users/ebrahimnouri/IdeaProjects/HomeService/farzad.jpg"));
+        Person e = service.findById(1L, Path.of("/Users/ebrahimnouri/IdeaProjects/HomeService/farzad.jpg"));
     }
 
     @Test
@@ -102,7 +102,7 @@ class ExpertServiceImplTest {
 
     @Test
     void emailPatternTest() {
-        Expert expert1 = Expert.builder().firstname("testName")
+        Person expert1 = Person.builder().firstname("testName")
                 .lastname("testLastname").email("tesst1emailcom")
                 .password("1234QWer").build();
         ;
@@ -113,7 +113,7 @@ class ExpertServiceImplTest {
     void emailUniqueTest() {
         assertThrows(UnexpectedRollbackException.class
                 , () -> service.registerExpert
-                        (Expert.builder().email("tesst1@email.com")
+                        (Person.builder().email("tesst1@email.com")
                                         .password("qwe123ASD").build()
                                 , new File("/Users/ebrahimnouri/ss.jpg")));
     }

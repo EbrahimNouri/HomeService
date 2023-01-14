@@ -1,6 +1,7 @@
 package ir.maktab.homeservice.service.offer;
 
 import ir.maktab.homeservice.entity.*;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
@@ -32,9 +33,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class OfferServiceImplTest {
 
 
-    static Expert[] expert = new Expert[4];
+    static Person[] expert = new Person[4];
     static File[] avatar = new File[4];
-    static User[] user = new User[4];
+    static Person[] user = new Person[4];
     static ExpertUser[] expertUser = new ExpertUser[4];
     static Order[] order = new Order[4];
     static Offer[][] offerTest = new Offer[4][3];
@@ -74,14 +75,14 @@ class OfferServiceImplTest {
 
         for (int i = 0; i < 4; i++) {
 
-            expert[i] = Expert.builder().firstname("testName4").lastname("lname4").email("testss4" + i + "@email.com")
+            expert[i] = Person.builder().firstname("testName4").lastname("lname4").email("testss4" + i + "@email.com")
                     .password("1234QWer").build();
             avatar[i] = new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg");
 
-            user[i] = User.builder().firstname("fname4").lastname("lname4")
+            user[i] = Person.builder().firstname("fname4").lastname("lname4")
                     .email("userTesddta4" + i + "@email.com").password("1234QWear").build();
 
-            basicService[i] = new BasicService("basicServiceTsest4" + i, null);
+            basicService[i] = new BasicService(null,"basicServiceTsest4" + i, null);
 
             typeService[i] = new TypeService("subTest4sa" + i, 100.0+(i*2), null
                     , null, basicService[i], "description");

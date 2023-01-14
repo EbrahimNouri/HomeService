@@ -1,6 +1,6 @@
 package ir.maktab.homeservice.service.expert;
 
-import ir.maktab.homeservice.entity.Expert;
+import ir.maktab.homeservice.entity.base.Person;
 import jakarta.mail.MessagingException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,41 +13,41 @@ import java.util.Map;
 
 public interface ExpertService {
 
-    void register(Expert expert, String siteURL)
+    void register(Person expert, String siteURL)
             throws MessagingException, UnsupportedEncodingException;
 
     boolean verify(Integer verificationCode);
 
     // TODO: 1/8/2023 AD controller
-    Expert expertDetail(Long expertId);
+    Person expertDetail(Long expertId);
 
-    void registerExpert(Expert expert, File file);
+    void registerExpert(Person expert, File file);
 
-    void acceptExpert(Expert expert);
+    void acceptExpert(Person expert);
 
-    Expert findById(Long id);
+    Person findById(Long id);
 
-    List<Expert> findByBasicService(Long basicId);
+    List<Person> findByBasicService(Long basicId);
 
-    void changePassword(Expert expert, String password);
+    void changePassword(Person expert, String password);
 
-    Expert findById(Long id, Path path) throws IOException;
+    Person findById(Long id, Path path) throws IOException;
 
     void SetAveragePoint(Double point, Long expertId);
 
-    void deactivate(Expert expert);
+    void deactivate(Person expert);
 
-    void save(Expert expert);
+    void save(Person expert);
 
-    List<Expert> findAll();
+    List<Person> findAll();
 
-    List<Expert> findByFirstName(String firstname);
+    List<Person> findByFirstName(String firstname);
 
-    List<Expert> findByLastName(String firstname);
+    List<Person> findByLastName(String firstname);
 
-    Expert findByEmail(String email);
+    Person findByEmail(String email);
 
-    List<Expert> findBy(Map<String, String> find);
+    List<Person> findBy(Map<String, String> find);
 
     void addAvatar(Long expertId, MultipartFile file) throws IOException;
 

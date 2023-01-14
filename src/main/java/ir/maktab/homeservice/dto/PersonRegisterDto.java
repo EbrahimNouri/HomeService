@@ -1,7 +1,6 @@
 package ir.maktab.homeservice.dto;
 
-import ir.maktab.homeservice.entity.Expert;
-import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.entity.base.Person;
 import lombok.*;
 
 @Data
@@ -22,8 +21,8 @@ public class PersonRegisterDto {
 
     private String password;
 
-    public static Expert personDtoExpertMapping(PersonRegisterDto personRegisterDto) {
-        return Expert.builder()
+    public static Person personDtoExpertMapping(PersonRegisterDto personRegisterDto) {
+        return Person.builder()
                 .firstname(personRegisterDto.getFirstname())
                 .lastname(personRegisterDto.getLastname())
                 .email(personRegisterDto.getEmail())
@@ -32,8 +31,18 @@ public class PersonRegisterDto {
                 .build();
     }
 
-    public static User personDtoUserMapping(PersonRegisterDto personRegisterDto) {
-        return User.builder()
+    public static Person personDtoUserMapping(PersonRegisterDto personRegisterDto) {
+        return Person.builder()
+                .firstname(personRegisterDto.getFirstname())
+                .lastname(personRegisterDto.getLastname())
+                .email(personRegisterDto.getEmail())
+                .password(personRegisterDto.getPassword())
+                .username(personRegisterDto.getUsername())
+                .build();
+    }
+
+    public static Person personDtoAdminMapping(PersonRegisterDto personRegisterDto) {
+        return Person.builder()
                 .firstname(personRegisterDto.getFirstname())
                 .lastname(personRegisterDto.getLastname())
                 .email(personRegisterDto.getEmail())

@@ -1,6 +1,10 @@
 package ir.maktab.homeservice.service.expertUser;
 
-import ir.maktab.homeservice.entity.*;
+import ir.maktab.homeservice.entity.BasicService;
+import ir.maktab.homeservice.entity.ExpertUser;
+import ir.maktab.homeservice.entity.Order;
+import ir.maktab.homeservice.entity.TypeService;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.repository.order.OrderRepository;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
@@ -22,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 class ExpertUserServiceImplTest {
 
-    private static Expert expertTest;
+    private static Person expertTest;
     private static File avatar;
-    private static User user;
+    private static Person user;
     private static ExpertUser expertUserMain;
     private static Order order;
     private static TypeService typeService;
@@ -49,12 +53,12 @@ class ExpertUserServiceImplTest {
 
     @BeforeAll
     static void initialize() {
-        expertTest = Expert.builder().firstname("testName").lastname("lname").lastname("testLastname").email("testExpertUser@email.com")
+        expertTest = Person.builder().firstname("testName").lastname("lname").lastname("testLastname").email("testExpertUser@email.com")
                 .password("1234QWer").build();
         avatar = new File("/Users/ebrahimnouri/Downloads/unr_test_180821_0925_9k0pgs.jpg");
 
-        user = User.builder().firstname("fname").lastname("lname").email("userTestExpertUser@email.com").password("1234QWear").build();
-        basicService = new BasicService("basicServiceTest", null);
+        user = Person.builder().firstname("fname").lastname("lname").email("userTestExpertUser@email.com").password("1234QWear").build();
+        basicService = new BasicService(null,"basicServiceTest", null);
 
         typeService = new TypeService("subTest", 110.0
                 , null, null, basicService, "description");

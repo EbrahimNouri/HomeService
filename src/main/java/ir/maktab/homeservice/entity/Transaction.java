@@ -1,5 +1,6 @@
 package ir.maktab.homeservice.entity;
 
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.TransactionType;
 import ir.maktab.homeservice.entity.id.TransactionId;
 import jakarta.persistence.*;
@@ -22,13 +23,11 @@ public class Transaction implements Serializable {
 
     @Id
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "expert_id")
-    private Expert expert;
+    private Person expert;
 
     @Id
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-    private User user;
+    private Person user;
 
     @Id
     @CreationTimestamp

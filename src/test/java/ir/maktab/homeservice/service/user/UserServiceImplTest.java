@@ -1,6 +1,6 @@
 package ir.maktab.homeservice.service.user;
 
-import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.entity.base.Person;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,13 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 //@EnableConfigurationProperties
 class UserServiceImplTest {
 
-    private static User user;
+    private static Person user;
 
     @Autowired
     UserService service;
     @BeforeAll
     public static void initialize() {
-        user = User.builder().firstname("testname").lastname("testlname").email("test@mail.com")
+        user = Person.builder().firstname("testname").lastname("testlname").email("test@mail.com")
                 .password("qwER1234").credit(0.0).build();
     }
 

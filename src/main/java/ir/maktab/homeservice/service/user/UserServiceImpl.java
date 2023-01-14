@@ -2,7 +2,7 @@ package ir.maktab.homeservice.service.user;
 
 
 import ir.maktab.homeservice.entity.Order;
-import ir.maktab.homeservice.entity.User;
+import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.Role;
 import ir.maktab.homeservice.exception.CustomExceptionInvalid;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
@@ -42,12 +42,12 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void save(User user) {
+    public void save(Person user) {
         repository.save(user);
     }
 
     @Override
-    public void register(User user, String siteURL)
+    public void register(Person user, String siteURL)
             throws MessagingException, UnsupportedEncodingException {
 
         if (repository.existsByEmail(user.getEmail()))
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean verify(Integer verificationCode) {
-        User user = repository.findByVerificationCode(verificationCode)
+        Person user = repository.findByVerificationCode(verificationCode)
                 .orElseThrow(() -> new CustomNotChoosingException("this code is invalid"));
 
         if (user.getVerificationCode() == null || user.isEnabled()) {
@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void registerUser(@Valid User user) {
+    public void registerUser(@Valid Person user) {
 
         if (user.getEmail() == null
                 && user.getPassword() == null
@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(@Valid User user, String password) {
+    public void changePassword(@Valid Person user, String password) {
 
         if (user.getPassword().equals(passwordEncoder.encode(password)))
             throw new CustomExceptionInvalid("password not changed");
@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(Long id) {
+    public Person findById(Long id) {
 
         return repository.findUserByIdCustom(id).orElseThrow
                 (() -> new RuntimeException("user not found"));
@@ -125,28 +125,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAll() {
+    public List<Person> findAll() {
         return repository.findAll();
     }
 
     @Override
-    public List<User> findByFirstname(String firstname) {
+    public List<Person> findByFirstname(String firstname) {
         return repository.findByFirstname(firstname);
     }
 
     @Override
-    public List<User> findByLastname(String lastname) {
+    public List<Person> findByLastname(String lastname) {
         return repository.findByLastname(lastname);
     }
 
     @Override
-    public User findByEmail(String email) {
+    public Person findByEmail(String email) {
         return repository.findByEmail(email).orElseThrow(() ->
                 new CustomExceptionNotFind("user not found"));
     }
 
     @Override
-    public List<User> findBy(Map<String, String> find) {
+    public List<Person> findBy(Map<String, String> find) {
         return repository.findAll(specificationUtil.mapToSpecification(find));
     }
 
@@ -156,12 +156,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(User user) {
+    public void delete(Person user) {
         repository.delete(user);
     }
 
     @Override
-    public User userDetail(User user) {
+    public Person userDetail(Person user) {
         List<Order> orders = applicationContext
                 .getContext()
                 .getBean(OrderService.class)
@@ -171,12 +171,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> userFindBySpecification(Map<String, String> map) {
+    public List<Person> userFindBySpecification(Map<String, String> map) {
         return repository.findAll(specificationUtil.userSpecification(map));
     }
 
     @Override
-    public List<User> userSpecification(Map<String, String> map){
+    public List<Person> userSpecification(Map<String, String> map){
         return repository.findAll(specificationUtil.userSpecification(map));
     }
 }

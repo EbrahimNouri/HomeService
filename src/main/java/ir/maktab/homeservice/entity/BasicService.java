@@ -13,11 +13,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "basic_service")
-@AllArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@Builder
 @ToString
 public class BasicService extends BaseEntity {
 
@@ -27,6 +24,17 @@ public class BasicService extends BaseEntity {
     @OneToMany(mappedBy = "basicService"/*, fetch = FetchType.EAGER*/)
     @ToString.Exclude
     private List<TypeService> typeServices;
+
+    public BasicService(Long id, String name, List<TypeService> typeServices) {
+        super(id);
+        this.name = name;
+        this.typeServices = typeServices;
+    }
+
+    public BasicService() {
+        super();
+    }
+
 
     @Override
     public boolean equals(Object o) {
