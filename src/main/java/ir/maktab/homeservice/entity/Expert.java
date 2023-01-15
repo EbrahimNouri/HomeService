@@ -5,9 +5,6 @@ import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.entity.enums.Role;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -17,10 +14,8 @@ import java.util.Objects;
 
 
 @Entity
-@AllArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
 @ToString
 public class Expert extends Person {
 
@@ -50,14 +45,22 @@ public class Expert extends Person {
     private byte[] avatar;
 
     @Builder
-    public Expert(@NotEmpty(message = "Blank is not acceptable") String firstname, @NotEmpty(message = "Blank is not acceptable") String lastname, @Email(/*groups = CustomExceptionInvalid.class,*/ message = "email address is not valid") String email, @NotEmpty String username, @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$", message = "password is not valid") String password, double credit, LocalDateTime signupDateTime, Role role, boolean enabled, Integer verificationCode, ExpertStatus expertStatus, List<ExpertTypeService> expertTypeServices, List<ExpertUser> expertUsers, List<Transaction> transactions, Double averageScore, byte[] avatar) {
-        super(firstname, lastname, email, username, password, credit, signupDateTime, role, enabled, verificationCode);
+    public Expert(Long id, String firstname, String lastname, String email, String username, String password
+            , double credit, LocalDateTime signupDateTime, Role role, boolean enabled, Integer verificationCode
+            , ExpertStatus expertStatus, List<ExpertTypeService> expertTypeServices, List<Offer> offers
+            , List<ExpertUser> expertUsers, List<Transaction> transactions, Double averageScore, byte[] avatar) {
+
+        super(id, firstname, lastname, email, username, password, credit, signupDateTime, role, enabled, verificationCode);
         this.expertStatus = expertStatus;
         this.expertTypeServices = expertTypeServices;
+        this.offers = offers;
         this.expertUsers = expertUsers;
         this.transactions = transactions;
         this.averageScore = averageScore;
         this.avatar = avatar;
+    }
+
+    public Expert() {
     }
 
     @Override

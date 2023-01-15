@@ -4,10 +4,9 @@ import ir.maktab.homeservice.entity.base.Person;
 import ir.maktab.homeservice.entity.enums.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
@@ -16,10 +15,8 @@ import java.util.Objects;
 
 
 @Entity(name = "user_table")
-@AllArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
 public class User extends Person {
 
     @OneToMany(mappedBy = "user")
@@ -32,11 +29,17 @@ public class User extends Person {
     private List<Transaction> transactions;
 
     @Builder
-    public User(@NotEmpty(message = "Blank is not acceptable") String firstname, @NotEmpty(message = "Blank is not acceptable") String lastname, @Email(/*groups = CustomExceptionInvalid.class,*/ message = "email address is not valid") String email, @NotEmpty String username, @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$", message = "password is not valid") String password, double credit, LocalDateTime signupDateTime, Role role, boolean enabled, Integer verificationCode, List<ExpertUser> expertUsers, List<Order> orders, List<Transaction> transactions) {
-        super(firstname, lastname, email, username, password, credit, signupDateTime, role, enabled, verificationCode);
+    public User(Long id, String firstname, String lastname, String email, String username, String password
+            , double credit, LocalDateTime signupDateTime, Role role, boolean enabled, Integer verificationCode
+            , List<ExpertUser> expertUsers, List<Order> orders, List<Transaction> transactions) {
+
+        super(id, firstname, lastname, email, username, password, credit, signupDateTime, role, enabled, verificationCode);
         this.expertUsers = expertUsers;
         this.orders = orders;
         this.transactions = transactions;
+    }
+
+    public User() {
     }
 
     @Override

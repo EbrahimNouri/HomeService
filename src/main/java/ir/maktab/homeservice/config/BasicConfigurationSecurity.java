@@ -12,13 +12,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -43,56 +38,26 @@ public class BasicConfigurationSecurity {
     }
 
     @Bean
-    public InMemoryUserDetailsManager userDetailsServiceInMemory(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.withUsername("expert")
-                .password(passwordEncoder.encode("PAsswOrd"))
-                .roles("EXPERT")
-                .build();
-
-        UserDetails admin = User.withUsername("admin")
-                .password(passwordEncoder.encode("PAsswOrd"))
-                .roles("ADMIN")
-                .build();
-
-        UserDetails expert = User.withUsername("user")
-                .password(passwordEncoder.encode("PAsswOrd"))
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(user, admin, expert);
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/register/**").permitAll())
 
                 .authorizeHttpRequests(
                         (auth) -> auth.requestMatchers(
-                                "api/v1/expert/**").hasRole("EXPERT"))
+                                        "/api/v1/expert/**").hasRole("EXPERT")
 
-                .authorizeHttpRequests(
-                        (auth) -> auth.requestMatchers(
-                                "api/v1/user/**").hasRole("USER"))
+                                .requestMatchers(
+                                        "/api/v1/user/**").hasRole("USER")
 
-                .authorizeHttpRequests(
-                        (auth) -> auth.requestMatchers(
-                                "api/v1/admin/**").hasRole("ADMIN"))
+                                .requestMatchers(
+                                        "/api/v1/admin/**").hasRole("ADMIN")
+                                .anyRequest().authenticated()
+                )
 
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .authorizeRequests().anyRequest().permitAll().and()
                 .httpBasic();
 
         return http.build();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-
-        return (web) -> web.ignoring()
-                .requestMatchers(
-                        "/api/v1/register/**"
-                );
     }
 
     @Bean

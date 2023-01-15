@@ -27,7 +27,7 @@ import java.util.List;
 @RestController
 @Log4j2
 @AllArgsConstructor
-@RequestMapping("api/v1/expert")
+@RequestMapping("/api/v1/expert")
 public class ExpertControllerImpl {
     private final ExpertService expertService;
     private final OfferService offerService;
@@ -118,5 +118,4 @@ public class ExpertControllerImpl {
         Expert principal = (Expert) authentication.getPrincipal();
         return principal.getCredit();
     }
-
 }

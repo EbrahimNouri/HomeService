@@ -8,9 +8,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,8 +20,6 @@ import java.util.Collection;
 import java.util.List;
 
 @MappedSuperclass
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 public abstract class Person extends BaseEntity implements UserDetails {
@@ -61,6 +57,24 @@ public abstract class Person extends BaseEntity implements UserDetails {
     @Column(name = "verification_code", length = 5)
     private Integer verificationCode;
 
+    public Person(Long id, String firstname, String lastname, String email, String username, String password
+            , double credit, LocalDateTime signupDateTime, Role role, boolean enabled, Integer verificationCode) {
+        super(id);
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.credit = credit;
+        this.signupDateTime = signupDateTime;
+        this.role = role;
+        this.enabled = enabled;
+        this.verificationCode = verificationCode;
+    }
+
+    public Person() {
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(getRole().name()));
@@ -83,6 +97,6 @@ public abstract class Person extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return enabled;
     }
 }

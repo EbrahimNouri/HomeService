@@ -10,22 +10,17 @@ import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.order.OrderService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
-import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.repository.query.Param;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @RestController
 @Log4j2
 @AllArgsConstructor
-@RequestMapping("api/v1/user")
+@RequestMapping("/api/v1/user")
 public class UserControllerImpl {
 
     private final UserService userService;
@@ -36,30 +31,6 @@ public class UserControllerImpl {
     private final TypeServiceService typeServiceService;
     private final AdminControllerImpl adminController;
 
-    @Secured("permitAll")
-    @PostMapping("/register")
-    public void registerUser(@RequestBody @Validated PersonRegisterDto personRegisterDto)
-            throws MessagingException, UnsupportedEncodingException {
-
-        User temp = User.builder()
-                .firstname(personRegisterDto.getFirstname())
-                .lastname(personRegisterDto.getLastname())
-                .email(personRegisterDto.getEmail())
-                .username(personRegisterDto.getUsername())
-                .password(personRegisterDto.getPassword())
-                .build();
-
-        userService.register(temp, "/api/v1/user");
-    }
-
-    @GetMapping("/verify")
-    public String verifyUser(@Param("code") Integer code) {
-        if (userService.verify(code)) {
-            return "verify_success";
-        } else {
-            return "verify_fail";
-        }
-    }
 
     @PutMapping("/chPass")
     public void changePassword(@RequestBody String password, Authentication authentication) {

@@ -22,10 +22,7 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @ToString
-@NoArgsConstructor
-@Builder
 public class Admin extends BaseEntity implements UserDetails {
 
     @Column(unique = true)
@@ -45,6 +42,19 @@ public class Admin extends BaseEntity implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Builder
+    public Admin(Long id, String name, String email, String username, String password, Role role) {
+        super(id);
+        this.name = name;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
+    public Admin() {
+    }
 
     @Override
     public boolean equals(Object o) {

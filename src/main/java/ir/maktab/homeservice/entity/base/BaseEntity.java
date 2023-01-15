@@ -5,11 +5,9 @@ import lombok.*;
 
 import java.io.Serializable;
 
-@AllArgsConstructor
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable {
 
@@ -18,4 +16,10 @@ public abstract class BaseEntity implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    public BaseEntity(Long id) {
+        this.id = id;
+    }
+
+    public BaseEntity() {
+    }
 }

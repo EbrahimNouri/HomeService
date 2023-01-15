@@ -37,11 +37,6 @@ public class AdminControllerImpl {
     private final OfferService offerService;
     private final OrderService orderService;
 
-    @PostMapping("/add") //checked
-    public void addAdmin(@RequestBody @Valid Admin admin) {
-        service.addAdmin(admin);
-    }
-
     @PutMapping("/chPass") //checked
     public void changePassword(@RequestParam @Valid String password, Authentication authentication) {
         Admin admin = (Admin) authentication.getPrincipal();
@@ -297,7 +292,7 @@ public class AdminControllerImpl {
                 .toList();
     }
 
-    @GetMapping("/countOfOrder/{userId}}")
+    @GetMapping("/countOfOrder/{userId}")
     public int countOfOrder(@PathVariable Long userId) {
         return orderService.countOfOrdersByUserId(userId);
     }

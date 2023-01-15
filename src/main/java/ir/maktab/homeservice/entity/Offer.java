@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@AllArgsConstructor
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Offer extends BaseEntity {
@@ -40,6 +40,7 @@ public class Offer extends BaseEntity {
     private LocalDateTime EndDate;
 
     private boolean choose;
+
 
     @Override
     public boolean equals(Object o) {
