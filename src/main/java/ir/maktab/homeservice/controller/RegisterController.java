@@ -1,12 +1,15 @@
 package ir.maktab.homeservice.controller;
 
 import ir.maktab.homeservice.dto.PersonRegisterDto;
-import ir.maktab.homeservice.entity.base.Person;
+import ir.maktab.homeservice.entity.Admin;
+import ir.maktab.homeservice.entity.Expert;
+import ir.maktab.homeservice.entity.User;
 import ir.maktab.homeservice.service.admin.AdminService;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.user.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
@@ -27,10 +30,10 @@ public class RegisterController {
 
 
     @PostMapping("/expert")
-    public String registerExpert(@RequestBody @Valid PersonRegisterDto personRegisterDto)
+    public String registerExpert(@RequestBody @Validated PersonRegisterDto personRegisterDto)
             throws MessagingException, UnsupportedEncodingException {
 
-        Person temp = PersonRegisterDto.personDtoExpertMapping(personRegisterDto);
+        Expert temp = PersonRegisterDto.personDtoExpertMapping(personRegisterDto);
 
         expertService.register(temp, "http://localhost:8099/api/v1/register/verifyExpert/");
 
@@ -47,27 +50,27 @@ public class RegisterController {
     }
 
     @PostMapping("/user")
-    public String registerUser(@RequestBody @Valid PersonRegisterDto personRegisterDto)
+    public String registerUser(@RequestBody @Validated PersonRegisterDto personRegisterDto)
             throws MessagingException, UnsupportedEncodingException {
 
-        Person temp = PersonRegisterDto.personDtoUserMapping(personRegisterDto);
+        User temp = PersonRegisterDto.personDtoUserMapping(personRegisterDto);
 
         userService.register(temp, "http://localhost:8099/api/v1/register/verifyUser/");
 
         return "register_success";
     }
 
-    @GetMapping("/verifyUser/{code}")
+    @GetMapping("verifyUser/{code}")
     public String verifyUser(@PathVariable Integer code) {
         if (userService.verify(code)) {
-            return "verify_success";
+            return "verify success";
         } else {
-            return "verify_fail";
+            return "verify fail";
         }
     }
 
     @PostMapping("/addAdmin") //checked
-    public void addAdmin(@RequestBody PersonRegisterDto admin) {
-        adminService.addAdmin(PersonRegisterDto.personDtoAdminMapping(admin));
+    public void addAdmin(@RequestBody @Valid Admin admin) {
+        adminService.addAdmin(admin);
     }
 }

@@ -1,6 +1,8 @@
 package ir.maktab.homeservice.config;
 
-import ir.maktab.homeservice.repository.PersonRepository;
+import ir.maktab.homeservice.repository.admin.AdminRepository;
+import ir.maktab.homeservice.repository.expert.ExpertRepository;
+import ir.maktab.homeservice.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,30 +24,35 @@ import org.springframework.security.web.SecurityFilterChain;
         securedEnabled = true
 )
 public class BasicConfigurationSecurity {
+    private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final PersonRepository personRepository;
+    private final ExpertRepository expertRepository;
+    private final AdminRepository adminRepository;
 
-    public BasicConfigurationSecurity(BCryptPasswordEncoder passwordEncoder, PersonRepository personRepository) {
+    public BasicConfigurationSecurity(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
+                                      ExpertRepository expertRepository, AdminRepository adminRepository) {
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.personRepository = personRepository;
+        this.expertRepository = expertRepository;
+        this.adminRepository = adminRepository;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/register/**").permitAll())
+
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/register/**")
+                        .permitAll())
 
                 .authorizeHttpRequests(
                         (auth) -> auth.requestMatchers(
-                                "/api/v1/user/**").hasRole("USER")
-                                .requestMatchers(
-                                        "/api/v1/admin/**").hasRole("ADMIN")
-                                .requestMatchers(
                                         "/api/v1/expert/**").hasRole("EXPERT")
-                                .anyRequest().authenticated()
-                )
+                                .requestMatchers(
+                                        "/api/v1/user/**").hasRole("USER")
+                                .requestMatchers(
+                                        "/api/v1/admin/**").hasRole("ADMIN"))
+                .authorizeHttpRequests((auth) -> auth.anyRequest().permitAll())
 
                 .httpBasic();
 
@@ -62,7 +69,19 @@ public class BasicConfigurationSecurity {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 
-        auth.userDetailsService(username -> personRepository
+        auth.userDetailsService(username -> userRepository
+                        .findByUsername(username)
+                        .orElseThrow(() -> new UsernameNotFoundException(String
+                                .format("this %s not found", username))))
+                .passwordEncoder(passwordEncoder).and()
+
+                .userDetailsService(username -> adminRepository
+                        .findByUsername(username)
+                        .orElseThrow(() -> new UsernameNotFoundException(String
+                                .format("this %s not found", username))))
+                .passwordEncoder(passwordEncoder).and()
+
+                .userDetailsService(username -> expertRepository
                         .findByUsername(username)
                         .orElseThrow(() -> new UsernameNotFoundException(String
                                 .format("this %s not found", username))))
