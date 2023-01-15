@@ -7,6 +7,7 @@ import ir.maktab.homeservice.entity.User;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 public interface OrderService {
     Order findById(Long id);
@@ -36,4 +37,6 @@ public interface OrderService {
     int countOfOrdersByUserId(Long userId);
 
     List<Order> findByUserId(Long id);
+
+    List<Order> findBySpecification(Map<String, String> map);
 }

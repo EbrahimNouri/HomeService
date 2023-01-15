@@ -17,10 +17,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -187,33 +185,6 @@ public class OrderServiceImpl implements OrderService {
         timeChecker(order, offer);
     }
 
-    // TODO: 1/4/2023 AD test it
-    public List<Order> findBySpecification(Map<String, String> find) {
-        List<Order> orders = new ArrayList<>();
-        // "from" date "to" date
-        if (find.containsKey("from") || find.containsKey("to")) {
-            orders.addAll(repository.findOrdersByPriodTime
-                    (LocalDate.parse(find.get("from")), LocalDate.parse(find.get("to"))));
-
-            find.remove("from");
-            find.remove("to");
-        }
-
-        if (find.containsKey("basicService")) {
-            orders.addAll(repository.findByBasicServiceName(find.get("basicService")));
-            find.remove("basicService");
-        }
-
-        if (find.containsKey("subService")) {
-            orders.addAll(repository.findOrderByTypeServiceName(find.get("subService")));
-            find.remove("subService");
-        }
-
-        orders.addAll(repository.findAll(specificationUtil.mapToSpecification(find)));
-
-        return orders;
-    }
-
     private void timeChecker(Order order, Offer offer) {
         if (LocalDateTime.now().isBefore(offer.getEndDate())) {
 
@@ -258,6 +229,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> findByUserId(Long id) {
         return repository.findByUserId(id);
+    }
+
+    @Override
+    public List<Order> findBySpecification(Map<String, String> map){
+        return repository.findAll(specificationUtil.OrderSpecification(map));
     }
 
 

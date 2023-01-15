@@ -30,7 +30,6 @@ public class AdminControllerImpl {
     private final AdminService service;
     private final BasicServicesService basicServicesService;
     private final ExpertService expertService;
-
     private final UserService userService;
     private final ExpertTypeServiceService expertTypeServiceService;
     private final TypeServiceService typeServiceService;
@@ -295,15 +294,6 @@ public class AdminControllerImpl {
     @GetMapping("/countOfOrder/{userId}")
     public int countOfOrder(@PathVariable Long userId) {
         return orderService.countOfOrdersByUserId(userId);
-    }
-
-
-    private AdminDto adminDtoMapper(Admin admin) {
-        return AdminDto.builder()
-                .username(admin.getUsername())
-                .email(admin.getEmail())
-                .name(admin.getName())
-                .build();
     }
 
     public TypeServiceDto typeServiceMapped(TypeService typeService) {

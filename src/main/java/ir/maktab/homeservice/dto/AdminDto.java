@@ -1,5 +1,6 @@
 package ir.maktab.homeservice.dto;
 
+import ir.maktab.homeservice.entity.Admin;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +12,15 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 public class AdminDto {
+        String name;
         String username;
         String email;
-        String name;
+
+        public static AdminDto adminDtoMapper(Admin admin) {
+                return AdminDto.builder()
+                        .username(admin.getUsername())
+                        .name(admin.getName())
+                        .email(admin.getEmail())
+                        .build();
+        }
 }
