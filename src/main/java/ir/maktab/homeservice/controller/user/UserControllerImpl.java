@@ -134,7 +134,7 @@ public class UserControllerImpl {
     @GetMapping("/showAllTypeService/{id}")
     public List<TypeServiceDto> findByBasicServiceId(@PathVariable Long id) {
         return typeServiceService.showTypeServices(id).stream()
-                .map(adminController::typeServiceMapped).toList();
+                .map(TypeServiceDto::typeServiceToTypeServiceDto).toList();
     }
 
     @GetMapping("/{orderId}")

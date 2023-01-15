@@ -11,11 +11,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "type_service")
-@AllArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@Builder
 @ToString
 public class TypeService extends BaseEntity {
 
@@ -37,7 +34,23 @@ public class TypeService extends BaseEntity {
     @JoinColumn(nullable = false)
     private BasicService basicService;
 
+    @Column(nullable = false)
     private String description;
+
+    @Builder
+    public TypeService(Long id, String subService, double basePrice, List<ExpertTypeService> expertTypeServices
+            , List<Order> orders, BasicService basicService, String description) {
+        super(id);
+        this.subService = subService;
+        this.basePrice = basePrice;
+        this.expertTypeServices = expertTypeServices;
+        this.orders = orders;
+        this.basicService = basicService;
+        this.description = description;
+    }
+
+    public TypeService() {
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,7 +1,6 @@
 package ir.maktab.homeservice.service.expertTypeSerice;
 
 
-import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.ExpertTypeService;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
@@ -9,6 +8,7 @@ import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,11 +21,10 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
     ExpertTypeServiceRepository repository;
 
     @Override
-    public int removeExpertFromBasicService(Expert expert) {
+    @Transactional
+    public void removeExpertFromBasicService(Long expert) {
 
-        log.debug("debug remove expert from basic service {} ", expert);
-
-        return repository.removeByExpert(expert);
+        repository.removeExpertTypeServiceByExpertId(expert);
 
     }
 

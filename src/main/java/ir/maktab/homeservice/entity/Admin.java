@@ -25,7 +25,7 @@ import java.util.Objects;
 @ToString
 public class Admin extends BaseEntity implements UserDetails {
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String name;
 
     @Email(message = "email address is not valid")

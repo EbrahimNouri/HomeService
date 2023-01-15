@@ -82,4 +82,9 @@ public class BasicServicesServiceImpl implements BasicServicesService {
         repository.delete(basicService);
     }
 
+    @Override
+    public boolean existByName(String name) {
+        return repository.existsByName(name);
+    }
+
 }

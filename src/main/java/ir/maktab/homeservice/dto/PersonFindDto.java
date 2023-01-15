@@ -14,6 +14,7 @@ public class PersonFindDto {
     private String firstname;
     private String lastname;
     private String email;
+    private String username;
     private PersonType personType;
     private Double credit;
     private LocalDateTime signupDate;
@@ -27,6 +28,7 @@ public class PersonFindDto {
                 .credit(user.getCredit())
                 .firstname(user.getFirstname())
                 .lastname(user.getLastname())
+                .username(user.getUsername())
                 .build();
     }
 
@@ -39,6 +41,7 @@ public class PersonFindDto {
                 .credit(expert.getCredit())
                 .firstname(expert.getFirstname())
                 .lastname(expert.getLastname())
+                .username(expert.getUsername())
                 .build();
     }
 }

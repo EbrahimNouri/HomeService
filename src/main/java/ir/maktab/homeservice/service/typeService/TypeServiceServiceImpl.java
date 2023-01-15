@@ -2,8 +2,10 @@ package ir.maktab.homeservice.service.typeService;
 
 
 import ir.maktab.homeservice.entity.TypeService;
+import ir.maktab.homeservice.exception.CustomExceptionInvalid;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
+import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -17,7 +19,8 @@ import java.util.List;
 @Transactional
 public class TypeServiceServiceImpl implements TypeServiceService {
 
-    private TypeServiceRepository typeServiceRepository;
+    private final TypeServiceRepository typeServiceRepository;
+    private final BasicServicesService basicServicesService;
 
     @Override
     public TypeService findById(Long id) {
@@ -28,9 +31,13 @@ public class TypeServiceServiceImpl implements TypeServiceService {
     @Override
     public void addSubService(TypeService typeService) {
 
-            typeServiceRepository.save(typeService);
+        if (typeServiceRepository.existsBySubService(typeService.getSubService()))
+            throw new CustomExceptionInvalid("this type service is invalid");
 
-            log.debug("debug add sub service {} ", typeService);
+        if (!basicServicesService.existByName(typeService.getBasicService().getName()))
+            throw new CustomExceptionInvalid("this basic service is invalid");
+
+        typeServiceRepository.save(typeService);
     }
 
     @Override
@@ -61,12 +68,12 @@ public class TypeServiceServiceImpl implements TypeServiceService {
     }
 
     @Override
-    public List<TypeService> findByBasicServiceId(Long basicId){
+    public List<TypeService> findByBasicServiceId(Long basicId) {
         return typeServiceRepository.findByBasicServiceId(basicId);
     }
 
     @Override
-    public void save(TypeService typeService){
+    public void save(TypeService typeService) {
         typeServiceRepository.save(typeService);
     }
 }

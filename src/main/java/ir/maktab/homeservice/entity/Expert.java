@@ -23,7 +23,7 @@ public class Expert extends Person {
     @Enumerated(EnumType.STRING)
     private ExpertStatus expertStatus;
 
-    @OneToMany(mappedBy = "expert"/*, fetch = FetchType.EAGER*/)
+    @OneToMany(mappedBy = "expert", fetch = FetchType.EAGER)
     @ToString.Exclude
     private List<ExpertTypeService> expertTypeServices;
 

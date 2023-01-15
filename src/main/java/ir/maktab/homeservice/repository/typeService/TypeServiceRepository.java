@@ -13,4 +13,6 @@ import java.util.List;
 public interface TypeServiceRepository extends JpaRepository<TypeService, Long> {
     @Query("from TypeService ts where ts.basicService.id = :basicServiceId")
     List<TypeService> findByBasicServiceId(@Param("basicServiceId") Long basicServiceId);
+
+    boolean existsBySubService(String subService);
 }

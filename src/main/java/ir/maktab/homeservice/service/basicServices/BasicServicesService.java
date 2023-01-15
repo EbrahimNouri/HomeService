@@ -23,4 +23,6 @@ public interface BasicServicesService {
     void save(BasicService basicService);
 
     void delete(BasicService basicService);
+
+    boolean existByName(String name);
 }

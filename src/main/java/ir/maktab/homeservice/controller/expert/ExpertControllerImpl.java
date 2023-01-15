@@ -4,6 +4,7 @@ package ir.maktab.homeservice.controller.expert;
 import ir.maktab.homeservice.dto.ExpertOffersDto;
 import ir.maktab.homeservice.dto.OfferDto;
 import ir.maktab.homeservice.dto.OrderDto;
+import ir.maktab.homeservice.dto.PersonFindDto;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
@@ -38,8 +39,9 @@ public class ExpertControllerImpl {
     // TODO: 12/31/2022 AD
 
     @GetMapping()
-    public Expert showExpert(Authentication authentication) {
-        return (Expert) authentication.getPrincipal();
+    public PersonFindDto showExpert(Authentication authentication) {
+        Expert expert = (Expert) authentication.getPrincipal();
+        return PersonFindDto.expertTopPersonFindDtoMapper(expert);
 
     }
 
@@ -107,14 +109,14 @@ public class ExpertControllerImpl {
     }
 
     @GetMapping("/myOffers")
-    public List<OfferDto> myOffers(Authentication authentication){
+    public List<OfferDto> myOffers(Authentication authentication) {
         Expert principal = (Expert) authentication.getPrincipal();
         return offerService.findByExpertId(principal.getId()).stream()
                 .map(OfferDto::offerToOfferDtoMapping).toList();
     }
 
     @GetMapping("/myPrice")
-    public Double myPrice(Authentication authentication){
+    public Double myPrice(Authentication authentication) {
         Expert principal = (Expert) authentication.getPrincipal();
         return principal.getCredit();
     }

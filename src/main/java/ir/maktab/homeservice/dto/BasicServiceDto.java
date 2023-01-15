@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class BasicServiceDto {
-    private Long dtoId;
-    private String dtoName;
+    private Long Id;
+    private String Name;
 }

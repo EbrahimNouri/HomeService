@@ -13,7 +13,6 @@ import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +44,7 @@ public class AdminControllerImpl {
     @GetMapping() //checked
     public AdminDto admin(Authentication authentication) {
         Admin admin = (Admin) authentication.getPrincipal();
-        return adminDtoMapper(admin);
+        return AdminDto.adminDtoMapper(admin);
     }
 
     @PostMapping("/addBasicService") //checked
@@ -59,8 +58,8 @@ public class AdminControllerImpl {
                 .map(bs -> new BasicServiceDto(bs.getId(), bs.getName())).toList();
     }
 
-    @PutMapping("/descriptionChange/{typeServiceId}/{description}") //checked
-    public void descriptionChange(@PathVariable Long typeServiceId, @PathVariable String description) {
+    @PutMapping("/descriptionChange") //checked
+    public void descriptionChange(@RequestParam Long typeServiceId, String description) {
         typeServiceService.descriptionChange(typeServiceId, description);
     }
 
@@ -70,60 +69,40 @@ public class AdminControllerImpl {
         expertService.acceptExpert(acceptExpert);
     }
 
-    @DeleteMapping("/removeExpertFromBasicService/{expertId}")
-    public HttpStatus removeExpertFromBasicService(@PathVariable Long expertId) {
-        Expert expert = expertService.findById(expertId);
-
-        return expertTypeServiceService.removeExpertFromBasicService(expert) == 1
-                ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+    @DeleteMapping("/removeExpertFromBasicService/{expertId}") //checked
+    public void removeExpertFromBasicService(@PathVariable Long expertId) {
+        expertTypeServiceService.removeExpertFromBasicService(expertId);
     }
 
-    @PostMapping("/addExpertToTypeService")
-    public void addExpertToTypeService(@RequestParam Long ex, @RequestParam Long ty) {
+    @PostMapping("/addExpertToTypeService")//checked
+    public void addExpertToTypeService(@RequestParam Long expert, Long typeService) {
         expertTypeServiceService.addExpertToTypeService
-                (findExpertTypeServiceByDto(new ExpertTypeServiceDto(ex, ty)));
+                (findExpertTypeServiceByDto(expert, typeService));
     }
 
-    @DeleteMapping("/removeExpertFromTypeService/")
-    public void removeExpertFromTypeService(@RequestParam Long ex, @RequestParam Long ty) {
+    @DeleteMapping("/removeExpertFromTypeService") //checked
+    public void removeExpertFromTypeService(@RequestParam Long expert, Long typeService) {
 
         expertTypeServiceService.removeExpertFromTypeService
-                (findExpertTypeServiceByDto(new ExpertTypeServiceDto(ex, ty)));
+                (findExpertTypeServiceByDto(expert, typeService));
     }
 
 
-    @GetMapping("findExpertTypeServiceById/{expertId}/{typeServiceId}")
-    public ExpertTypeServiceMapped findExpertTypeServiceById(@PathVariable Long expertId
-            , @PathVariable Long typeServiceId) {
+    @GetMapping("findExpertTypeServiceById") //checked
+    public ExpertTypeServiceDto findExpertTypeServiceById(@RequestParam Long expert
+            , Long typeService) {
 
 
         ExpertTypeService expertTypeService = expertTypeServiceService.findById
-                (expertId, typeServiceId);
-        Expert expert = expertTypeService.getExpert();
-        TypeService typeService = expertTypeService.getTypeService();
+                (expert, typeService);
+        Expert expert1 = expertTypeService.getExpert();
+        TypeService typeService1 = expertTypeService.getTypeService();
 
-        return new ExpertTypeServiceMapped
-                (expert.getFirstname()
-                        , expert.getLastname()
-                        , expert.getEmail()
-                        , expert.getAverageScore()
-                        , expert.getCredit()
-                        , expert.getAverageScore()
-                        , typeService.getSubService()
-                        , typeService.getBasePrice()
-                        , typeService.getBasicService().getName()
-                        , typeService.getDescription()
-                );
+        return ExpertTypeServiceDto.expertTypeServiceToDtoMapper(expert1, typeService1);
     }
 
-    private ExpertTypeService findExpertTypeServiceByDto(ExpertTypeServiceDto expertTypeServiceDto) {
-        Expert expert = expertService.findById(expertTypeServiceDto.getExpertId());
 
-        TypeService typeService = typeServiceService.findById(expertTypeServiceDto.getTypeServiceId());
-
-        return new ExpertTypeService(expert, typeService);
-    }
-
+    // TODO: 1/15/2023 AD
     @GetMapping("findOfferById/{id}")
     public OfferDto findOfferById(@PathVariable Long id) {
 
@@ -139,15 +118,17 @@ public class AdminControllerImpl {
 
     }
 
-    @GetMapping("/showAllTypeService/{id}")
+    @GetMapping("/showAllTypeService/{id}") //checked
     public List<TypeServiceDto> findByBasicServiceId(@PathVariable Long id) {
-        return typeServiceService.showTypeServices(id).stream().map(this::typeServiceMapped).toList();
+        return typeServiceService.showTypeServices(id).stream()
+                .map((TypeServiceDto::typeServiceToTypeServiceDto)).toList();
     }
 
-    @PostMapping("/addTypeService")
-    public void addTypeService(@RequestParam String name, Long baseId, Double price) {
+    @PostMapping("/addTypeService")//checked
+    public void addTypeService(@RequestParam String name, Long baseId, Double price, String description) {
 
         TypeService typeService = TypeService.builder()
+                .description(description)
                 .subService(name)
                 .basicService(basicServicesService.findById(baseId))
                 .basePrice(price)
@@ -157,7 +138,7 @@ public class AdminControllerImpl {
     }
 
 
-    @PostMapping("/addSubService")
+    @PostMapping("/addSubService")//checked
     public void addSubService(@RequestBody TypeServiceDto typeServiceDto) {
 
         BasicService basicService = basicServicesService.findById(typeServiceDto.getBaseServiceId());
@@ -169,19 +150,20 @@ public class AdminControllerImpl {
                 .build());
     }
 
-    @PutMapping("/paymentPriceChange")
+    @PutMapping("/paymentPriceChange")//checked
     public void paymentPriceChange(@RequestBody PaymentPriceChangeDto paymentPriceChangeDto) {
         TypeService typeService = typeServiceService.findById(paymentPriceChangeDto.getTypeServiceId());
 
         typeServiceService.paymentPriceChange(typeService, paymentPriceChangeDto.getPrice());
     }
 
-    @GetMapping("/showTypeServices/{basicServiceId}")
-    public List<TypeService> showTypeServices(@PathVariable Long basicServiceId) {
-        return typeServiceService.showTypeServices(basicServiceId);
+    @GetMapping("/showTypeServices/{basicServiceId}") //checked
+    public List<TypeServiceDto> showTypeServices(@PathVariable Long basicServiceId) {
+        return typeServiceService.showTypeServices(basicServiceId)
+                .stream().map(TypeServiceDto::typeServiceToTypeServiceDto).toList();
     }
 
-    @GetMapping("/all")
+    @GetMapping("/all") //checked
     public List<PersonFindDto> showAll() {
         List<PersonFindDto> all = new ArrayList<>();
         all.addAll(expertService.findAll().stream().map(PersonFindDto::expertTopPersonFindDtoMapper).toList());
@@ -189,7 +171,7 @@ public class AdminControllerImpl {
         return all;
     }
 
-    @GetMapping("/findByFirstName/")
+    @GetMapping("/findByFirstName") //checked
     public List<PersonFindDto> findByFirstNameAll(@RequestParam String firstname) {
         List<PersonFindDto> all = new ArrayList<>();
         all.addAll(expertService.findByFirstName(firstname).stream()
@@ -200,61 +182,75 @@ public class AdminControllerImpl {
     }
 
 
-    @GetMapping("/findByFirstName/allExperts/{firstname}")
+    @GetMapping("/findByFirstName/allExperts/{firstname}") //checked
     public List<PersonFindDto> findByFirstnameExpert(@PathVariable String firstname) {
 
         return expertService.findByFirstName(firstname).stream().map(PersonFindDto::expertTopPersonFindDtoMapper).toList();
 
     }
 
-    @GetMapping("/findByFirstName/allUsers/{firstname}")
+    @GetMapping("/findByFirstName/allUsers/{firstname}") //checked
     public List<PersonFindDto> findByFirstnameUser(@PathVariable String firstname) {
         return userService.findByFirstname(firstname).stream().map(PersonFindDto::userTopPersonFindDtoMapper).toList();
 
     }
 
-    @GetMapping("/findByLastnameAll/{lastname}")
-    public List<PersonFindDto> findByLastName(@PathVariable String lastname) {
+    @GetMapping("/findByLastnameAll")//checked
+    public List<PersonFindDto> findByLastName(@RequestParam String lastname) {
+
         List<PersonFindDto> all = new ArrayList<>();
-        all.addAll(expertService.findByLastName(lastname).stream().map(PersonFindDto::expertTopPersonFindDtoMapper).toList());
-        all.addAll(userService.findByLastname(lastname).stream().map(PersonFindDto::userTopPersonFindDtoMapper).toList());
+
+        all.addAll(expertService.findByLastName(lastname)
+                .stream().map(PersonFindDto::expertTopPersonFindDtoMapper).toList());
+
+        all.addAll(userService.findByLastname(lastname)
+                .stream().map(PersonFindDto::userTopPersonFindDtoMapper).toList());
+
         return all;
     }
 
-    @GetMapping("/findByLastname/allExperts/{lastname}")
-    public List<PersonFindDto> findByLastnameExpert(@PathVariable String lastname) {
+    @GetMapping("/findByLastname/allExperts") //checked
+    public List<PersonFindDto> findByLastnameExpert(@RequestParam String lastname) {
 
         return expertService.findByLastName(lastname).stream().map(PersonFindDto::expertTopPersonFindDtoMapper).toList();
 
     }
 
-    @GetMapping("/findByLastname/allUsers/{lastname}")
-    public List<PersonFindDto> findByLastnameUser(@PathVariable String lastname) {
+    @GetMapping("/findByLastname/allUsers")//checked
+    public List<PersonFindDto> findByLastnameUser(@RequestParam String lastname) {
         return userService.findByLastname(lastname).stream().map(PersonFindDto::userTopPersonFindDtoMapper).toList();
 
     }
 
-    @GetMapping("/findByEmailAll/{email}")
-    public PersonFindDto[] findByEmailExpert(@PathVariable String email) {
+    @GetMapping("/findByEmailAll")//checked
+    public PersonFindDto[] findByEmailExpert(@RequestParam String email) {
         PersonFindDto[] persons = new PersonFindDto[2];
-        persons[0] = Optional.of(expertService.findByEmail(email)).map(PersonFindDto::expertTopPersonFindDtoMapper)
-                .orElse(null);
-        persons[1] = Optional.of(userService.findByEmail(email)).map(PersonFindDto::userTopPersonFindDtoMapper)
-                .orElse(null);
+        try {
+            persons[0] = Optional.of(expertService.findByEmail(email)).map(PersonFindDto::expertTopPersonFindDtoMapper)
+                    .orElse(null);
+        } catch (Exception ignore) {
+        }
+
+        try {
+            persons[1] = Optional.of(userService.findByEmail(email)).map(PersonFindDto::userTopPersonFindDtoMapper)
+                    .orElse(null);
+        } catch (Exception ignore) {
+        }
+
         return persons;
     }
 
-    @GetMapping("/findByEmailExpert/{email}")
-    public PersonFindDto findByEmailAll(@PathVariable String email) {
+    @GetMapping("/findByEmailExpert")//checked
+    public PersonFindDto findByEmailAll(@RequestParam String email) {
         return Optional.of(expertService.findByEmail(email)).map(PersonFindDto::expertTopPersonFindDtoMapper).orElse(null);
     }
 
-    @GetMapping("/findByEmailUser/{email}")
-    public PersonFindDto findByEmailUser(@PathVariable String email) {
+    @GetMapping("/findByEmailUser")//checked
+    public PersonFindDto findByEmailUser(@RequestParam String email) {
         return Optional.of(userService.findByEmail(email)).map(PersonFindDto::userTopPersonFindDtoMapper).orElse(null);
     }
 
-    @GetMapping("/finAllReqParam")
+    @GetMapping("/finAllReqParam")//checked
     public List<PersonFindDto> findAllReq(@RequestParam Map<String, String> stringMap) {
         List<PersonFindDto> findDtos = new ArrayList<>();
         findDtos.addAll(expertService.findBy(stringMap).stream().map(PersonFindDto::expertTopPersonFindDtoMapper).toList());
@@ -262,59 +258,64 @@ public class AdminControllerImpl {
         return findDtos;
     }
 
-    @GetMapping("/findAllExpertReq")
+    @GetMapping("/findAllExpertReq")//checked
     public List<PersonFindDto> findAllExpertReq(@RequestParam Map<String, String> stringMap) {
         return expertService.findBy(stringMap).stream().map(PersonFindDto::expertTopPersonFindDtoMapper).toList();
     }
 
-    @GetMapping("/findAllUserReq")
+    @GetMapping("/findAllUserReq")//checked
     public List<PersonFindDto> findAllUserReq(@RequestParam Map<String, String> stringMap) {
         return userService.findBy(stringMap).stream()
                 .map((PersonFindDto::userTopPersonFindDtoMapper)).toList();
     }
 
-    @GetMapping("/userDetail/{id}")
-    public User userDetail(@PathVariable Long id) {
+    @GetMapping("/userDetail/{id}")//checked
+    public PersonFindDto userDetail(@PathVariable Long id) {
         User byId = userService.findById(id);
-        return userService.userDetail(byId);
+        return PersonFindDto.userTopPersonFindDtoMapper(userService.userDetail(byId));
     }
 
-    @PostMapping("/offerInformation")
+    // TODO: 1/15/2023 AD
+    @GetMapping("/offerInformation")
     public List<OfferDto> offerDtos(@RequestParam Map<String, String> map) {
         return offerService.offerSpecification(map).stream()
                 .map(OfferDto::offerToOfferDtoMapping).toList();
     }
 
-    @PostMapping("/orderInformation")
-    public List<User> orderDtos(@RequestParam Map<String, String> map) {
+    //checked
+    @GetMapping("/orderInformation")
+    public List<PersonFindDto> orderDtos(@RequestParam Map<String, String> map) {
+
         return userService.userSpecification(map).stream()
-                .toList();
+                .map(PersonFindDto::userTopPersonFindDtoMapper).toList();
     }
 
-    @GetMapping("/countOfOrder/{userId}")
+    @GetMapping("/countOfOrder/{userId}")    //checked
+
     public int countOfOrder(@PathVariable Long userId) {
         return orderService.countOfOrdersByUserId(userId);
     }
 
-    public TypeServiceDto typeServiceMapped(TypeService typeService) {
-        return TypeServiceDto.builder()
-                .typeServiceId(typeService.getId())
-                .baseServiceId(typeService.getBasicService().getId())
-                .name(typeService.getSubService())
-                .price(typeService.getBasePrice())
-                .build();
-    }
 
-    @GetMapping("/findByBasicService/{basicServiceId}")
+    @GetMapping("/findByExpertsBasicService/{basicServiceId}")    //checked
     public List<PersonFindDto> findByBasicService(@PathVariable Long basicServiceId) {
         return expertService.findByBasicService(basicServiceId).stream()
                 .map(PersonFindDto::expertTopPersonFindDtoMapper).toList();
     }
 
+    //checked
     @GetMapping("/showOrderSuggestionOrSelection")
     public List<OrderDto> showOrderSuggestionOrSelection() {
         return orderService.showOrderSuggestionOrSelection().stream()
                 .map(OrderDto::orderToOrderDtoMapper).toList();
     }
 
+    private ExpertTypeService findExpertTypeServiceByDto(Long expertId, Long typeServiceId) {
+
+        Expert expert = expertService.findById(expertId);
+
+        TypeService typeService = typeServiceService.findById(typeServiceId);
+
+        return new ExpertTypeService(expert, typeService);
+    }
 }

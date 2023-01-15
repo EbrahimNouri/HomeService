@@ -42,7 +42,7 @@ public abstract class Person extends BaseEntity implements UserDetails {
     @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$", message = "password is not valid")
     private String password;
 
-    private double credit = 0.0;
+    private double credit;
 
     @CreationTimestamp
     @Column(name = "signup_date_time")
