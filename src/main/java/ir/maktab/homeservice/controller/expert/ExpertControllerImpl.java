@@ -6,10 +6,9 @@ import ir.maktab.homeservice.dto.OfferDto;
 import ir.maktab.homeservice.dto.OrderDto;
 import ir.maktab.homeservice.dto.PersonFindDto;
 import ir.maktab.homeservice.entity.Expert;
-import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
-import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.service.expert.ExpertService;
+import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.order.OrderService;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 
@@ -35,72 +35,86 @@ public class ExpertControllerImpl {
     private final OrderService orderService;
     private final TypeServiceService typeServiceService;
     private final ExpertUserService expertUserService;
+    private final ExpertTypeServiceService expertTypeServiceService;
 
     // TODO: 12/31/2022 AD
 
-    @GetMapping()
+    @GetMapping()//checked
     public PersonFindDto showExpert(Authentication authentication) {
         Expert expert = (Expert) authentication.getPrincipal();
         return PersonFindDto.expertTopPersonFindDtoMapper(expert);
 
     }
 
-    @PutMapping("/chPass")
+    @PutMapping("/chPass")//checked
     public void changePassword(@RequestParam @Valid String password, Authentication authentication) {
         Expert expert = (Expert) authentication.getPrincipal();
         expertService.changePassword(expert, password);
     }
 
-    @PostMapping("/offerRegistrationOrUpdate")
+    @PostMapping("/offerRegistrationOrUpdate")//checked
     public void offerRegistrationOrUpdate(@RequestBody @Valid OfferDto offerDto, Authentication authentication) {
 
-        Offer offer = Offer.builder()
-                .expert((Expert) authentication.getPrincipal())
-                .order(orderService.findById(offerDto.getOrderId()))
-                .description(offerDto.getDescription())
-                .startDate(offerDto.getStartDate())
-                .EndDate(offerDto.getEndDate())
-                .suggestedPrice(offerDto.getSuggestedPrice())
-                .build();
+        Expert expert = (Expert) authentication.getPrincipal();
+        Order order = orderService.findById(offerDto.getOrderId());
 
-        offerService.offerRegistrationOrUpdate(offer);
+        offerService.offerRegistrationOrUpdate
+                (OfferDto.offerDtoToOfferMapping(offerDto, expert, order));
     }
 
-    @GetMapping("/showOrderSuggestionOrSelection")
-    public List<Order> showOrderSuggestionOrSelection() {
-        return orderService.showOrderSuggestionOrSelection();
+    @GetMapping("/showOrderSuggestionOrSelection")//checked
+    public List<OrderDto> showOrderSuggestionOrSelection() {
+        return orderService.showOrderSuggestionOrSelection()
+                .stream().map(OrderDto::orderToOrderDtoMapper).toList();
     }
 
-    @GetMapping("/getAverageScore")
+    @GetMapping("/showOrderSuggestionOrSelectionForYou")//checked
+    public List<OrderDto> findOrderByTypeService(Authentication authentication) {
+        Expert expert = (Expert) authentication.getPrincipal();
+        return orderService.findByTypeService(expert.getExpertTypeServices().get(0).getTypeService())
+                .stream().map(OrderDto::orderToOrderDtoMapper).toList();
+    }
+
+    @GetMapping("/getAverageScore")//checked
     public Double getAverageScore(Authentication authentication) {
         Expert expert = (Expert) authentication.getPrincipal();
         return expert.getAverageScore();
     }
 
-    @GetMapping("/getAllScores")
+    @GetMapping("/getAllScores")//checked
     public List<Double> getAllScores(Authentication authentication) {
         Expert expert = (Expert) authentication.getPrincipal();
         return expertUserService.listOfScore(expert.getId());
     }
 
-    @PostMapping("/addAvatar")
+    //checked
+    @PostMapping("/addAvatar")//checked
     public void addAvatar(Authentication authentication, @RequestBody MultipartFile file) throws IOException {
         Expert expert = (Expert) authentication.getPrincipal();
         expertService.addAvatar(expert.getId(), file);
     }
 
-    @GetMapping("/showAllOrderList/{typeService}")
-    public List<OrderDto> showAllOrderList(@PathVariable Long typeService) {
-        TypeService typeServices = typeServiceService.findById(typeService);
-        return orderService.findByTypeService(typeServices).stream().map(OrderDto::orderToOrderDtoMapper).toList();
+    @GetMapping("/getAvatar")//checked
+    public void getAvatar(Authentication authentication, @RequestParam String uri) throws IOException {
+        Expert expert = (Expert) authentication.getPrincipal();
+        expertService.findById(expert.getId(),
+                Path.of(uri));
     }
 
-    @GetMapping("/getScore")
+    @GetMapping("/showAllOrderList") //checked
+    public List<OrderDto> showAllOrderList(Authentication authentication) {
+        Expert principal = (Expert) authentication.getPrincipal();
+        return expertTypeServiceService.findByExpertId(principal.getId())
+                .stream().map(OrderDto::orderToOrderDtoMapper).toList();
+    }
+
+    @GetMapping("/getScore")//checked
     public Double getScore(Authentication authentication) {
         Expert expert = (Expert) authentication.getPrincipal();
         return expertService.getScore(expert.getId());
     }
 
+    // TODO: 1/15/2023 AD  
     @GetMapping("/detail")
     public ExpertOffersDto expertDetail(Authentication authentication) {
         Expert expert = (Expert) authentication.getPrincipal();
@@ -108,14 +122,14 @@ public class ExpertControllerImpl {
                 ExpertOffersDto.expertMappingToExpertOfferDto(expertService.expertDetail(expert.getId()));
     }
 
-    @GetMapping("/myOffers")
+    @GetMapping("/myOffers")//checked
     public List<OfferDto> myOffers(Authentication authentication) {
         Expert principal = (Expert) authentication.getPrincipal();
         return offerService.findByExpertId(principal.getId()).stream()
                 .map(OfferDto::offerToOfferDtoMapping).toList();
     }
 
-    @GetMapping("/myPrice")
+    @GetMapping("/myPrice")//checked
     public Double myPrice(Authentication authentication) {
         Expert principal = (Expert) authentication.getPrincipal();
         return principal.getCredit();

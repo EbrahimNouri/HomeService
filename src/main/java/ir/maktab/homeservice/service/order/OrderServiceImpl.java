@@ -7,6 +7,7 @@ import ir.maktab.homeservice.entity.enums.PaymentType;
 import ir.maktab.homeservice.entity.enums.TransactionType;
 import ir.maktab.homeservice.exception.*;
 import ir.maktab.homeservice.repository.basicService.BasicServiceRepository;
+import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
 import ir.maktab.homeservice.repository.order.OrderRepository;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,6 +30,7 @@ import java.util.Objects;
 @Log4j2
 @Transactional
 public class OrderServiceImpl implements OrderService {
+    private final ExpertTypeServiceRepository expertTypeServiceRepository;
     private final BasicServiceRepository basicServiceRepository;
 
     private final ExpertUserService expertUserService;
@@ -235,6 +238,19 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> findBySpecification(Map<String, String> map){
         return repository.findAll(specificationUtil.OrderSpecification(map));
     }
+
+    @Override
+    public List<Order> findOrdersByTypeServices(List<TypeService> typeServices) {
+        List<Order> orders = new ArrayList<>();
+        System.out.println("debug12");
+
+        for (TypeService ts: typeServices) {
+            orders.addAll(repository.findOrdersByTypeServices(ts.getId()));
+            System.out.println("debug");
+        }
+        return orders;
+    }
+
 
 
     private boolean orderChecker(Order order) {

@@ -2,9 +2,13 @@ package ir.maktab.homeservice.service.expertTypeSerice;
 
 
 import ir.maktab.homeservice.entity.ExpertTypeService;
+import ir.maktab.homeservice.entity.Order;
+import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.repository.expertTypeService.ExpertTypeServiceRepository;
 import ir.maktab.homeservice.repository.typeService.TypeServiceRepository;
+import ir.maktab.homeservice.service.order.OrderService;
+import ir.maktab.homeservice.util.ApplicationContextProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -18,7 +22,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
     private final TypeServiceRepository typeServiceRepository;
-    ExpertTypeServiceRepository repository;
+    private final ExpertTypeServiceRepository repository;
+    private final ApplicationContextProvider applicationContext;
 
     @Override
     @Transactional
@@ -63,6 +68,24 @@ public class ExpertTypeServiceServiceImpl implements ExpertTypeServiceService {
     @Override
     public List<ExpertTypeService> findExpertTypeServiceByExpertId(Long expertId) {
         return repository.findExpertTypeServiceByExpertId(expertId);
+
+    }
+
+
+    @Override
+    public List<Order> findByExpertId(Long expertId) {
+        List<TypeService> typeServices = repository.findByExpertId(expertId);
+        if (typeServices.isEmpty())
+            throw new CustomExceptionNotFind("type service is empty");
+
+        OrderService bean = applicationContext.getContext()
+                .getBean(OrderService.class);
+
+        List<Order> ordersByTypeServices = bean.findOrdersByTypeServices(typeServices);
+        if (ordersByTypeServices.isEmpty())
+            throw new CustomExceptionNotFind("any order not found");
+
+        return ordersByTypeServices;
 
     }
 }

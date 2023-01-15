@@ -21,7 +21,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     List<Order> findByOrderTypeBeforeStart();
 
     @Query("from Order od where od.orderType = \"WAITING_FOR_THE_SUGGESTIONS\"" +
-            " OR od.orderType = \"WAITING_EXPERT_SELECTION\" and od.typeService.subService = :typeService")
+            " OR od.orderType = \"WAITING_EXPERT_SELECTION\" and od.typeService = :typeService")
     List<Order> findOrderByTypeService(TypeService typeService);
 
     Optional<Order> findOrderByUserAndOrderType(User user, OrderType orderType);
@@ -39,4 +39,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     int countOfOrdersByUserId(Long userId);
 
     List<Order> findByUserId(Long userId);
+
+    @Query("from Order o where o.typeService.id = :typeService")
+    List<Order> findOrdersByTypeServices(Long typeService);
 }

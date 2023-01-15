@@ -39,4 +39,6 @@ public interface OrderService {
     List<Order> findByUserId(Long id);
 
     List<Order> findBySpecification(Map<String, String> map);
+
+    List<Order> findOrdersByTypeServices(List<TypeService> typeServices);
 }

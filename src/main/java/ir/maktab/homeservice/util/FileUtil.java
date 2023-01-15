@@ -2,13 +2,16 @@ package ir.maktab.homeservice.util;
 
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Path;
 
 @Component
 public class FileUtil {
 
-    public static byte[] imageConverter(java.io.File file) {
+    public static byte[] imageConverter(File file) {
         if (file.exists()) {
             try {
                 FileInputStream fileInputStream = new FileInputStream(file);
@@ -23,9 +26,11 @@ public class FileUtil {
     }
 
     public static File fileWriter(Path path, byte[] bytes) throws IOException {
+        String randomCode = "/" + String.valueOf((int) (Math.random() * (999 - 100 + 1) + 100)) + ".jpg";
+        path = Path.of(path.toString() + randomCode);
         FileOutputStream fos = new FileOutputStream(path.toFile());
-            fos.write(bytes);
-            return new File(path.toUri());
+        fos.write(bytes);
+        return new File(path.toUri());
 
     }
 }

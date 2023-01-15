@@ -76,4 +76,5 @@ public class TypeServiceServiceImpl implements TypeServiceService {
     public void save(TypeService typeService) {
         typeServiceRepository.save(typeService);
     }
+
 }

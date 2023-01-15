@@ -2,6 +2,7 @@ package ir.maktab.homeservice.repository.expertTypeService;
 
 import ir.maktab.homeservice.entity.BasicService;
 import ir.maktab.homeservice.entity.ExpertTypeService;
+import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.entity.id.ExpertTypeServiceId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -25,5 +26,8 @@ public interface ExpertTypeServiceRepository extends JpaRepository<ExpertTypeSer
 
     @Query("select et.typeService.basicService from ExpertTypeService et where et.typeService = :typeService ")
     Optional<BasicService> findBasicService(Long typeService);
+
+    @Query("select et.typeService from ExpertTypeService et where et.expert.id = ?1")
+    List<TypeService> findByExpertId(Long expertId);
 
 }

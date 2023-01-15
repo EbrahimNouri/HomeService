@@ -85,7 +85,7 @@ public class ExpertServiceImpl implements ExpertService {
         }
     }
 
-    public List<Expert> showAllNewExperts(){
+    public List<Expert> showAllNewExperts() {
         return repository.findByExpertStatus(ExpertStatus.NEW);
     }
 
@@ -250,17 +250,16 @@ public class ExpertServiceImpl implements ExpertService {
         Expert expert = findById(expertId);
         final int AVATAR_SIZE = 307200;  // 300 * 1024 = 300kb
 
-        if (file.getSize() < AVATAR_SIZE
-                && Objects.equals(file.getContentType()
-                , "image/jpeg")) {
-
-            byte[] avatar = file.getBytes();
-            expert.setAvatar(avatar);
-            repository.save(expert);
-
-        } else
+        if (file.getSize() > AVATAR_SIZE
+                && !Objects.equals(file.getContentType()
+                , "image/jpeg"))
             throw new CustomExceptionInvalid("image file is invalid");
 
+
+        byte[] avatar = file.getBytes();
+        System.out.println("debug");
+        expert.setAvatar(avatar);
+        repository.save(expert);
 
     }
 
@@ -273,7 +272,6 @@ public class ExpertServiceImpl implements ExpertService {
     public Double getScore(Long expertId) {
         return findById(expertId).getAverageScore();
     }
-
 
 
 }

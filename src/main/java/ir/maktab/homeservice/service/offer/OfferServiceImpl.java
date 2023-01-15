@@ -50,22 +50,24 @@ public class OfferServiceImpl implements OfferService {
         OrderService orderService = applicationContextProvider.getBean(OrderService.class);
         Order order = offer.getOrder();
 
-        if (order.getOrderType().equals(OrderType.WAITING_FOR_THE_SUGGESTIONS)
-                || order.getOrderType().equals(OrderType.WAITING_EXPERT_SELECTION)) {
-            if (offerRegistrationCheck(offer, offer.getOrder())) {
-
-                repository.save(offer);
-
-                log.debug("debug offer registered {} ", order);
+        if (!order.getOrderType().equals(OrderType.WAITING_FOR_THE_SUGGESTIONS)
+                || !order.getOrderType().equals(OrderType.WAITING_EXPERT_SELECTION))
+            throw new CustomExceptionOrderType("order type not valid");
 
 
-                order.setOrderType(OrderType.WAITING_EXPERT_SELECTION);
-                orderService.save(order);
+        if (offerRegistrationCheck(offer, offer.getOrder())) {
 
-                log.debug("debug order change to {} ", order.getOrderType());
+            repository.save(offer);
 
-            }
-        } else throw new CustomExceptionOrderType("order type not valid");
+            log.debug("debug offer registered {} ", order);
+
+
+            order.setOrderType(OrderType.WAITING_EXPERT_SELECTION);
+            orderService.save(order);
+
+            log.debug("debug order change to {} ", order.getOrderType());
+
+        }
     }
 
     @Override

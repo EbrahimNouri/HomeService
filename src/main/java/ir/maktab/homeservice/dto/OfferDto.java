@@ -1,7 +1,9 @@
 package ir.maktab.homeservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Offer;
+import ir.maktab.homeservice.entity.Order;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,4 +41,15 @@ public class OfferDto {
                 .endDate(offer.getEndDate())
                 .build();
     }
+    public static Offer offerDtoToOfferMapping(OfferDto offer, Expert expert, Order order){
+        return Offer.builder()
+                .suggestedPrice(offer.getSuggestedPrice())
+                .description(offer.getDescription())
+                .expert(expert)
+                .order(order)
+                .startDate(offer.getStartDate())
+                .EndDate(offer.getEndDate())
+                .build();
+    }
+
 }
