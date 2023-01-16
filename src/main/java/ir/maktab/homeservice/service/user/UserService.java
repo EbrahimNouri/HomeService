@@ -44,5 +44,5 @@ public interface UserService {
 
     List<User> userSpecification(Map<String, String> map);
 
-    // TODO: 1/4/2023 AD
+    boolean existById(Long id);
 }

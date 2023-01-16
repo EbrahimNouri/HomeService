@@ -64,7 +64,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void chargeAccountBalance(User user, Double amount, String card) {
 
-        if(!CaptchaController.cardCheck(card))
+        if (!CaptchaController.cardCheck(card))
             throw new CustomExceptionInvalid("card number is invalid");
 
         if (user.getId() == null)
@@ -105,7 +105,6 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Optional<Transaction> findById(Transaction transaction) {
-        Optional<Transaction> transaction1 = Optional.empty();
 
         return repository.findByExpertIdAndUserId(
                 transaction.getExpert().getId(),
@@ -114,11 +113,15 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> findByUserId(Long userId){
+    public List<Transaction> findTransactionByUserId(Long userId) {
+        if (!userService.existById(userId))
+            throw new CustomExceptionNotFind("user not found");
+
         return repository.findTransactionByUserId(userId);
     }
+
     @Override
-    public List<Transaction> findByExpertId(Long expertId){
-        return repository.findTransactionByUserId(expertId);
+    public List<Transaction> findTransactionByExpertId(Long transactionId) {
+        return repository.findTransactionByExpertId(transactionId);
     }
 }

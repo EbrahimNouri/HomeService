@@ -210,6 +210,14 @@ public class UserControllerImpl {
                 .map(OrderDto::orderToOrderDtoMapper).toList();
     }
 
+    @GetMapping("/getTransactions")//checked
+    public List<TransactionDto> getTransActions(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+
+        return transactionService.findTransactionByUserId
+                (user.getId()).stream().map((TransactionDto::TransactionToDto)).toList();
+    }
+
     private static ExpertUser getExpertUser(ExpertUserDto expertUserDto, Expert expert, User user, Order order) {
         ExpertUser expertUser;
         expertUser = ExpertUser.builder()

@@ -27,7 +27,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     Optional<Order> findOrderByUserAndOrderType(User user, OrderType orderType);
 
     @Query("from Order o where o.startOfWork >= :start and o.startOfWork < :end")
-    List<Order> findOrdersByPriodTime(LocalDate start, LocalDate end);
+    List<Order> findOrdersByPeriodTime(LocalDate start, LocalDate end);
 
     @Query("from Order o where o.typeService.basicService = ?1")
     List<Order> findByBasicServiceName(String basicService);

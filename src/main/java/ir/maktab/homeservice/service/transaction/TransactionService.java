@@ -16,7 +16,8 @@ public interface TransactionService {
 
     Optional<Transaction> findById(Transaction transaction);
 
-    List<Transaction> findByUserId(Long userId);
+    List<Transaction> findTransactionByUserId(Long userId);
 
-    List<Transaction> findByExpertId(Long expertId);
+    List<Transaction> findTransactionByExpertId(Long expertId);
+
 }

@@ -10,6 +10,7 @@ import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.order.OrderService;
+import ir.maktab.homeservice.service.transaction.TransactionService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
 import jakarta.validation.Valid;
@@ -35,6 +36,7 @@ public class AdminControllerImpl {
     private final TypeServiceService typeServiceService;
     private final OfferService offerService;
     private final OrderService orderService;
+    private final TransactionService transactionService;
 
     @PutMapping("/chPass") //checked
     public void changePassword(@RequestParam @Valid String password, Authentication authentication) {
@@ -321,6 +323,18 @@ public class AdminControllerImpl {
     public List<OrderDto> showOrderSuggestionOrSelection() {
         return orderService.showOrderSuggestionOrSelection().stream()
                 .map(OrderDto::orderToOrderDtoMapper).toList();
+    }
+
+    @GetMapping("/getTransactionsByExpertId/{expertId}")//checked
+    public List<TransactionDto> getTransactionsByExpertId(@PathVariable Long expertId){
+        return transactionService.findTransactionByExpertId(expertId)
+                .stream().map(TransactionDto::TransactionToDto).toList();
+    }
+
+    @GetMapping("/getTransactionsByUserId/{userId}")
+    public List<TransactionDto> getTransactionsByUserId(@PathVariable Long userId){
+        return transactionService.findTransactionByUserId(userId)
+                .stream().map(TransactionDto::TransactionToDto).toList();
     }
 
     private ExpertTypeService findExpertTypeServiceByDto(Long expertId, Long typeServiceId) {

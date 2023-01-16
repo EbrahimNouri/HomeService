@@ -1,10 +1,7 @@
 package ir.maktab.homeservice.controller.expert;
 
 
-import ir.maktab.homeservice.dto.ExpertOffersDto;
-import ir.maktab.homeservice.dto.OfferDto;
-import ir.maktab.homeservice.dto.OrderDto;
-import ir.maktab.homeservice.dto.PersonFindDto;
+import ir.maktab.homeservice.dto.*;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.service.expert.ExpertService;
@@ -12,7 +9,7 @@ import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.order.OrderService;
-import ir.maktab.homeservice.service.typeService.TypeServiceService;
+import ir.maktab.homeservice.service.transaction.TransactionService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -34,9 +31,9 @@ public class ExpertControllerImpl {
     private final ExpertService expertService;
     private final OfferService offerService;
     private final OrderService orderService;
-    private final TypeServiceService typeServiceService;
     private final ExpertUserService expertUserService;
     private final ExpertTypeServiceService expertTypeServiceService;
+    private final TransactionService transactionService;
 
 
     @GetMapping()//checked
@@ -53,7 +50,8 @@ public class ExpertControllerImpl {
     }
 
     @PostMapping("/offerRegistrationOrUpdate")//checked
-    public void offerRegistrationOrUpdate(@RequestBody @Valid OfferDto offerDto, Authentication authentication) {
+    public void offerRegistrationOrUpdate(@RequestBody @Valid OfferDto offerDto
+            , Authentication authentication) {
 
         Expert expert = (Expert) authentication.getPrincipal();
         Order order = orderService.findById(offerDto.getOrderId());
@@ -134,11 +132,22 @@ public class ExpertControllerImpl {
         return principal.getCredit();
     }
 
-    @GetMapping("/offerInformation")
+    @GetMapping("/offerInformation")//checked
     public List<OfferDto> offerDtos(@RequestParam Map<String, String> map, Authentication authentication) {
+
         Expert expert = (Expert) authentication.getPrincipal();
         map.put("expert", String.valueOf(expert.getId()));
+
         return offerService.offerSpecification(map).stream()
                 .map(OfferDto::offerToOfferDtoMapping).toList();
+    }
+
+    @GetMapping("/getTransactions")//checked
+    public List<TransactionDto> getTransActions(Authentication authentication) {
+
+        Expert expert = (Expert) authentication.getPrincipal();
+
+        return transactionService.findTransactionByExpertId
+                (expert.getId()).stream().map((TransactionDto::TransactionToDto)).toList();
     }
 }

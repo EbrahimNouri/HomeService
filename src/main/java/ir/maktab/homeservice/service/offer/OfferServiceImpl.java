@@ -55,7 +55,7 @@ public class OfferServiceImpl implements OfferService {
                 || order.getOrderType().equals(OrderType.PAID)
                 || order.getOrderType().equals(OrderType.DONE)
                 || order.getOrderType().equals(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE)
-                || order.getOrderType() == null)
+                )
             throw new CustomExceptionOrderType("order type not valid");
 
 
@@ -69,15 +69,12 @@ public class OfferServiceImpl implements OfferService {
             order.setOrderType(OrderType.WAITING_EXPERT_SELECTION);
             orderService.save(order);
 
-            log.debug("debug order change to {} ", order.getOrderType());
-
         }
     }
 
     @Override
     public List<Offer> showOffersByOrder(Order order) {
 
-        log.debug("debug found offer by order {}", order);
         return repository.findOfferByOrder_Id(order.getId());
 
     }
