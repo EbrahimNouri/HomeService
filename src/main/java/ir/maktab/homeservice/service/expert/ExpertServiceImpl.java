@@ -179,12 +179,18 @@ public class ExpertServiceImpl implements ExpertService {
 
         Expert expert;
 
-        expert = repository.findByIdCustom(id).orElseThrow(() -> new CustomExceptionNotFind("expert not found"));
+        expert = findByIdCustom(id);
         FileUtil.fileWriter(path, expert.getAvatar());
 
         return expert;
 
     }
+
+    @Override
+    public Expert findByIdCustom(Long id) {
+        return repository.findByIdCustom(id).orElseThrow(() -> new CustomExceptionNotFind("expert not found"));
+    }
+
 
     @Transactional
     @Override

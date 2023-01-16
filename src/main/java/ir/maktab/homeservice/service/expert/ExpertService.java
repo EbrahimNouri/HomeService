@@ -33,6 +33,8 @@ public interface ExpertService {
 
     Expert findById(Long id, Path path) throws IOException;
 
+    Expert findByIdCustom(Long id);
+
     void SetAveragePoint(Double point, Long expertId);
 
     void deactivate(Expert expert);
