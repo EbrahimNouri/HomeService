@@ -3,6 +3,7 @@ package ir.maktab.homeservice.controller.admin;
 
 import ir.maktab.homeservice.dto.*;
 import ir.maktab.homeservice.entity.*;
+import ir.maktab.homeservice.exception.CustomExceptionUpdate;
 import ir.maktab.homeservice.service.admin.AdminService;
 import ir.maktab.homeservice.service.basicServices.BasicServicesService;
 import ir.maktab.homeservice.service.expert.ExpertService;
@@ -76,6 +77,10 @@ public class AdminControllerImpl {
     @PutMapping("/acceptExpert/{expertId}") //checked
     public void acceptExpert(@PathVariable Long expertId) {
         Expert acceptExpert = expertService.findById(expertId);
+
+        if (!acceptExpert.isEnabled())
+            throw new CustomExceptionUpdate("expert is disabled");
+
         expertService.acceptExpert(acceptExpert);
     }
 

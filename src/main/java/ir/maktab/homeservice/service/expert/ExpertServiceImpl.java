@@ -115,9 +115,7 @@ public class ExpertServiceImpl implements ExpertService {
             expert.setExpertStatus(ExpertStatus.NEW);
             repository.save(expert);
 
-            log.debug("debug register expert {} ", expert);
         } else {
-            log.warn("warn register avatar larger than 300kb or not .jpg");
             throw new CustomExceptionInvalid("this email is invalid");
         }
     }
