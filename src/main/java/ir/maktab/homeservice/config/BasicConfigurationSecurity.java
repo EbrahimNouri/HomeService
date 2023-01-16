@@ -44,13 +44,10 @@ public class BasicConfigurationSecurity {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-//
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/v1/register/**", "/app/**")
-//                        .permitAll())
 
                 .authorizeHttpRequests(
-                        (auth) -> auth.requestMatchers(
+                        (auth) -> auth
+                                .requestMatchers(
                                         "/api/v1/expert/**").hasRole("EXPERT")
 
                                 .requestMatchers(
@@ -58,6 +55,7 @@ public class BasicConfigurationSecurity {
 
                                 .requestMatchers(
                                         "/api/v1/admin/**").hasRole("ADMIN")
+
                                 .anyRequest().authenticated()
                 )
 
@@ -72,7 +70,7 @@ public class BasicConfigurationSecurity {
         return (web) -> web.ignoring()
                 .requestMatchers(
                         "/api/v1/register/**"
-                        ,"/app/**"
+                        , "/app/**"
                 );
     }
 
@@ -86,7 +84,8 @@ public class BasicConfigurationSecurity {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 
-        auth.userDetailsService(username -> userRepository
+        auth
+                .userDetailsService(username -> userRepository
                         .findByUsername(username)
                         .orElseThrow(() -> new UsernameNotFoundException(String
                                 .format("this %s not found", username))))

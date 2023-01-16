@@ -1,6 +1,7 @@
 package ir.maktab.homeservice.service.order;
 
 
+import ir.maktab.homeservice.controller.user.CaptchaController;
 import ir.maktab.homeservice.entity.*;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.entity.enums.PaymentType;
@@ -12,6 +13,7 @@ import ir.maktab.homeservice.repository.order.OrderRepository;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.transaction.TransactionService;
+import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.util.SpecificationUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -39,6 +41,7 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderRepository repository;
     private OfferService offerService;
+    private final TypeServiceService typeServiceService;
 
 
     @Override
@@ -54,6 +57,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void orderRegistration(Order order) {
 
+        order.setTypeService(typeServiceService.findById(order.getTypeService().getId()));
+
         if (order.getSuggestedPrice() == null
                 || order.getDescription() == null
                 || order.getStartOfWork() == null
@@ -65,20 +70,22 @@ public class OrderServiceImpl implements OrderService {
 
         order.setOrderType(OrderType.WAITING_FOR_THE_SUGGESTIONS);
         repository.save(order);
-
-        log.debug("debug order registration {} ", order);
-
     }
 
     @Override
-    public void startOfWork(Order order) {
+    public void startOfWork(Long orderId, User user) {
+
+        Order order = findById(orderId);
+
+        if (!order.getUser().equals(user))
+            throw new CustomExceptionInvalid("order and user not equal");
 
         Offer offer = getOffer(order);
         if (checkLevelWork(offer))
-            throw new CustomExceptionUpdate("this order not valid");
+            throw new CustomExceptionUpdate("offer date time not valid");
 
         if (!order.getOrderType().equals(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE))
-            throw new CustomExceptionUpdate("order type not invalid");
+            throw new CustomExceptionUpdate("order type not WAITING_FOR_COME_TO_YOUR_PLACE");
 
         if (offer.getStartDate().isBefore(LocalDateTime.now()))
             throw new CustomExceptionUpdate("start of work is after offer set");
@@ -94,21 +101,21 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public void endOfTheWork(Order order) {
+    public void endOfTheWork(Long orderId) {
+        Order order = findById(orderId);
         Offer offer = getOffer(order);
 
         if (checkLevelWork(offer))
             throw new CustomExceptionUpdate("order check level work error");
 
         if (!order.getOrderType().equals(OrderType.STARTED))
-            throw new CustomExceptionUpdate("this order not valid");
+            throw new CustomExceptionUpdate("this order not started");
 
         if (LocalDateTime.now().isAfter(offer.getEndDate())) {
 
             order.setDelayEndWorkHours(ChronoUnit.HOURS.between(LocalDateTime.now(), offer.getEndDate()));
             repository.save(order);
 
-            log.debug("debug done of work {} ", order);
         }
 
         order.setOrderType(OrderType.DONE);
@@ -119,53 +126,39 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public void setOrderToDone(Order order) {
+    public void setOrderToDone(Long orderId) {
+
+        Order order = findById(orderId);
 
         if (orderChecker(order))
             throw new CustomExceptionUpdate("order have empty variable");
 
         if (!order.getOrderType().equals(OrderType.STARTED))
-            throw new CustomExceptionOrderType("order not valid");
+            throw new CustomExceptionOrderType("order not started");
 
         order.setOrderType(OrderType.DONE);
         repository.save(order);
     }
 
-    @Transactional
     @Override
-    public void setOrderToPaidAppPayment(Order order, User user) {
-        if (Objects.equals(order.getUser().getId(), user.getId())) {
+    public void choosePaymentMethod(Long orderId, PaymentType paymentType, User user) {
+        Order order = findById(orderId);
+        if (!order.getUser().equals(user))
+            throw new CustomExceptionInvalid("user with this order invalid");
 
-            Offer offer = offerService.findOfferByOrder_Id(order.getId())
-                    .stream().filter(Offer::isChoose).findFirst()
-                    .orElseThrow(() -> new CustomExceptionNotFind("offer not found"));
-
-
-            if (orderChecker(order)
-                    && !order.getOrderType().equals(OrderType.DONE))
-                throw new CustomExceptionOrderType("order type is invalid");
-
-            if (order.getPaymentType().equals(PaymentType.CREDIT_PAYMENT)) {
-
-                transactionService.addTransaction(Transaction.builder()
-                        .expert(offer.getExpert())
-                        .user(order.getUser())
-                        .transactionType(TransactionType.TRANSFER)
-                        .transfer(offer.getSuggestedPrice())
-                        .build());
-
-            } else
-                throw new CustomNotChoosingException("didn't choose any of the payment methods");
-
-            order.setOrderType(OrderType.PAID);
-
-            timeChecker(order, offer);
-        }
+        if (!order.getOrderType().equals(OrderType.DONE))
+            throw new CustomExceptionInvalid("order type must be done");
+        order.setPaymentType(paymentType);
+        repository.save(order);
     }
 
     @Transactional
     @Override
-    public void setOrderToPaidOnlinePayment(Order order) {
+    public void setOrderToPaidAppPayment(Long orderId, User user) {
+        Order order = findById(orderId);
+
+        if (!Objects.equals(order.getUser().getId(), user.getId()))
+            throw new CustomExceptionInvalid("order and user not valid");
 
         Offer offer = offerService.findOfferByOrder_Id(order.getId())
                 .stream().filter(Offer::isChoose).findFirst()
@@ -176,12 +169,46 @@ public class OrderServiceImpl implements OrderService {
                 && !order.getOrderType().equals(OrderType.DONE))
             throw new CustomExceptionOrderType("order type is invalid");
 
-        if (order.getPaymentType().equals(PaymentType.ONLINE_PAYMENT)) {
-
-            onlinePayment(offer);
-
-        } else
+        if (!order.getPaymentType().equals(PaymentType.CREDIT_PAYMENT))
             throw new CustomNotChoosingException("didn't choose any of the payment methods");
+
+
+        transactionService.addTransaction(Transaction.builder()
+                .expert(offer.getExpert())
+                .user(order.getUser())
+                .transactionType(TransactionType.TRANSFER)
+                .transfer(offer.getSuggestedPrice())
+                .build());
+
+
+        order.setOrderType(OrderType.PAID);
+
+        timeChecker(order, offer);
+    }
+
+    @Transactional
+    @Override
+    public void setOrderToPaidOnlinePayment(Long orderId, User user, String card) {
+
+        if (CaptchaController.cardCheck(card))
+            throw new CustomExceptionInvalid("card is invalid");
+
+        Order order = findById(orderId);
+
+        if (!user.equals(order.getUser()))
+            throw new CustomExceptionInvalid("user and order is invalid");
+
+        Offer offer = offerService.findByOrderIdChosen(order.getId());
+
+
+        if (orderChecker(order)
+                && !order.getOrderType().equals(OrderType.DONE))
+            throw new CustomExceptionOrderType("order type isn't done");
+
+        if (!order.getPaymentType().equals(PaymentType.ONLINE_PAYMENT))
+            throw new CustomNotChoosingException("didn't choose any of the payment methods");
+
+        transactionService.onlinePayment(offer.getOrder().getUser(), offer.getExpert(), offer.getSuggestedPrice());
 
         order.setOrderType(OrderType.PAID);
 
@@ -199,11 +226,6 @@ public class OrderServiceImpl implements OrderService {
 
             expertUserService.deductPoints(hour, order);
         }
-    }
-
-
-    public void onlinePayment(Offer offer) {
-        transactionService.onlinePayment(offer.getExpert(), offer.getSuggestedPrice());
     }
 
     @Override
@@ -225,7 +247,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public int countOfOrdersByUserId(Long userId){
+    public int countOfOrdersByUserId(Long userId) {
         return repository.countOfOrdersByUserId(userId);
     }
 
@@ -235,7 +257,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findBySpecification(Map<String, String> map){
+    public List<Order> findBySpecification(Map<String, String> map) {
         return repository.findAll(specificationUtil.OrderSpecification(map));
     }
 
@@ -244,13 +266,12 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orders = new ArrayList<>();
         System.out.println("debug12");
 
-        for (TypeService ts: typeServices) {
+        for (TypeService ts : typeServices) {
             orders.addAll(repository.findOrdersByTypeServices(ts.getId()));
             System.out.println("debug");
         }
         return orders;
     }
-
 
 
     private boolean orderChecker(Order order) {
@@ -266,13 +287,13 @@ public class OrderServiceImpl implements OrderService {
     private boolean checkLevelWork(Offer offer) {
         Order order = offer.getOrder();
         return order.getId() != null && offer.getId() != null
-                && offer.getStartDate().isAfter(LocalDateTime.now());
+                && offer.getStartDate().isBefore(LocalDateTime.now());
     }
 
     private Offer getOffer(Order order) {
-        List<Offer> offers = offerService.findByOrder(order).stream().filter(Offer::isChoose).toList();
-        if (offers.isEmpty()) {
-            throw new CustomExceptionNotFind("offer chosen is empty");
-        } else return offers.get(0);
+        return offerService.findByOrder(order).stream()
+                .filter(Offer::isChoose).findFirst().orElseThrow(
+                        () -> new CustomExceptionNotFind("offer chosen is empty"));
+
     }
 }

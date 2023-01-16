@@ -1,6 +1,8 @@
 package ir.maktab.homeservice.dto;
 
 import ir.maktab.homeservice.entity.Order;
+import ir.maktab.homeservice.entity.TypeService;
+import ir.maktab.homeservice.entity.User;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,5 +35,14 @@ public class OrderDto {
                 .build();
     }
 
-
+    public static Order getOrderForRegister(OrderDto orderDto, User user) {
+        return Order.builder()
+                .address(orderDto.getAddress())
+                .description(orderDto.getDescription())
+                .user(user)
+                .typeService(TypeService.builder().id(orderDto.typeId).build())
+                .startOfWork(orderDto.getStartOfWork())
+                .suggestedPrice(orderDto.getPrice())
+                .build();
+    }
 }

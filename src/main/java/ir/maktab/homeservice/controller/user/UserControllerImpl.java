@@ -1,15 +1,16 @@
 package ir.maktab.homeservice.controller.user;
 
 
-import ir.maktab.homeservice.controller.admin.AdminControllerImpl;
 import ir.maktab.homeservice.dto.*;
 import ir.maktab.homeservice.entity.*;
+import ir.maktab.homeservice.entity.enums.PaymentType;
 import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.order.OrderService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
@@ -23,25 +24,23 @@ import java.util.Map;
 @AllArgsConstructor
 @RequestMapping("/api/v1/user")
 public class UserControllerImpl {
-
     private final UserService userService;
     private final ExpertService expertService;
     private final OrderService orderService;
     private final ExpertUserService expertUserService;
     private final OfferService offerService;
     private final TypeServiceService typeServiceService;
-    private final AdminControllerImpl adminController;
 
 
-    @PutMapping("/chPass")
-    public void changePassword(@RequestBody String password, Authentication authentication) {
+    @PutMapping("/chPass")//checked
+    public void changePassword(@Valid @RequestBody String password, Authentication authentication) {
         User temp = (User) authentication.getPrincipal();
 
         userService.changePassword(temp, password);
     }
 
-    @PostMapping("/addCommentAndPoint")
-    public void addCommentAndPoint(@RequestBody ExpertUserDto expertUserDto, Authentication authentication) {
+    @PostMapping("/addCommentAndPoint")//checked
+    public void addCommentAndPoint(@Valid @RequestBody ExpertUserDto expertUserDto, Authentication authentication) {
         ExpertUser expertUser;
 
         Expert expert = expertService.findById(expertUserDto.getExpId());
@@ -50,18 +49,12 @@ public class UserControllerImpl {
 
         Order order = orderService.findById(expertUserDto.getOrderId());
 
-        expertUser = ExpertUser.builder()
-                .user(user)
-                .expert(expert)
-                .order(order)
-                .point(expertUserDto.getPoint())
-                .comment(expertUserDto.getComment())
-                .build();
+        expertUser = getExpertUser(expertUserDto, expert, user, order);
 
         expertUserService.addCommentAndPoint(expertUser);
     }
 
-    @GetMapping("/showOffersByOrder/{orderId}")
+    @GetMapping("/showOffersByOrder/{orderId}")//checked
     public List<OfferDto> showOffersByOrder(@PathVariable Long orderId) {
 
         Order order = orderService.findById(orderId);
@@ -70,58 +63,59 @@ public class UserControllerImpl {
                 .map(OfferDto::offerToOfferDtoMapping).toList();
     }
 
-    @PutMapping("/chooseOffer/{offerId}")
-    public void chooseOffer(@PathVariable Long offerId) {
+    @PutMapping("/chooseOffer/{offerId}")//checked
+    public void chooseOffer(@PathVariable Long offerId, Authentication authentication) {
+
+        User user = (User) authentication.getPrincipal();
         Offer offer = offerService.findById(offerId);
 
-        offerService.chooseOffer(offer);
+        offerService.chooseOffer(offer, user);
     }
 
-    @PutMapping("/startOfWork/{orderId}")
-    public void startOfWork(@PathVariable Long orderId) {
-        Order order = orderService.findById(orderId);
+    @PutMapping("/startOfWork/{orderId}")//checked
+    public void startOfWork(@PathVariable Long orderId, Authentication authentication) {
 
-        orderService.startOfWork(order);
+        User user = (User) authentication.getPrincipal();
+
+        orderService.startOfWork(orderId, user);
     }
 
-    @PutMapping("/endOfTheWork/{orderId}")
+    @PutMapping("/endOfTheWork/{orderId}")//checked
     public void endOfTheWork(@PathVariable Long orderId) {
-        Order order = orderService.findById(orderId);
 
-        orderService.endOfTheWork(order);
+        orderService.endOfTheWork(orderId);
     }
 
-    @PostMapping("/orderRegistration")
+    @PostMapping("/orderRegistration")//checked
     public void orderRegistration(@RequestBody OrderDto orderDto, Authentication authentication) {
 
         User user = (User) authentication.getPrincipal();
-        TypeService typeService = typeServiceService.findById(orderDto.getTypeId());
-        Order order = Order.builder()
-                .address(orderDto.getAddress())
-                .description(orderDto.getDescription())
-                .user(user)
-                .typeService(typeService)
-                .startOfWork(orderDto.getStartOfWork())
-                .suggestedPrice(orderDto.getPrice())
-                .build();
+
+        Order order = OrderDto.getOrderForRegister(orderDto, user);
 
         orderService.orderRegistration(order);
     }
 
-    @PutMapping("/setOrderToDone/{orderId}")
+
+    @PutMapping("/setOrderToDone/{orderId}")//checked
     public void setOrderToDone(@PathVariable Long orderId) {
-        Order order = orderService.findById(orderId);
-        orderService.setOrderToDone(order);
+
+        orderService.setOrderToDone(orderId);
+
     }
 
 
-    @GetMapping("/findByOrderIdSortedPrice/{orderId}")
-    public List<OfferDto> findByOrderIdSortedPrice(@PathVariable Long orderId, Authentication authentication) {
+    @GetMapping("/findByOrderIdSortedPrice/{orderId}")//checked
+    public List<OfferDto> findByOrderIdSortedPrice(@PathVariable Long orderId
+            , Authentication authentication) {
+
         User user = (User) authentication.getPrincipal();
-        return offerService.findByOrderIdSortedPrice(orderId, user.getId()).stream().map(OfferDto::offerToOfferDtoMapping).toList();
+
+        return offerService.findByOrderIdSortedPrice(orderId, user.getId()).stream()
+                .map(OfferDto::offerToOfferDtoMapping).toList();
     }
 
-    @GetMapping("/findByOrderIdSortedByPoint/{orderId}")
+    @GetMapping("/findByOrderIdSortedByPoint/{orderId}")//checked
     public List<OfferDto> findByOrderIdSortedByPoint(@PathVariable Long orderId
             , Authentication authentication) {
 
@@ -131,63 +125,87 @@ public class UserControllerImpl {
                 .map(OfferDto::offerToOfferDtoMapping).toList();
     }
 
-    @GetMapping("/showAllTypeService/{id}")
+    @GetMapping("/showAllTypeService/{id}")//checked
     public List<TypeServiceDto> findByBasicServiceId(@PathVariable Long id) {
         return typeServiceService.showTypeServices(id).stream()
                 .map(TypeServiceDto::typeServiceToTypeServiceDto).toList();
     }
 
-    @GetMapping("/{orderId}")
+    @GetMapping("findComment/{orderId}") //checked
     public ExpertUser findByOrderId(@PathVariable Long orderId, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
+
         return expertUserService.findByOrderId(orderId, user.getId());
     }
 
-    @PostMapping("/setOrderToPaidAppPayment/{orderId}")
-    public void setOrderToPaidAppPayment(@PathVariable Long orderId, Authentication authentication) {
+    @PutMapping("/choosePaymentMethod")//checked
+    public void choosePaymentMethod(@RequestParam Long orderId, String paymentType
+            , Authentication authentication) {
+
         User user = (User) authentication.getPrincipal();
-        orderService.setOrderToPaidAppPayment(orderService.findById(orderId), user);
+
+        orderService.choosePaymentMethod(orderId,
+                PaymentType.valueOf(paymentType.toUpperCase()), user);
     }
 
-    @PostMapping("/onlinePayment")
-    public void onlinePayment(@RequestBody PaymentOnlineDto paymentOnlineDto) {
+    @PutMapping("/setOrderToPaidAppPayment/{orderId}")//checked
+    public void setOrderToPaidAppPayment(@PathVariable Long orderId
+            , Authentication authentication) {
 
-        User user = userService.findByEmail(paymentOnlineDto.getEmail());
-        Order order = orderService.findOrderEndWork(user);
-        orderService.setOrderToPaidOnlinePayment(order);
-        System.out.println("done");
-    }
-
-    @PutMapping("/setOrderToPaidAppPayment/{orderId}")
-    public void appPayment(@PathVariable Long orderId, Authentication authentication) {
-        Order order = orderService.findById(orderId);
         User user = (User) authentication.getPrincipal();
-        orderService.setOrderToPaidAppPayment(order, user);
+
+        orderService.setOrderToPaidAppPayment(orderId, user);
     }
 
-    @GetMapping("/detail")
+    @PutMapping("/onlinePayment")//checked
+    public void onlinePayment(@RequestParam String card, Long orderId
+            , Authentication authentication) {
+
+        User user = (User) authentication.getPrincipal();
+
+        orderService.setOrderToPaidOnlinePayment(orderId, user, card);
+    }
+
+    @GetMapping("/detail")//checked
     public UserOrderDto userDetail(Authentication authentication) {
+
         User user = (User) authentication.getPrincipal();
+
         return UserOrderDto.userToUserOrderDtoMapper(userService.userDetail(user));
+
     }
 
-    @GetMapping("/myOrders")
-    public List<OrderDto> myOffers(Authentication authentication){
+    @GetMapping("/myOrders")//checked
+    public List<OrderDto> myOffers(Authentication authentication) {
         User principal = (User) authentication.getPrincipal();
         return orderService.findByUserId(principal.getId())
                 .stream().map(OrderDto::orderToOrderDtoMapper).toList();
     }
 
-    @GetMapping("/myPrice")
-    public Double myPrice(Authentication authentication){
+    @GetMapping("/myPrice")//checked
+    public Double myPrice(Authentication authentication) {
         User principal = (User) authentication.getPrincipal();
         return principal.getCredit();
     }
 
-    @GetMapping("/findOrder")
-    public List<OrderDto> findOrderBySpecification(@RequestParam Map<String, String> map){
+    @GetMapping("/findOrderReqParam")
+    public List<OrderDto> findOrderBySpecification(@RequestParam Map<String, String> map, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        map.put("user", String.valueOf(user.getId()));
         return orderService.findBySpecification(map).stream()
                 .map(OrderDto::orderToOrderDtoMapper).toList();
+    }
+
+    private static ExpertUser getExpertUser(ExpertUserDto expertUserDto, Expert expert, User user, Order order) {
+        ExpertUser expertUser;
+        expertUser = ExpertUser.builder()
+                .user(user)
+                .expert(expert)
+                .order(order)
+                .point(expertUserDto.getPoint())
+                .comment(expertUserDto.getComment())
+                .build();
+        return expertUser;
     }
 }
 

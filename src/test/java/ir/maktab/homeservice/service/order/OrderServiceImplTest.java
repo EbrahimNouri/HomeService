@@ -65,7 +65,7 @@ class OrderServiceImplTest {
 
             basicService[i] = new BasicService("basicServiceTsest4" + i, null);
 
-            typeService[i] = new TypeService("subTest4sa" + i, 100.0, null
+            typeService[i] = new TypeService(null, "subTest4sa" + i, 100.0, null
                     , null, basicService[i], "description");
 
             expertTypeService[i] = new ExpertTypeService(expert[i], typeService[i]);
@@ -94,7 +94,7 @@ class OrderServiceImplTest {
             typeServiceService.addSubService(typeService[i]);
             orderService.orderRegistration(order[i]);
             order[i].setOrderType(OrderType.STARTED);
-            orderService.setOrderToDone(order[i]);
+            orderService.setOrderToDone(order[i].getId());
             expertTypeServiceService.addExpertToTypeService(expertTypeService[i]);
             for (int j = 0; j < 3; j++) {
                 offer[i][j].setOrder(order[i]);
@@ -135,7 +135,7 @@ class OrderServiceImplTest {
     @Test
     void setOrderToDone() {
         order[2].setOrderType(OrderType.STARTED);
-        orderService.setOrderToDone(order[2]);
+        orderService.setOrderToDone(order[2].getId());
         assertTrue(() -> order[2].getOrderType().equals(OrderType.DONE));
 
     }
@@ -151,7 +151,7 @@ class OrderServiceImplTest {
         order[3].setOffers(offers);
         orderService.save(order[3]);
 
-        orderService.startOfWork(order[3]);
+        orderService.startOfWork(order[3].getId(), user[3]);
         assertAll(
                 () -> assertEquals(orderService.findById(order[3].getId()).getOrderType()
                         , OrderType.STARTED)
@@ -162,7 +162,7 @@ class OrderServiceImplTest {
     @Test
     void endOfTheWork() {
         order[1].setOrderType(OrderType.STARTED);
-        orderService.endOfTheWork(order[1]);
+        orderService.endOfTheWork(order[1].getId());
         assertAll(
                 () -> assertEquals(orderService.findById(order[1].getId()).getOrderType()
                         , OrderType.DONE)

@@ -36,7 +36,7 @@ public class TransactionServiceImpl implements TransactionService {
         Expert expert = transaction1.getExpert();
         double amount = transaction1.getTransfer();
 
-        if (transaction1.getTransfer() <= transaction1.getUser().getCredit()) {
+        if (transaction1.getTransfer() >= transaction1.getUser().getCredit()) {
             throw new CustomExceptionAmount("amount greater than wallet");
 
         }
@@ -80,7 +80,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public void onlinePayment(Expert expert, Double amount) {
+    public void onlinePayment(User user, Expert expert, Double amount) {
         if (expert.getId() == null)
             throw new CustomExceptionNotFind("user not valid");
 
@@ -88,6 +88,7 @@ public class TransactionServiceImpl implements TransactionService {
         expertService.save(expert);
         Transaction transaction = Transaction.builder()
                 .expert(expert)
+                .user(user)
                 .transfer(amount)
                 .transactionType(TransactionType.ONLINE_PAYMENT)
                 .build();

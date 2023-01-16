@@ -24,8 +24,6 @@ public class RegisterController {
     private final UserService userService;
     private final AdminService adminService;
 
-
-
     @PostMapping("/expert")
     public String registerExpert(@RequestBody @Validated PersonRegisterDto personRegisterDto)
             throws MessagingException, UnsupportedEncodingException {
@@ -40,7 +38,7 @@ public class RegisterController {
     @GetMapping("/verifyExpert/{code}")
     public String verifyExpert(@PathVariable Integer code) {
         if (expertService.verify(code)) {
-            return "verify_success";
+            return "verify success waiting for accept by admin";
         } else {
             return "verify_fail";
         }
@@ -60,7 +58,7 @@ public class RegisterController {
     @GetMapping("/verifyUser/{code}")
     public String verifyUser(@PathVariable Integer code) {
         if (userService.verify(code)) {
-            return "verify success waiting for accept by admin";
+            return "verify success";
         } else {
             return "verify fail";
         }

@@ -2,6 +2,7 @@ package ir.maktab.homeservice.service.offer;
 
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
+import ir.maktab.homeservice.entity.User;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ public interface OfferService {
 
     List<Offer> showOffersByOrder(Order order);
 
-    void chooseOffer(Offer offer);
+    void chooseOffer(Offer offer, User user);
 
     Offer findById(Long id);
 
@@ -37,4 +38,6 @@ public interface OfferService {
     List<Offer> findByExpertId(Long expertId);
 
     List<Offer> offerSpecification(Map<String, String> map);
+
+    Offer findByOrderIdChosen(Long orderId);
 }

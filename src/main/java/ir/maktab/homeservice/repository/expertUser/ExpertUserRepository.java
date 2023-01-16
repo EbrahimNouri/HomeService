@@ -21,7 +21,7 @@ public interface ExpertUserRepository extends JpaRepository<ExpertUser, ExpertUs
     Optional<ExpertUser> findByExpertIdAndUserIdAndOrderId(Long expert, Long user, Long order);
 
     @Query(value = "select * from comment_point where order_id = :orderId", nativeQuery = true)
-    Optional<ExpertUser> findByOrderIdNative(Long orderId);
+    List<ExpertUser> findByOrderIdNative(Long orderId);
 
     @Query("select e from ExpertUser e where e.order.id = :orderId")
     Optional<ExpertUser> findByOrderIdQ(Long orderId);

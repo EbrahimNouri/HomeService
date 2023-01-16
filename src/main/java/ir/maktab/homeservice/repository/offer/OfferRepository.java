@@ -36,4 +36,7 @@ public interface OfferRepository extends JpaRepository<Offer, Long>, JpaSpecific
 
     @Query("select o from Offer o where o.choose = true and o.order.orderType = \"PAID\"")
     List<Offer> getAllDoneOffersByUserId(Long userId);
+
+    @Query("from Offer o where o.order.id = :order and o.choose = true ")
+    List<Offer> findByOrderIdAndChoose(Long order);
 }

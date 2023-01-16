@@ -4,6 +4,7 @@ package ir.maktab.homeservice.service.offer;
 import ir.maktab.homeservice.entity.ExpertTypeService;
 import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
+import ir.maktab.homeservice.entity.User;
 import ir.maktab.homeservice.entity.enums.OrderType;
 import ir.maktab.homeservice.exception.*;
 import ir.maktab.homeservice.repository.offer.OfferRepository;
@@ -50,8 +51,11 @@ public class OfferServiceImpl implements OfferService {
         OrderService orderService = applicationContextProvider.getBean(OrderService.class);
         Order order = offer.getOrder();
 
-        if (!order.getOrderType().equals(OrderType.WAITING_FOR_THE_SUGGESTIONS)
-                || !order.getOrderType().equals(OrderType.WAITING_EXPERT_SELECTION))
+        if (order.getOrderType().equals(OrderType.STARTED)
+                || order.getOrderType().equals(OrderType.PAID)
+                || order.getOrderType().equals(OrderType.DONE)
+                || order.getOrderType().equals(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE)
+                || order.getOrderType() == null)
             throw new CustomExceptionOrderType("order type not valid");
 
 
@@ -79,7 +83,10 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public void chooseOffer(Offer offer) {
+    public void chooseOffer(Offer offer, User user) {
+        if (!Objects.equals(offer.getOrder().getUser().getId(), user.getId()))
+            throw new CustomExceptionInvalid("this offer not for your order");
+
         OrderService orderService = applicationContextProvider.getBean(OrderService.class);
 
         Order order = offer.getOrder();
@@ -92,17 +99,15 @@ public class OfferServiceImpl implements OfferService {
             throw new CustomExceptionUpdate("check level work error");
 
         if (order.getOrderType().equals(OrderType.WAITING_EXPERT_SELECTION)
-                || order.getOrderType().equals(OrderType.WAITING_FOR_THE_SUGGESTIONS))
-            throw new CustomExceptionUpdate("order type invalid");
+                || order.getOrderType().equals(OrderType.WAITING_FOR_THE_SUGGESTIONS)) {
 
 
-        offer.setChoose(true);
-        repository.save(offer);
+            offer.setChoose(true);
+            repository.save(offer);
 
-        order.setOrderType(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE);
-        orderService.save(order);
-
-        log.debug("debug choose offer {} ", offer);
+            order.setOrderType(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE);
+            orderService.save(order);
+        } else throw new CustomExceptionUpdate("order type invalid");
 
 
     }
@@ -123,6 +128,7 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public List<Offer> findByOrderIdSortedPrice(Long orderId, Long userId) {
+
         OfferService offerService = applicationContextProvider.getBean(OfferService.class);
 
         if (Objects.equals(offerService.findById(orderId).getOrder().getUser().getId(), userId))
@@ -142,8 +148,6 @@ public class OfferServiceImpl implements OfferService {
         else throw new CustomExceptionInvalid("this order for another user");
 
     }
-
-    // TODO: 1/4/2023 AD test blow 
     @Override
     public int countOfOffers(Long expertId) {
         return repository.countOfOffers(expertId);
@@ -163,7 +167,6 @@ public class OfferServiceImpl implements OfferService {
     public List<Offer> getAllDoneOffersByUserId(Long userId) {
         return repository.getAllDoneOffersByUserId(userId);
     }
-    // TODO: 1/9/2023 AD up
 
     @Override
     public List<Offer> findByExpertId(Long expertId) {
@@ -173,6 +176,14 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public List<Offer> offerSpecification(Map<String, String> map) {
         return repository.findAll(specificationUtil.expertSpecification(map));
+    }
+
+    @Override
+    public Offer findByOrderIdChosen(Long orderId){
+        List<Offer> byOrderIdAndChoose = repository.findByOrderIdAndChoose(orderId);
+        if (byOrderIdAndChoose.isEmpty())
+            throw  new CustomExceptionNotFind("offer not found");
+        return byOrderIdAndChoose.get(0);
     }
 
     private boolean checkLevelWork(Offer offer) {

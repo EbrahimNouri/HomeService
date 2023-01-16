@@ -29,11 +29,12 @@ public class User extends Person {
     private List<Transaction> transactions;
 
     @Builder
-    public User(Long id, String firstname, String lastname, String email, String username, String password
-            , double credit, LocalDateTime signupDateTime, Role role, boolean enabled, Integer verificationCode
-            , List<ExpertUser> expertUsers, List<Order> orders, List<Transaction> transactions) {
+    public User(Long id, String firstname, String lastname, String email, String username, String password,
+                double credit, LocalDateTime signupDateTime, Role role, boolean enabled, Integer verificationCode,
+                List<ExpertUser> expertUsers, List<Order> orders, List<Transaction> transactions) {
 
-        super(id, firstname, lastname, email, username, password, credit, signupDateTime, role, enabled, verificationCode);
+        super(id, firstname, lastname, email, username, password, credit,
+                signupDateTime, role, enabled, verificationCode);
         this.expertUsers = expertUsers;
         this.orders = orders;
         this.transactions = transactions;

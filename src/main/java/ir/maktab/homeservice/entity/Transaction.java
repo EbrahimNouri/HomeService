@@ -22,12 +22,10 @@ public class Transaction implements Serializable {
 
     @Id
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "expert_id")
     private Expert expert;
 
     @Id
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
     private User user;
 
     @Id

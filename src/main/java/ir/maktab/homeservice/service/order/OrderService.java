@@ -4,7 +4,7 @@ package ir.maktab.homeservice.service.order;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.entity.User;
-import jakarta.transaction.Transactional;
+import ir.maktab.homeservice.entity.enums.PaymentType;
 
 import java.util.List;
 import java.util.Map;
@@ -16,17 +16,17 @@ public interface OrderService {
 
     void orderRegistration(Order order);
 
-    void startOfWork(Order order);
+    void startOfWork(Long order, User user);
 
-    void endOfTheWork(Order order);
+    void endOfTheWork(Long order);
 
-    void setOrderToDone(Order order);
+    void setOrderToDone(Long order);
 
-    @Transactional
-    void setOrderToPaidAppPayment(Order order, User user);
+    void choosePaymentMethod(Long orderId, PaymentType paymentType, User user);
 
-    @Transactional
-    void setOrderToPaidOnlinePayment(Order order);
+    void setOrderToPaidAppPayment(Long orderId, User user);
+
+    void setOrderToPaidOnlinePayment(Long orderId, User user, String card);
 
     Order findOrderEndWork(User user);
 

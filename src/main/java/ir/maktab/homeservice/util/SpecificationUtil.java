@@ -30,10 +30,13 @@ public class SpecificationUtil {
 
         Specification<Order> orderSpecification = Specification.where(null);
 
+
+
         for (Map.Entry<String, String> entry : map.entrySet()) {
 
             Specification<Order> orderSpecificationTemp
                     = (root, query, criteriaBuilder) -> switch (entry.getKey().toLowerCase()) {
+
                 case "id", "orderid" -> criteriaBuilder.equal(root.get(Order_.id), Long.valueOf(entry.getValue()));
 
                 case "from" -> criteriaBuilder.greaterThanOrEqualTo(root.get(Order_.startOfWork)
@@ -89,6 +92,9 @@ public class SpecificationUtil {
 
                 case "to" -> criteriaBuilder.lessThanOrEqualTo(root.join(Offer_.expert).get(Expert_.signupDateTime)
                         , LocalDateTime.parse(entry.getValue()));
+
+                case "offer" -> criteriaBuilder.equal(root.join(Offer_.expert).get(Expert_.id),
+                        Long.valueOf(entry.getValue()));
 
 
                 case "countOrderDone" -> criteriaBuilder.equal(root.get(Offer_.choose),

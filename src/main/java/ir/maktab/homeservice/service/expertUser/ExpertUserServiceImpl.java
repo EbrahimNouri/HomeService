@@ -58,9 +58,11 @@ public class ExpertUserServiceImpl implements ExpertUserService {
 
     @Override
     public ExpertUser findByOrderId(Long orderId, Long userId) {
+        List<ExpertUser> byOrderIdNative = repository.findByOrderIdNative(orderId);
+        if (!byOrderIdNative.isEmpty())
+            return byOrderIdNative.get(0);
 
-        return repository.findByOrderIdNative(orderId)
-                .orElseThrow(() -> new CustomExceptionNotFind("comment not found"));
+        throw new CustomExceptionNotFind("not found comment point");
 
     }
 

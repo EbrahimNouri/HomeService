@@ -275,7 +275,6 @@ public class AdminControllerImpl {
         return PersonFindDto.userTopPersonFindDtoMapper(userService.userDetail(byId));
     }
 
-    // TODO: 1/15/2023 AD
     @GetMapping("/offerInformation")
     public List<OfferDto> offerDtos(@RequestParam Map<String, String> map) {
         return offerService.offerSpecification(map).stream()
@@ -303,8 +302,7 @@ public class AdminControllerImpl {
                 .map(PersonFindDto::expertTopPersonFindDtoMapper).toList();
     }
 
-    //checked
-    @GetMapping("/showOrderSuggestionOrSelection")
+    @GetMapping("/showOrderSuggestionOrSelection")    //checked
     public List<OrderDto> showOrderSuggestionOrSelection() {
         return orderService.showOrderSuggestionOrSelection().stream()
                 .map(OrderDto::orderToOrderDtoMapper).toList();

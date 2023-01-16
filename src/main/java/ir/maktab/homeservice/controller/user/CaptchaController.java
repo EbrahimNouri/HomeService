@@ -44,7 +44,7 @@ public class CaptchaController {
         return captchaSettings;
     }
 
-    private boolean cardCheck(String card) {
+    public static boolean cardCheck(String card) {
         if (card.trim().length() == 16) {
             try {
                 Integer.parseInt(card);

@@ -83,7 +83,7 @@ class OfferServiceImplTest {
 
             basicService[i] = new BasicService("basicServiceTsest4" + i, null);
 
-            typeService[i] = new TypeService("subTest4sa" + i, 100.0+(i*2), null
+            typeService[i] = new TypeService(null, "subTest4sa" + i, 100.0+(i*2), null
                     , null, basicService[i], "description");
 
             expertTypeService[i] = new ExpertTypeService(expert[i], typeService[i]);
@@ -113,7 +113,7 @@ class OfferServiceImplTest {
             typeServiceService.addSubService(typeService[i]);
             orderService.orderRegistration(order[i]);
             order[i].setOrderType(OrderType.STARTED);
-            orderService.setOrderToDone(order[i]);
+            orderService.setOrderToDone(order[i].getId());
             expertTypeServiceService.addExpertToTypeService(expertTypeService[i]);
             order[i].setOrderType(OrderType.WAITING_EXPERT_SELECTION);
             for (int j = 0; j < 3; j++) {
@@ -155,7 +155,7 @@ class OfferServiceImplTest {
     @Test
     void chooseOffer() {
         offerTest[0][1].getOrder().setOrderType(OrderType.WAITING_EXPERT_SELECTION);
-        service.chooseOffer(offerTest[0][1]);
+        service.chooseOffer(offerTest[0][1], user[1]);
         assertAll(
                 () -> assertEquals(Objects.requireNonNull(service.findById(offerTest[0][1].getId())).getOrder()
                                 .getOrderType(), OrderType.WAITING_FOR_COME_TO_YOUR_PLACE),

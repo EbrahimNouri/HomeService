@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -37,7 +38,6 @@ public class ExpertControllerImpl {
     private final ExpertUserService expertUserService;
     private final ExpertTypeServiceService expertTypeServiceService;
 
-    // TODO: 12/31/2022 AD
 
     @GetMapping()//checked
     public PersonFindDto showExpert(Authentication authentication) {
@@ -114,8 +114,7 @@ public class ExpertControllerImpl {
         return expertService.getScore(expert.getId());
     }
 
-    // TODO: 1/15/2023 AD  
-    @GetMapping("/detail")
+    @GetMapping("/detail")//checked
     public ExpertOffersDto expertDetail(Authentication authentication) {
         Expert expert = (Expert) authentication.getPrincipal();
         return
@@ -133,5 +132,13 @@ public class ExpertControllerImpl {
     public Double myPrice(Authentication authentication) {
         Expert principal = (Expert) authentication.getPrincipal();
         return principal.getCredit();
+    }
+
+    @GetMapping("/offerInformation")
+    public List<OfferDto> offerDtos(@RequestParam Map<String, String> map, Authentication authentication) {
+        Expert expert = (Expert) authentication.getPrincipal();
+        map.put("expert", String.valueOf(expert.getId()));
+        return offerService.offerSpecification(map).stream()
+                .map(OfferDto::offerToOfferDtoMapping).toList();
     }
 }

@@ -30,7 +30,7 @@ public abstract class Person extends BaseEntity implements UserDetails {
     @NotEmpty(message = "Blank is not acceptable")
     private String lastname;
 
-    @Email(/*groups = CustomExceptionInvalid.class,*/ message = "email address is not valid")
+    @Email(message = "email address is not valid")
     @Column(unique = true, nullable = false)
     private String email;
 
@@ -39,7 +39,8 @@ public abstract class Person extends BaseEntity implements UserDetails {
     private String username;
 
     @Column(nullable = false)
-    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$", message = "password is not valid")
+    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,128}$"
+            , message = "password is not valid")
     private String password;
 
     private double credit;
@@ -57,8 +58,11 @@ public abstract class Person extends BaseEntity implements UserDetails {
     @Column(name = "verification_code", length = 5)
     private Integer verificationCode;
 
-    public Person(Long id, String firstname, String lastname, String email, String username, String password
-            , double credit, LocalDateTime signupDateTime, Role role, boolean enabled, Integer verificationCode) {
+    public Person(Long id, String firstname, String lastname,
+                  String email, String username, String password
+            , double credit, LocalDateTime signupDateTime, Role role
+            , boolean enabled, Integer verificationCode) {
+
         super(id);
         this.firstname = firstname;
         this.lastname = lastname;
