@@ -7,7 +7,6 @@ import ir.maktab.homeservice.entity.enums.ExpertStatus;
 import ir.maktab.homeservice.entity.enums.Role;
 import ir.maktab.homeservice.exception.*;
 import ir.maktab.homeservice.repository.expert.ExpertRepository;
-import ir.maktab.homeservice.service.expertTypeSerice.ExpertTypeServiceService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.util.ApplicationContextProvider;
 import ir.maktab.homeservice.util.EmailSenderUtil;
@@ -35,7 +34,6 @@ import java.util.Objects;
 @Log4j2
 @AllArgsConstructor
 public class ExpertServiceImpl implements ExpertService {
-    private final ExpertTypeServiceService expertTypeServiceService;
     private final ExpertRepository repository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final ApplicationContextProvider applicationContext;
@@ -85,11 +83,11 @@ public class ExpertServiceImpl implements ExpertService {
         }
     }
 
+    @Override
     public List<Expert> showAllNewExperts() {
         return repository.findByExpertStatus(ExpertStatus.NEW);
     }
 
-    // TODO: 1/8/2023 AD controller
     @Override
     public Expert expertDetail(Long expertId) {
 
@@ -263,7 +261,6 @@ public class ExpertServiceImpl implements ExpertService {
 
 
         byte[] avatar = file.getBytes();
-        System.out.println("debug");
         expert.setAvatar(avatar);
         repository.save(expert);
 

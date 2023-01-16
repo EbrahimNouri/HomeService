@@ -18,7 +18,8 @@ public interface ExpertService {
 
     boolean verify(Integer verificationCode);
 
-    // TODO: 1/8/2023 AD controller
+    List<Expert> showAllNewExperts();
+
     Expert expertDetail(Long expertId);
 
     void registerExpert(Expert expert, File file);

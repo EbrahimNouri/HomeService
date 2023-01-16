@@ -54,8 +54,18 @@ public class AdminControllerImpl {
 
     @GetMapping("/showAllBasicServices") //checked
     public List<BasicServiceDto> showAllBasicServices() {
+
         return basicServicesService.findAll().stream()
                 .map(bs -> new BasicServiceDto(bs.getId(), bs.getName())).toList();
+
+    }
+
+    @GetMapping("/showAllNewExpert") //checked
+    public List<PersonFindDto> showAllNewExpert() {
+
+        return expertService.showAllNewExperts().stream()
+                .map(PersonFindDto::expertTopPersonFindDtoMapper).toList();
+
     }
 
     @PutMapping("/descriptionChange") //checked
