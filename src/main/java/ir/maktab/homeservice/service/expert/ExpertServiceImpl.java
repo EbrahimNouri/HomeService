@@ -167,7 +167,6 @@ public class ExpertServiceImpl implements ExpertService {
 
         log.debug("debug change password expert {} to {} ", expert, password);
 
-
     }
 
     @Override

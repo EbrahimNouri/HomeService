@@ -28,4 +28,6 @@ public interface ExpertUserRepository extends JpaRepository<ExpertUser, ExpertUs
 
     @Query("select eu.point from ExpertUser eu where eu.expert.id = :id")
     List<Double> listOfScore(Long id);
+
+    List<ExpertUser> findExpertUserByUserId(Long userId);
 }

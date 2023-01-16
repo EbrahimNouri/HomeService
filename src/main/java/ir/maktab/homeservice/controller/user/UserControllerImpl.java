@@ -218,6 +218,14 @@ public class UserControllerImpl {
                 (user.getId()).stream().map((TransactionDto::TransactionToDto)).toList();
     }
 
+    @GetMapping("/showMyCommentOrPoint")//checked
+    public List<ExpertUserDto> showMyCommentOrPoint(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+
+        return expertUserService.findByUser(user.getId())
+                .stream().map(ExpertUserDto::expertUserDtoMapper).toList();
+    }
+
     private static ExpertUser getExpertUser(ExpertUserDto expertUserDto, Expert expert, User user, Order order) {
         ExpertUser expertUser;
         expertUser = ExpertUser.builder()

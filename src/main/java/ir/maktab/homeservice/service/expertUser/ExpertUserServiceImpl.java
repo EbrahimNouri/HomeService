@@ -91,4 +91,8 @@ public class ExpertUserServiceImpl implements ExpertUserService {
         return repository.listOfScore(id);
     }
 
+    @Override
+    public List<ExpertUser> findByUser(Long user){
+        return repository.findExpertUserByUserId(user);
+    }
 }

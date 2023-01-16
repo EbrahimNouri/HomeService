@@ -112,8 +112,6 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(password));
         repository.save(user);
 
-        log.debug("debug change password user {} to {} ", user, password);
-
     }
 
     @Override

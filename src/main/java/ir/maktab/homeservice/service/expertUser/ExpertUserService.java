@@ -16,4 +16,6 @@ public interface ExpertUserService {
     void deductPoints(int hours, Order order);
 
     List<Double> listOfScore(Long id);
+
+    List<ExpertUser> findByUser(Long user);
 }

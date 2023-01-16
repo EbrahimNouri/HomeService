@@ -44,7 +44,7 @@ public class ExpertControllerImpl {
     }
 
     @PutMapping("/chPass")//checked
-    public void changePassword(@RequestParam @Valid String password, Authentication authentication) {
+    public void changePassword(@RequestBody @Valid String password, Authentication authentication) {
         Expert expert = (Expert) authentication.getPrincipal();
         expertService.changePassword(expert, password);
     }
