@@ -1,11 +1,13 @@
 package ir.maktab.homeservice.service.transaction;
 
 
+import ir.maktab.homeservice.controller.user.CaptchaController;
 import ir.maktab.homeservice.entity.Expert;
 import ir.maktab.homeservice.entity.Transaction;
 import ir.maktab.homeservice.entity.User;
 import ir.maktab.homeservice.entity.enums.TransactionType;
 import ir.maktab.homeservice.exception.CustomExceptionAmount;
+import ir.maktab.homeservice.exception.CustomExceptionInvalid;
 import ir.maktab.homeservice.exception.CustomExceptionNotFind;
 import ir.maktab.homeservice.exception.CustomExceptionSave;
 import ir.maktab.homeservice.repository.transaction.TransactionRepository;
@@ -60,12 +62,17 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public void chargeAccountBalance(User user, Double amount) {
+    public void chargeAccountBalance(User user, Double amount, String card) {
+
+        if(!CaptchaController.cardCheck(card))
+            throw new CustomExceptionInvalid("card number is invalid");
+
         if (user.getId() == null)
             throw new CustomExceptionNotFind("user not valid");
 
         user.setCredit(user.getCredit() + amount);
         userService.save(user);
+
         Transaction transaction = Transaction.builder()
                 .user(user)
                 .transfer(amount)
@@ -73,9 +80,6 @@ public class TransactionServiceImpl implements TransactionService {
                 .build();
 
         repository.save(transaction);
-
-        log.debug("debug add transaction to wallet user {} {} ", user, amount);
-
     }
 
     @Transactional

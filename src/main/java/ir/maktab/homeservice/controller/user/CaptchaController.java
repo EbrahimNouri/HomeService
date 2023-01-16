@@ -3,7 +3,6 @@ package ir.maktab.homeservice.controller.user;
 import cn.apiclub.captcha.Captcha;
 import ir.maktab.homeservice.config.CaptchaGenerator;
 import ir.maktab.homeservice.util.CaptchaSettings;
-import lombok.Data;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/app")
-@Data
 public class CaptchaController {
 
     @GetMapping("/verify")
@@ -24,8 +22,7 @@ public class CaptchaController {
 
     @PostMapping("/verify")
     public String verify(@ModelAttribute CaptchaSettings captchaSettings, Model model) {
-        if (captchaSettings.getCaptcha().equals(captchaSettings.getHiddenCaptcha())
-                /*&& cardCheck(card) && userService.existsByEmail(email*/) {
+        if (captchaSettings.getCaptcha().equals(captchaSettings.getHiddenCaptcha())) {
             model.addAttribute("message", "Captcha verified successfully");
         } else {
             model.addAttribute("message", "Invalid Captcha");
@@ -47,7 +44,7 @@ public class CaptchaController {
     public static boolean cardCheck(String card) {
         if (card.trim().length() == 16) {
             try {
-                Integer.parseInt(card);
+                Long.valueOf(card);
                 return true;
             } catch (NumberFormatException | NullPointerException e) {
                 return false;

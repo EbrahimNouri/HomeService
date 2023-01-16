@@ -12,12 +12,9 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -44,34 +41,24 @@ public class BasicConfigurationSecurity {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-
-                .authorizeHttpRequests(
-                        (auth) -> auth
-                                .requestMatchers(
-                                        "/api/v1/expert/**").hasRole("EXPERT")
-
-                                .requestMatchers(
-                                        "/api/v1/user/**").hasRole("USER")
-
-                                .requestMatchers(
-                                        "/api/v1/admin/**").hasRole("ADMIN")
-
-                                .anyRequest().authenticated()
+                .authorizeHttpRequests(auth -> auth.requestMatchers
+                                ("/api/v1/register/**"
+                                        , "/app/**")
+                        .permitAll()
                 )
 
-                .httpBasic(withDefaults());
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/expert/**").hasRole("EXPERT")
+
+                        .requestMatchers("/api/v1/user/**").hasRole("USER")
+
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+
+                        .anyRequest().authenticated()
+
+                ).httpBasic();
 
         return http.build();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-
-        return (web) -> web.ignoring()
-                .requestMatchers(
-                        "/api/v1/register/**"
-                        , "/app/**"
-                );
     }
 
     @Bean
@@ -83,7 +70,6 @@ public class BasicConfigurationSecurity {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-
         auth
                 .userDetailsService(username -> userRepository
                         .findByUsername(username)
@@ -102,6 +88,5 @@ public class BasicConfigurationSecurity {
                         .orElseThrow(() -> new UsernameNotFoundException(String
                                 .format("this %s not found", username))))
                 .passwordEncoder(passwordEncoder);
-
     }
 }

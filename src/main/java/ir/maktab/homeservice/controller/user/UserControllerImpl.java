@@ -8,6 +8,7 @@ import ir.maktab.homeservice.service.expert.ExpertService;
 import ir.maktab.homeservice.service.expertUser.ExpertUserService;
 import ir.maktab.homeservice.service.offer.OfferService;
 import ir.maktab.homeservice.service.order.OrderService;
+import ir.maktab.homeservice.service.transaction.TransactionService;
 import ir.maktab.homeservice.service.typeService.TypeServiceService;
 import ir.maktab.homeservice.service.user.UserService;
 import jakarta.validation.Valid;
@@ -30,6 +31,7 @@ public class UserControllerImpl {
     private final ExpertUserService expertUserService;
     private final OfferService offerService;
     private final TypeServiceService typeServiceService;
+    private final TransactionService transactionService;
 
 
     @PutMapping("/chPass")//checked
@@ -166,6 +168,15 @@ public class UserControllerImpl {
         orderService.setOrderToPaidOnlinePayment(orderId, user, card);
     }
 
+    @PutMapping("/chargeAccount")//checked
+    public void chargeAccount(@RequestParam String card, double balance
+            , Authentication authentication) {
+
+        User user = (User) authentication.getPrincipal();
+
+        transactionService.chargeAccountBalance(user, balance, card);
+    }
+
     @GetMapping("/detail")//checked
     public UserOrderDto userDetail(Authentication authentication) {
 
@@ -188,10 +199,13 @@ public class UserControllerImpl {
         return principal.getCredit();
     }
 
-    @GetMapping("/findOrderReqParam")
+    @GetMapping("/findOrderReqParam")//checked
     public List<OrderDto> findOrderBySpecification(@RequestParam Map<String, String> map, Authentication authentication) {
+
         User user = (User) authentication.getPrincipal();
+
         map.put("user", String.valueOf(user.getId()));
+
         return orderService.findBySpecification(map).stream()
                 .map(OrderDto::orderToOrderDtoMapper).toList();
     }

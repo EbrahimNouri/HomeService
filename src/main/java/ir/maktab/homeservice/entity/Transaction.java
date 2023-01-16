@@ -1,13 +1,12 @@
 package ir.maktab.homeservice.entity;
 
+import ir.maktab.homeservice.entity.base.BaseEntity;
 import ir.maktab.homeservice.entity.enums.TransactionType;
-import ir.maktab.homeservice.entity.id.TransactionId;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -17,18 +16,14 @@ import java.util.Objects;
 @Setter
 @Entity
 @Builder
-@IdClass(TransactionId.class)
-public class Transaction implements Serializable {
+public class Transaction extends BaseEntity {
 
-    @Id
     @ManyToOne(fetch = FetchType.EAGER)
     private Expert expert;
 
-    @Id
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
-    @Id
     @CreationTimestamp
     @Column(name = "local_date_time")
     private LocalDateTime localDateTime;

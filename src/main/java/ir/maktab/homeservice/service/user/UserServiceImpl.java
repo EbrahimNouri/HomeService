@@ -179,6 +179,4 @@ public class UserServiceImpl implements UserService {
     public List<User> userSpecification(Map<String, String> map){
         return repository.findAll(specificationUtil.userSpecification(map));
     }
-
-
 }

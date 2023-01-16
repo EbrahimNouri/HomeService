@@ -190,7 +190,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void setOrderToPaidOnlinePayment(Long orderId, User user, String card) {
 
-        if (CaptchaController.cardCheck(card))
+        if (!CaptchaController.cardCheck(card))
             throw new CustomExceptionInvalid("card is invalid");
 
         Order order = findById(orderId);

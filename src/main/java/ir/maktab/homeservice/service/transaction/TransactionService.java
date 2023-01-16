@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface TransactionService {
     void addTransaction(Transaction transaction);
 
-    void chargeAccountBalance(User user, Double amount);
+    void chargeAccountBalance(User user, Double amount, String card);
 
     void onlinePayment(User user ,Expert expert, Double amount);
 
