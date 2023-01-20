@@ -1,5 +1,6 @@
 package ir.maktab.homeservice.dto;
 
+import ir.maktab.homeservice.entity.Offer;
 import ir.maktab.homeservice.entity.Order;
 import ir.maktab.homeservice.entity.TypeService;
 import ir.maktab.homeservice.entity.User;
@@ -10,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
@@ -17,6 +19,7 @@ import java.time.LocalDate;
 @Builder
 public class OrderDto {
     private Long userId;
+    private Long expertId;
     private Long typeId;
     private Double price;
     private String description;
@@ -30,6 +33,8 @@ public class OrderDto {
                 .price(order.getSuggestedPrice())
                 .orderType(order.getOrderType())
                 .userId(order.getUser().getId())
+                .expertId(Objects.requireNonNull(order.getOffers().stream().filter(Offer::isChoose).findFirst()
+                        .orElse(null)).getExpert().getId())
                 .startOfWork(order.getStartOfWork())
                 .address(order.getAddress())
                 .build();

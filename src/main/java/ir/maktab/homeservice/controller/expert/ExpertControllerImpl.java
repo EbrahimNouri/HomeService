@@ -126,7 +126,7 @@ public class ExpertControllerImpl {
                 .map(OfferDto::offerToOfferDtoMapping).toList();
     }
 
-    @GetMapping("/myPrice")//checked
+    @GetMapping("/myWallet")//checked
     public Double myPrice(Authentication authentication) {
         Expert principal = (Expert) authentication.getPrincipal();
         return principal.getCredit();

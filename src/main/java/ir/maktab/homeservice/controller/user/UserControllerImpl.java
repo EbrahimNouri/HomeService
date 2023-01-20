@@ -193,7 +193,7 @@ public class UserControllerImpl {
                 .stream().map(OrderDto::orderToOrderDtoMapper).toList();
     }
 
-    @GetMapping("/myPrice")//checked
+    @GetMapping("/myWallet")//checked
     public Double myPrice(Authentication authentication) {
         User principal = (User) authentication.getPrincipal();
         return principal.getCredit();

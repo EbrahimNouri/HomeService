@@ -55,7 +55,7 @@ public class OfferServiceImpl implements OfferService {
                 || order.getOrderType().equals(OrderType.PAID)
                 || order.getOrderType().equals(OrderType.DONE)
                 || order.getOrderType().equals(OrderType.WAITING_FOR_COME_TO_YOUR_PLACE)
-                )
+        )
             throw new CustomExceptionOrderType("order type not valid");
 
 
@@ -145,6 +145,7 @@ public class OfferServiceImpl implements OfferService {
         else throw new CustomExceptionInvalid("this order for another user");
 
     }
+
     @Override
     public int countOfOffers(Long expertId) {
         return repository.countOfOffers(expertId);
@@ -176,10 +177,10 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public Offer findByOrderIdChosen(Long orderId){
+    public Offer findByOrderIdChosen(Long orderId) {
         List<Offer> byOrderIdAndChoose = repository.findByOrderIdAndChoose(orderId);
         if (byOrderIdAndChoose.isEmpty())
-            throw  new CustomExceptionNotFind("offer not found");
+            throw new CustomExceptionNotFind("offer not found");
         return byOrderIdAndChoose.get(0);
     }
 

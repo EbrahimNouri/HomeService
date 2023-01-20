@@ -9,7 +9,6 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,7 +31,7 @@ public class Order extends BaseEntity {
     private ExpertUser expertUser;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
-    private List<Offer> offers = new ArrayList<>();
+    private List<Offer> offers;
 
     private Double suggestedPrice;
 

@@ -36,6 +36,4 @@ public class ExpertOffersDto {
                 .id(expert.getId())
                 .build();
     }
-
-
 }
