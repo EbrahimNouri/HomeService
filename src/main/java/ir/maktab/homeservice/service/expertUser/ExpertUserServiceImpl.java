@@ -75,7 +75,7 @@ public class ExpertUserServiceImpl implements ExpertUserService {
         addCommentAndPoint(new ExpertUser(expert, user, order
                 , LocalDate.now(), (double) -hours, null));
 
-        Double countAll = repository.countOfAllPointByExpertId(expert.getId()) - hours;
+        double countAll = repository.countOfAllPointByExpertId(expert.getId()) - hours;
 
 
         if (countAll < 0)
@@ -92,7 +92,7 @@ public class ExpertUserServiceImpl implements ExpertUserService {
     }
 
     @Override
-    public List<ExpertUser> findByUser(Long user){
+    public List<ExpertUser> findByUser(Long user) {
         return repository.findExpertUserByUserId(user);
     }
 }

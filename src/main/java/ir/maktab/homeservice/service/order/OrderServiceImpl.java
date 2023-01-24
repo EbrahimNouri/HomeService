@@ -222,7 +222,7 @@ public class OrderServiceImpl implements OrderService {
 
         } else if (offer.getEndDate().isBefore(LocalDateTime.now())) {
 
-            int hour = offer.getEndDate().getHour() - LocalDateTime.now().getHour();
+            int hour = LocalDateTime.now().getHour() - offer.getEndDate().getHour();
 
             expertUserService.deductPoints(hour, order);
         }
